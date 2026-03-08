@@ -1,0 +1,29 @@
+{
+  "resourceType": "com.bmc.arsys.rx.services.view.domain.ViewComponentDefinition",
+  "lastUpdateTime": "<timestamp>",
+  "lastChangedBy": "Demo",
+  "owner": "Demo",
+  "name": "<viewComponentGuid>",
+  "tags": null,
+  "description": null,
+  "overlayGroupId": "1",
+  "internal": false,
+  "guid": "<viewComponentGuid>",
+  "type": "<viewComponentSelector>",
+  "propertiesByName": {
+    "availableOnDevices": "[\"desktop\",\"tablet\",\"mobile\"]",
+    "styles": null,
+    "<viewComponentInputParameter>": "<ViewComponentInputParameterValue>",
+    "hidden": "0"
+  },
+  "permissions": [
+    {
+      "ownerId": {
+        "value": 0,
+        "type": "GROUP",
+        "name": "Public"
+      },
+      "type": "VISIBLE"
+    }
+  ]
+}

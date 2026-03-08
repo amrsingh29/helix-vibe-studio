@@ -1,0 +1,53 @@
+Risk Assessment Agent Findings:
+**Risk Assessment Summary for Change Request CRQ000000021803**
+
+**Overview:** 
+This change request proposes the implementation of the BGP routing protocol on Pune Internet links. The risk assessment identifies critical issues across all evaluated domains: documentation, historical impact, and service instability. All tools report the highest risk score, indicating severe risk exposure if this change proceeds without substantial mitigation.
+
+---
+
+**1. Documentation Risk**
+• Score: 5.0 / 5 (High risk) 
+• Key Drivers:
+ - Only one document ("impl plan.txt") was found, but it is entirely unrelated to the BGP change (details a firewall port change in a non-prod environment).
+ - Required install plan is missing for the actual change.
+ - Document quality score is 0.0/5; no relevant or supporting documentation for the proposed BGP implementation.
+• Mitigation:
+ - Develop and attach a comprehensive, relevant implementation plan specific to BGP routing changes on Pune Internet links.
+ - Ensure all required documentation types are provided and reviewed for alignment with the change scope before proceeding.
+
+**2. Historical Impact Risk**
+• Score: 5 / 5 (High risk) 
+• Key Drivers:
+ - Strong associations with past incidents linked to similar BGP routing changes (e.g., similarity score 0.95).
+ - Found historical CRQs with matching status reasons; evidence of previous negative outcomes.
+• References:
+ - Incidents: INC000000024603, INC000000024623
+ - Related CRQ: CRQ000000021900
+• Mitigation:
+ - Conduct a detailed root cause analysis of previous incidents before proceeding.
+ - Incorporate additional safeguards and contingency planning based on lessons learned from referenced incidents.
+
+**3. Service Instability Risk**
+• Score: 5.0 / 5 (High risk) 
+• Key Drivers:
+ - Parent service 'Apex-Online' currently has 2 active incidents and a critically low health score (actualHealth: 30, CRITICAL healthState).
+ - Instability is concentrated at the parent service level, amplifying risk for any change.
+ - All child services are stable, but the parent’s critical status dominates the risk profile.
+• Mitigation:
+ - Defer implementation until the parent service health recovers (actualHealth > 50 and healthState no longer CRITICAL).
+ - Enhance real-time monitoring and prepare rollback plans in case of further degradation.
+
+---
+
+**Summary:** 
+All assessed risk dimensions for this change request are at the highest possible level (score: 5/5). There is no relevant supporting documentation, strong evidence of past incidents linked to similar changes, and the target service is currently unstable. Proceeding with this change in its current state is not recommended. Substantial mitigation actions are required, including documentation remediation, historical incident review, and waiting for service stabilization.
+
+**Final Risk Summary Table:**
+
+| Risk Factor | Score | Rationale |
+| Documentation | 5.0 | No relevant implementation plan provided; document quality score 0.0/5; required documentation missing. |
+| Historical Impact | 5 | Strong associations with past incidents (INC000000024603, INC000000024623); related CRQ: CRQ000000021900. |
+| Service Instability | 5.0 | Parent service 'Apex-Online' has critical health (30), 2 active incidents, and overall service instability. |
+
+Overall Risk Score (1-5): 5.0

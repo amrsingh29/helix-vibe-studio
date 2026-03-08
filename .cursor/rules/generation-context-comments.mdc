@@ -1,0 +1,102 @@
+---
+description: Enforce generation-context comments in every AI-created or AI-modified file so that future developers or AI agents retain full traceability of why and how the code was produced.
+globs: 
+alwaysApply: true
+---
+
+# Generation Context Comments
+
+When you **create a new file** or **make substantive changes** to an existing file, you MUST embed generation-context metadata so future editors (human or AI) understand the provenance of the code.
+
+## 1. File-Level Header Block
+
+Add or update a **Generation Context** block comment near the top of every file you create or significantly modify (below any license headers or language pragmas).
+
+### Format by Language
+
+**TypeScript / JavaScript / SCSS**
+```
+/**
+ * @generated
+ * @context <one-line summary of the requirement or user request>
+ * @decisions <key design choices, trade-offs, or constraints applied>
+ * @references <cookbook sections, rule files, or docs consulted>
+ * @modified <YYYY-MM-DD>
+ */
+```
+
+**HTML (Angular templates)**
+```
+<!-- @generated
+     @context  <one-line summary>
+     @decisions <key choices>
+     @references <docs consulted>
+     @modified <YYYY-MM-DD> -->
+```
+
+**Java**
+```
+/**
+ * @generated
+ * @context <one-line summary>
+ * @decisions <key choices>
+ * @references <docs consulted>
+ * @modified <YYYY-MM-DD>
+ */
+```
+
+**Process Definition (.def) / XML / JSON (where comments are possible)**
+Use `#` line comments for `.def`, `<!-- -->` for XML. For JSON files that support `//` comments (tsconfig, etc.), use `//`.
+
+## 2. Field Descriptions
+
+| Tag | Required | Content |
+|-----|----------|---------|
+| `@generated` | Yes | Marker — no value needed. Signals this block was AI-produced. |
+| `@context` | Yes | The user requirement or conversation intent that led to this code. Be specific: e.g., "User requested a contact-book view component with inline editing and DataPage API integration." |
+| `@decisions` | Yes | Architectural or implementation choices made: e.g., "Used DataPage API instead of Record Instance GET; standalone component with OnPush change detection." |
+| `@references` | No | Cookbook pages, rule files, or external docs referenced during generation: e.g., "cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md". |
+| `@modified` | Yes | Date of last AI modification in YYYY-MM-DD format. |
+
+## 3. Inline Context for Non-Obvious Blocks
+
+When you add a significant code block (e.g., a complex mapping, a workaround, a conditional branch driven by a specific requirement), add a short inline comment explaining **why** it exists and what requirement it addresses:
+
+```typescript
+// @context Pagination disabled per user request — all records loaded at once
+// because the dataset is expected to stay under 500 rows.
+pageSize: '1000',
+```
+
+```java
+// @context Using epoch millis per platform constraint (cookbook/06-java-backend.md).
+// ISO 8601 causes silent failures in AR System field writes.
+long timestamp = System.currentTimeMillis();
+```
+
+Only annotate blocks where the reasoning is non-obvious. Do NOT annotate trivial lines.
+
+## 4. Updating Existing Files
+
+When modifying a file that **already has** a `@generated` header:
+- **Append** your context to the existing `@context` line (semicolon-separated) or replace it if the scope changed entirely.
+- Update `@decisions` and `@modified`.
+- Do NOT remove previous context entries unless they are fully superseded.
+
+When modifying a file that **does not** have a `@generated` header:
+- Add the header block if your changes are substantive (new functions, new logic paths, structural refactors).
+- Skip the header for trivial fixes (typo, formatting, single-line change).
+
+## 5. What Counts as "Substantive"
+
+Add/update the header when you:
+- Create a new file
+- Add a new class, component, service, or function
+- Change business logic or data flow
+- Refactor structure (rename, move, split, merge)
+- Add or change API integrations
+
+Skip the header when you:
+- Fix a typo or formatting
+- Update a single import
+- Change only whitespace or comments

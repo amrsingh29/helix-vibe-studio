@@ -1,0 +1,32 @@
+services:
+  bmc-helix-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SDK_VERSION: ${SDK_VERSION}
+    container_name: bmc-helix-innovation-studio
+    volumes:
+      - ./workspace:/workspace
+      - ./sdk:/opt/sdk
+      - maven-repo:/root/.m2
+      - npm-cache:/root/.npm
+      - yarn-cache:/root/.cache/yarn
+    ports:
+      - "8080:8080"
+      - "3000:3000"
+      - "4200:4200"
+      - "5005:5005"
+    environment:
+      - JAVA_HOME=/opt/java/openjdk
+      - MAVEN_HOME=/opt/maven
+      - RX_SDK_HOME=/opt/sdk/com.bmc.arsys.rx.sdk-${SDK_VERSION}
+      - MAVEN_OPTS=-Xms512m -Xmx1024m
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+volumes:
+  maven-repo:
+  npm-cache:
+  yarn-cache:

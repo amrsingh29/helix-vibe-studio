@@ -1,0 +1,17 @@
+workspace/
+sdk/com.bmc.arsys.rx.sdk-25.4.00/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+
+# Build artifacts
+*-SNAPSHOT-INSTALL.zip
+*-SNAPSHOT-INSTALL/
+
+# Scripts with credentials — do not commit
+login_get_token.py
+call_assistant_api.py
+call_assistant_api_stream.py

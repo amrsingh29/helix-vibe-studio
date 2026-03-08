@@ -1,0 +1,309 @@
+---
+description: Checklist and troubleshooting guide for creating Java process activities, building, and deploying to BMC Helix Innovation Studio. Apply when creating Java services, building, or deploying.
+globs: **/bundle/src/main/java/**/*.java
+alwaysApply: false
+---
+
+# BMC Helix Java Process Activity — Build & Deploy Checklist
+
+## AR System Platform Quirks (Must-Know Before Writing Code)
+
+These are undocumented or poorly documented behaviors discovered through trial and error. Violating any of these causes runtime failures that are invisible at compile time.
+
+### DateTime Handling
+
+- [ ] **All date/time field values MUST use epoch milliseconds** (e.g., `System.currentTimeMillis()` or `Instant.now().toEpochMilli()`), NOT ISO 8601 strings
+- [ ] Never use `Instant.now().toString()` or `LocalDateTime.toString()` for AR System date fields — this causes `ERROR 12095`
+
+```java
+// WRONG — causes ERROR 12095
+fieldInstances.put("3", Instant.now().toString());          // "2026-02-18T10:30:00Z"
+
+// CORRECT
+fieldInstances.put("3", String.valueOf(System.currentTimeMillis()));  // "1771408200000"
+```
+
+### Required System Fields on Record Creation
+
+- [ ] **Every record creation MUST set Status (field 7) and Description/Short Description (field 8)** explicitly
+- [ ] Missing these fields causes silent failures or `ERROR 307` — records may appear created but with broken state
+
+```java
+// REQUIRED on every RecordInstance creation
+fieldInstances.put("7", "0");    // Status — set to a valid status value
+fieldInstances.put("8", ".");    // Short Description — can be a placeholder dot
+```
+
+### Transaction Annotations
+
+- [ ] **`@RxDefinitionTransactional` MUST only be placed on REST endpoint methods**, NOT on internal service methods
+- [ ] Internal services called by IS Rules or Processes already run inside a platform-managed transaction — adding the annotation causes `ERROR 12004` (transaction conflict)
+- [ ] If you get `ERROR 8790` (transaction not started) on a REST endpoint, that endpoint DOES need `@RxDefinitionTransactional`
+
+```java
+// CORRECT — annotation on REST endpoint only
+@Action(name = "MyRestEndpoint")
+@RxDefinitionTransactional
+public MyResponsePayload execute(@ActionParameter(...) String input) {
+    // Call internal services here — they inherit this transaction
+    myInternalService.doWork(input);
+}
+
+// WRONG — annotation on internal service called by a Rule
+@RxDefinitionTransactional  // REMOVE THIS -- the Rule already has a transaction
+public void doWork(String input) { ... }
+```
+
+### IS Rules Behavior
+
+- [ ] **Rules fire only once per triggering event** — do NOT design batch processing loops that rely on rules firing repeatedly
+- [ ] If processing gets stuck at 0%, check whether you're relying on a rule to iteratively process records — inline the processing logic instead
+- [ ] For batch processing, iterate within a single service method rather than expecting rules to chain
+
+### File Attachments
+
+- [ ] `persistAttachment()` MUST be called AFTER the parent record is created, not before
+- [ ] Setting a FileAttachment field as REQUIRED on the record definition will cause `ERROR 307` because the attachment cannot exist before the record
+- [ ] Workflow: create record > get record ID > persist attachment > update record with attachment reference
+
+### Record Creation via API
+
+- [ ] Verify all REQUIRED fields on the record definition are populated before calling create
+- [ ] AR System required fields are not always obvious — check the record definition in Innovation Studio
+- [ ] Field 8 (Short Description) is commonly required even if not explicitly marked
+
+---
+
+## Creating a New Java Process Activity
+
+### Step 1 — Create the Files
+
+For every new process activity, create these files in `bundle/src/main/java/com/mycompany/sampleapp/bundle/`:
+
+| File | Purpose |
+|------|---------|
+| `<Name>ProcessActivity.java` | The service class with `@Action` method |
+| `<Name>ResponsePayload.java` | The return type with `@JsonProperty` fields |
+
+### Step 2 — Register in MyApplication.java
+
+Add `registerService(new <Name>ProcessActivity());` in `MyApplication.register()`.
+
+**Order matters**: Place new registrations BEFORE `registerStaticWebResource()`.
+
+### Step 3 — Verify Files in Docker (CRITICAL)
+
+**Docker Desktop for Mac bind mounts can silently stop syncing host file changes into the container.** This is the #1 cause of "new service not appearing" issues.
+
+**Always verify before building:**
+
+```bash
+# List files in Docker to confirm new files exist
+docker exec bmc-helix-innovation-studio bash -c \
+  "ls -la /workspace/sample-app/bundle/src/main/java/com/mycompany/sampleapp/bundle/"
+
+# Verify MyApplication.java content in Docker matches host
+docker exec bmc-helix-innovation-studio bash -c \
+  "cat /workspace/sample-app/bundle/src/main/java/com/mycompany/sampleapp/bundle/MyApplication.java"
+```
+
+**If files are missing or stale, use `docker cp` to force sync:**
+
+```bash
+docker cp /path/on/host/MyFile.java \
+  bmc-helix-innovation-studio:/workspace/sample-app/bundle/src/main/java/com/mycompany/sampleapp/bundle/
+```
+
+**Copy ALL changed files**: `MyApplication.java`, new `*Activity.java`, new `*Payload.java`.
+
+### Step 4 — Build and Deploy
+
+```bash
+docker exec bmc-helix-innovation-studio bash -c \
+  "cd /workspace/sample-app && mvn clean install -Pdeploy -DskipTests"
+```
+
+### Step 5 — Verify Classes in JAR (CRITICAL)
+
+After build, confirm the new classes are actually in the compiled JAR:
+
+```bash
+docker exec bmc-helix-innovation-studio bash -c \
+  "jar tf /workspace/sample-app/bundle/target/com.mycompany.sample-app-1.0.0-SNAPSHOT.jar \
+   | grep 'sampleapp/bundle/.*\.class' | sort"
+```
+
+**What to look for:**
+- Your new class must appear (e.g., `RecordQueryProcessorActivity.class`)
+- It must have an `AjcClosure1` companion (e.g., `RecordQueryProcessorActivity$AjcClosure1.class`) — this confirms AspectJ weaving succeeded, which is required for `@Action` annotation processing
+- If the class is MISSING from the JAR, the Docker bind mount is stale — go back to Step 3
+
+### Step 6 — Verify Deployment Output
+
+Check the Maven output for:
+- `Final Status:Deployed`
+- `definitionsOverallImportStatus=IMPORT_DEFINITIONS_SUCCESS`
+- No `ERROR (930)` messages about action types
+
+### Step 7 — Verify in Process Designer
+
+After deployment, clear browser cache (Cmd+Shift+R), then check Process Designer.
+
+**Where Java @Action services appear:**
+- Open or create a process definition
+- Add a **Process Activity** (Service Task) node
+- Browse the list of available actions — your new action should appear here
+
+**Where they do NOT appear:**
+- They are NOT listed as standalone items in the Process Designer left panel
+- The left panel shows **process definitions** (`.def` files), not individual Java actions
+
+---
+
+## Common Failure Modes
+
+### 1. Docker Bind Mount Desync (Most Common)
+
+**Symptom**: Build succeeds, deployment says "Deployed", but new action doesn't appear. Existing actions still work.
+
+**Root cause**: Docker Desktop for Mac's VirtioFS/gRPC-FUSE file sync has silently broken. Host file edits are invisible to Docker.
+
+**Diagnosis**:
+```bash
+# Compare timestamps — if Docker shows old dates, mount is stale
+docker exec bmc-helix-innovation-studio bash -c \
+  "ls -la /workspace/sample-app/bundle/src/main/java/com/mycompany/sampleapp/bundle/MyApplication.java"
+```
+
+**Fix**: Use `docker cp` to manually copy all changed files into the container.
+
+**Prevention**: Always run Step 3 (verify files in Docker) before building.
+
+### 2. Action Type Not Found (ERROR 930)
+
+**Symptom**: Deployment fails with `Action type does not exist on server; com.mycompany.sample-app:<actionName>`
+
+**Root cause**: Deploying a `.def` file that references a Java `@Action` at the same time as the JAR. The definition importer validates action types before the OSGI bundle finishes activating.
+
+**Fix**: Deploy the JAR first without the `.def` file. Once the action is confirmed working, deploy the `.def` separately or in a subsequent deployment.
+
+### 3. OSGI Bundle Activation Failure
+
+**Symptom**: No actions (old or new) appear after deployment.
+
+**Root cause**: An exception during `MyApplication.register()` can cause the entire bundle activation to fail. The OSGI framework may fall back to the previous bundle version.
+
+**Diagnosis**: Check if the `registerService()` call for the new service throws an exception (e.g., class not found, missing dependency).
+
+**Fix**: Ensure all Java classes compile cleanly and have correct imports.
+
+### 4. AspectJ Weaving Not Applied
+
+**Symptom**: Class exists in JAR but has no `$AjcClosure1` companion class.
+
+**Root cause**: The `aspectj-maven-plugin` did not process the class.
+
+**Fix**: Ensure the class is in the correct package and the Maven build runs clean (`mvn clean install`).
+
+---
+
+### 5. OSGi ClassNotFoundException for Third-Party Libraries
+
+**Symptom**: `ClassNotFoundException` at runtime for classes from third-party JARs (e.g., Apache POI's `XmlObject`, Jackson classes).
+
+**Root cause**: The OSGi bundle does not embed transitive dependencies by default. The library JAR is included but its own dependencies are not.
+
+**Diagnosis**:
+```bash
+# Check if the class exists in the bundle
+docker exec bmc-helix-innovation-studio bash -c \
+  "jar tf /workspace/sample-app/bundle/target/com.mycompany.sample-app-1.0.0-SNAPSHOT.jar | grep '<ClassName>'"
+```
+
+**Fix**: Add `Embed-Transitive=true` to the `maven-bundle-plugin` configuration in `bundle/pom.xml`:
+
+```xml
+<plugin>
+  <groupId>org.apache.felix</groupId>
+  <artifactId>maven-bundle-plugin</artifactId>
+  <configuration>
+    <instructions>
+      <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+      <Embed-Transitive>true</Embed-Transitive>
+    </instructions>
+  </configuration>
+</plugin>
+```
+
+**Prevention**: When adding ANY third-party library dependency, always set `Embed-Transitive=true` from the start.
+
+### 6. AI-Generated Code Patterns That Look Correct But Fail at Runtime
+
+Common patterns the AI generates that are correct for standard Java but wrong for IS:
+
+| AI-Generated Pattern | Why It Fails on IS | Correct Approach |
+|-----|-----|------|
+| `Instant.now().toString()` for dates | IS uses epoch millis | `String.valueOf(System.currentTimeMillis())` |
+| `@RxDefinitionTransactional` on all services | Rules already have transactions | Only on REST endpoints |
+| `new ServiceClass()` for delegation | Bypasses platform DI, loses transaction context | Inject via constructor or use `@Inject` |
+| FileAttachment as REQUIRED field | Attachment persisted after record creation | Make field optional, validate in code |
+
+**Key insight**: The AI applies general enterprise Java patterns that are correct in isolation but wrong for the IS platform. Always validate AI-generated service code against the platform quirks in this checklist before deploying.
+
+---
+
+## Build Optimization Tips
+
+### Backend-Only Changes
+
+When only Java code has changed (no Angular modifications):
+```bash
+# Skip the Angular/frontend build entirely — saves ~2 minutes per cycle
+docker exec bmc-helix-innovation-studio bash -c \
+  "cd /workspace/sample-app && mvn clean install -Pdeploy -DskipTests -PskipUICodeGeneration"
+```
+
+### Incremental Development Strategy
+
+- [ ] **Deploy early, deploy often** — don't generate all services before your first deployment
+- [ ] Test each new service individually before creating the next one
+- [ ] Feed runtime errors back to the AI immediately — it learns from each error and applies fixes across the codebase
+- [ ] Keep a running list of every error and its fix — the AI will reference them for future services
+
+### Build Cycle Awareness
+
+Each build-deploy cycle takes ~3 minutes. With 10+ iterations common for first-time flows, expect **30–40 minutes of build wait time**. Plan accordingly:
+- Fix as many issues as possible per cycle (batch fixes)
+- Use `mvn clean install -DskipTests` (no `-Pdeploy`) for compilation-only checks when unsure about code correctness
+- Only deploy when confident the fix is correct
+
+---
+
+## Quick Reference — Full Workflow
+
+```
+ 0. Review AR System Platform Quirks  (datetime, transactions, required fields, attachments)
+ 1. Create/edit Java files on HOST
+ 2. Verify files visible in DOCKER    (docker exec ... ls)
+ 3. If stale, docker cp files in      (docker cp ... bmc-helix-innovation-studio:...)
+ 4. Build and deploy                  (mvn clean install -Pdeploy -DskipTests)
+    — Backend-only?                   (add -PskipUICodeGeneration to save ~2 min)
+ 5. Verify classes in JAR             (jar tf ... | grep ClassName)
+ 6. Verify AjcClosure1 exists        (confirms AspectJ weaving)
+ 7. Check deploy status               (Final Status: Deployed)
+ 8. Clear browser cache               (Cmd+Shift+R)
+ 9. Check Process Designer            (inside a process > add Process Activity)
+10. If runtime error, fix and repeat  (batch multiple fixes per cycle when possible)
+```
+
+---
+
+## AR System Error Code Quick Reference
+
+| Error Code | Meaning | Common Fix |
+|------------|---------|------------|
+| ERROR 307 | Required field blank or attachment before record exists | Set Status(7) + Description(8); persist attachments after record creation |
+| ERROR 930 | Action type not found on server | Deploy JAR first, then .def files separately |
+| ERROR 8790 | Transaction not started | Add `@RxDefinitionTransactional` on REST endpoint |
+| ERROR 12004 | Transaction conflict | Remove `@RxDefinitionTransactional` from internal service (Rule already has one) |
+| ERROR 12095 | Invalid date format | Use epoch millis, not ISO 8601 |

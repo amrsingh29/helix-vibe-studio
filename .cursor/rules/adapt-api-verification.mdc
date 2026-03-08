@@ -1,0 +1,49 @@
+---
+description: Mandatory verification rules for BMC-UX Adapt component APIs. Auto-applies when using Adapt components in templates or TypeScript.
+globs: **/webapp/libs/**/*.ts, **/webapp/libs/**/*.html
+alwaysApply: false
+---
+
+# Adapt Component API Verification
+
+Before using ANY `@bmc-ux/adapt-angular` or `@bmc-ux/adapt-table` component input, directive, or event binding, you MUST verify it exists. AI models frequently hallucinate Adapt API names.
+
+## Verification Steps
+
+1. **Check the `.d.ts`** file in `node_modules/@bmc-ux/adapt-angular/` or `node_modules/@bmc-ux/adapt-table/` for the component class declaration.
+2. **For form controls**, check `writeValue()` in the corresponding `.mjs` file to understand what value format the component expects.
+3. **Never assume** a directive exists — search with `grep` or `rg` first.
+4. **Never guess** input property names — read the component's `@Input()` declarations.
+
+## Known Gotchas (Verified from Source)
+
+### adapt-rx-select: Values MUST be arrays
+
+`writeValue(value)` checks `Array.isArray(value)` and clears to empty if not an array.
+
+```typescript
+// WRONG — silently clears selection
+new FormControl('Enabled')
+patchValue({ status: record.status })
+
+// CORRECT
+new FormControl(['Enabled'])
+patchValue({ status: record.status ? [record.status] : ['Enabled'] })
+
+// Unwrap when reading
+const sel = (v: any) => Array.isArray(v) ? v[0] || '' : v || '';
+```
+
+### adapt-table: No `adaptTableCellTemplate` directive
+
+This directive does not exist. Use:
+- `ColumnConfig.rowLevelActionsConfig` for row action buttons
+- `ColumnConfig.cellTemplate` (a `TemplateRef` assigned via `@ViewChild`) for custom cell rendering
+
+### adapt-button: `[btn-type]` not `[variant]`
+
+There is no `[variant]` input. Use `[btn-type]="'primary' | 'secondary' | 'tertiary' | 'danger'"`.
+
+### Icons: `<span>` with `d-icon-left-*` prefix
+
+Inside buttons, use `<span class="d-icon-left-pencil"></span>`, not `<i class="d-icon-edit">`.

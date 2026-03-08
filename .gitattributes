@@ -1,0 +1,16 @@
+# Ensure shell scripts always have Unix (LF) line endings, even on Windows
+*.sh text eol=lf
+
+# PowerShell scripts keep Windows (CRLF) line endings
+*.ps1 text eol=crlf
+
+# Dockerfile / Containerfile keep Unix line endings
+Dockerfile text eol=lf
+Containerfile text eol=lf
+
+# Compose files keep Unix line endings
+docker-compose.yml text eol=lf
+podman-compose.yml text eol=lf
+
+# Environment config keeps Unix line endings
+.env text eol=lf

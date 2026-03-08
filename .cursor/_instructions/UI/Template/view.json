@@ -1,0 +1,36 @@
+{
+  "version": null,
+  "lastUpdateTime": "<timestamp>",
+  "lastChangedBy": "Demo",
+  "owner": "Demo",
+  "name": "<viewFullyQualifiedName>",
+  "tags": null,
+  "description": null,
+  "overlayGroupId": "1",
+  "scope": "BUNDLE",
+  "internal": false,
+  "guid": "<viewGuid>",
+  "layout": "{\"outlets\":[{\"name\":\"DEFAULT\",\"columns\":[{\"children\":[\"<viewComponentGuid>\"]}]}]}",
+  "inputParams": [],
+  "outputParams": [],
+  "componentDefinitions": [<viewComponentDefinition>],
+  "permissions": [
+    {
+      "ownerId": {
+        "value": 0,
+        "type": "GROUP",
+        "name": "Public"
+      },
+      "type": "VISIBLE"
+    }
+  ],
+  "localizableStringsByComponentId": null,
+  "overlayDescriptor": {
+    "parentOverlayGroupId": null
+  },
+  "allowOverlay": false,
+  "type": "REGULAR",
+  "styles": null,
+  "targetViewDefinitionName": null,
+  "targetExtensionContainerGuid": null
+}

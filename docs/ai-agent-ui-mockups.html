@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Change Agent — UI Mockups</title>
+  <style>
+    :root {
+      --success-bg: #e9f9ed;
+      --success-border: #9fe1a8;
+      --success-text: #155724;
+      --warning-bg: #fff9e6;
+      --warning-border: #ffd966;
+      --warning-text: #856404;
+      --danger-bg: #fde8e8;
+      --danger-border: #f5c2c7;
+      --danger-text: #842029;
+      --info-bg: #e7f1ff;
+      --info-border: #b3d7ff;
+      --neutral: #f5f5f5;
+      --card-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 24px; background: #fafafa; }
+    h1 { font-size: 1.5rem; margin: 0 0 24px; color: #333; }
+    h2 { font-size: 1rem; margin: 0 0 12px; color: #555; font-weight: 600; }
+    .mockup-section { margin-bottom: 48px; }
+    .mockup-section h1 { border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: #fff; border-radius: 8px; box-shadow: var(--card-shadow); padding: 16px; margin-bottom: 12px; border: 1px solid #eee; }
+    .card-header { font-weight: 600; margin-bottom: 12px; font-size: 0.9rem; color: #444; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 16px; font-size: 0.75rem; font-weight: 600; }
+    .badge-success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning-text); border: 1px solid var(--warning-border); }
+    .badge-danger { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+    .callout { padding: 12px; border-radius: 6px; margin: 12px 0; border-left: 4px solid; }
+    .callout-success { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); }
+    .callout-warning { background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning-text); }
+    .progress-bar { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+    .progress-fill { height: 100%; border-radius: 4px; }
+    .progress-fill.success { background: #28a745; width: 70%; }
+    .progress-fill.high { background: #28a745; width: 80%; }
+    .list-item { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+    .list-item:last-child { border-bottom: none; }
+    .list-item .icon { width: 20px; text-align: center; }
+    .check { color: #28a745; }
+    .cross { color: #dc3545; }
+    .pending { color: #6c757d; }
+    .accordion-header { padding: 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 4px; cursor: pointer; font-size: 0.9rem; display: flex; justify-content: space-between; }
+    .accordion-header:hover { background: #eee; }
+    .accordion-body { padding: 12px; font-size: 0.85rem; color: #555; }
+    .steps { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
+    .step { padding: 8px 16px; border-radius: 6px; font-size: 0.8rem; background: #f0f0f0; color: #666; }
+    .step.completed { background: var(--success-bg); color: var(--success-text); }
+    .step.current { background: var(--info-bg); color: #004085; font-weight: 600; }
+    .btn { padding: 8px 16px; border-radius: 6px; border: none; font-size: 0.85rem; cursor: pointer; }
+    .btn-primary { background: #007bff; color: #fff; }
+    .btn-secondary { background: #6c757d; color: #fff; }
+    .flex { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .tree-item { padding: 6px 0 6px 20px; font-size: 0.85rem; }
+    .tree-item.parent { padding-left: 0; font-weight: 600; }
+    .tree-item .badge { margin-left: 8px; }
+    /* Change Analysis / Risk Assessment components */
+    .risk-meter { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .risk-meter-gauge { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#dc3545 0deg 360deg); display: flex; align-items: center; justify-content: center; }
+    .risk-meter-gauge-inner { width: 80px; height: 80px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #842029; }
+    .risk-meter-sub { flex: 1; min-width: 200px; }
+    .risk-meter-sub .progress-bar { margin: 4px 0; }
+    .impact-matrix { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 1px; background: #ddd; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+    .impact-matrix-cell { background: #fff; padding: 12px; font-size: 0.8rem; }
+    .impact-matrix-cell.header { background: #f8f9fa; font-weight: 600; }
+    .impact-matrix-cell.active { background: #fde8e8; border: 2px solid #dc3545; }
+    .insight-card { padding: 16px; border-radius: 8px; border-left: 4px solid; margin-bottom: 12px; background: #fff; }
+    .insight-card.critical { border-color: #dc3545; background: #fde8e8; }
+    .insight-card.high { border-color: #fd7e14; background: #fff4e6; }
+    .insight-card .icon { font-size: 1.25rem; margin-right: 8px; }
+    .diff-viewer { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+    .diff-viewer-col { padding: 12px; background: #f8f9fa; border-right: 1px solid #ddd; }
+    .diff-viewer-col:last-child { border-right: none; }
+    .diff-viewer-col .label { font-size: 0.7rem; text-transform: uppercase; color: #666; margin-bottom: 8px; }
+    .diff-viewer-col .content { font-size: 0.85rem; font-family: monospace; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item .state { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.75rem; font-weight: 700; }
+    .checklist-item .state.fail { background: #fde8e8; color: #dc3545; }
+    .checklist-item .state.pass { background: #e9f9ed; color: #155724; }
+    .checklist-item .state.warning { background: #fff9e6; color: #856404; }
+  </style>
+</head>
+<body>
+
+  <h1>AI Change Agent — UI Mockups</h1>
+  <p style="color:#666;margin-bottom:32px;">Visual preview of how agent outputs can be displayed. These mockups use the same structure as the wireframes in <code>ai-agent-visual-design.md</code>.</p>
+
+  <!-- 1. Change Planning Agent -->
+  <section class="mockup-section">
+    <h1>1. Change Planning Agent — Planning Dashboard</h1>
+    <p style="color:#666;margin-bottom:16px;">CRQ-56789 — Oracle Database Critical Security Patch</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">READINESS</div>
+        <div class="badge badge-warning" style="font-size:0.9rem;padding:6px 14px;">Conditionally Ready</div>
+        <div class="progress-bar"><div class="progress-fill success"></div></div>
+        <small style="color:#666;">~70% — Minor gaps in monitoring</small>
+      </div>
+      <div class="card" style="border-color:var(--warning-border);background:var(--warning-bg);">
+        <div class="card-header">COLLISION & CONFLICT</div>
+        <div class="badge badge-warning">Moderate Risk — 2 overlapping</div>
+        <div class="list-item"><span class="icon">•</span> CRQ-56801 — 1h overlap, Customer Portal</div>
+        <div class="list-item"><span class="icon">•</span> CRQ-56823 — 30m overlap, Customer Portal</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CHANGE CONTEXT</div>
+      <div style="font-size:0.85rem;color:#555;">
+        Type: Standard - Database Patch &nbsp;|&nbsp; Window: 2025-12-29 01:00-04:00 SGT<br>
+        CIs: DB-PROD-ORA-01, DB-PROD-ORA-02 &nbsp;|&nbsp; Services: Customer Portal, Mobile App API &nbsp;|&nbsp; Users: ~500
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">MOP COVERAGE</div>
+      <div class="flex">
+        <span class="check">✓</span> Pre-checks &nbsp;
+        <span class="check">✓</span> Sequenced steps &nbsp;
+        <span class="check">✓</span> Rollback &nbsp;
+        <span class="cross">✗</span> Monitoring
+      </div>
+      <small style="color:#666;">Source: Manual &nbsp;|&nbsp; Evidence: CRQ-54201</small>
+    </div>
+
+    <div class="card">
+      <div class="card-header">RECOMMENDED NEXT ACTION</div>
+      <p style="font-size:0.9rem;margin:0 0 12px;">Would you like me to generate an AI-backed MOP from historical executions?</p>
+      <div class="flex">
+        <button class="btn btn-primary">Generate MOP</button>
+        <button class="btn btn-secondary">No, thanks</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Change Advisory Agent -->
+  <section class="mockup-section">
+    <h1>2. Change Advisory Agent — Approval Summary</h1>
+    <p style="color:#666;margin-bottom:16px;">CR-45892 — Router Firmware Upgrade</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">RECOMMENDATION</div>
+        <div class="badge badge-warning" style="font-size:1rem;padding:8px 20px;">APPROVE WITH CONDITIONS</div>
+      </div>
+      <div class="card">
+        <div class="card-header">OVERALL READINESS</div>
+        <strong>High</strong>
+        <div class="progress-bar"><div class="progress-fill high"></div></div>
+        <small style="color:#666;">80%</small>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">EVIDENCE SNAPSHOT</div>
+      <div class="accordion-header">Impact <span>▼</span></div>
+      <div class="accordion-body">Affected: 4 core routers. Minimal customer impact. Peak: None.</div>
+      <div class="accordion-header">Risk <span>▼</span></div>
+      <div class="accordion-body">Firmware compatibility mitigated. Lab validated. Rollback ready.</div>
+      <div class="accordion-header">MOP Quality <span>▼</span></div>
+      <div class="accordion-body">24 steps validated. Rollback documented. Avg 45 min per router.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONDITIONS FOR APPROVAL</div>
+      <div class="list-item"><span class="icon pending">☐</span> Confirm John Tan arrival by 01:30 SGT — Change Coordinator by 2025-12-27 18:00</div>
+      <div class="list-item"><span class="icon pending">☐</span> Notify NOC of maintenance window — Change Owner by 2025-12-28 01:00</div>
+    </div>
+
+    <div class="callout callout-success" style="margin-top:12px;">
+      <strong>Confidence:</strong> High. All critical dimensions show strong evidence.
+    </div>
+  </section>
+
+  <!-- 3. Change Worker Assistant -->
+  <section class="mockup-section">
+    <h1>3. Change Worker Assistant — Execution Companion</h1>
+    <p style="color:#666;margin-bottom:16px;">CRQ-67890 — Oracle Database Patch (Pre-execution)</p>
+
+    <div class="grid-2">
+      <div class="card" style="border-left:4px solid var(--success-border);background:var(--success-bg);">
+        <div class="card-header">CAN I PROCEED?</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--success-text);">✓ YES — SAFE TO PROCEED</div>
+        <p style="font-size:0.85rem;margin:8px 0 0;color:var(--success-text);">Service health stable, no active events.</p>
+      </div>
+      <div class="card">
+        <div class="card-header">SERVICE HEALTH</div>
+        <div class="badge badge-success">Healthy</div>
+        <span style="font-size:0.85rem;">120ms &nbsp;|&nbsp; 0.02% error &nbsp;|&nbsp; No active events</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">PRE-IMPLEMENTATION CHECKLIST</div>
+      <div class="list-item"><span class="icon check">✓</span> Backup verification — RMAN backup COMPLETED</div>
+      <div class="list-item"><span class="icon check">✓</span> Service health baseline — Healthy, 120ms</div>
+      <div class="list-item"><span class="icon check">✓</span> Active event check — No active events</div>
+      <div class="list-item"><span class="icon pending">○</span> Standby sync check — Run when ready</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">MOP STEPS</div>
+      <div class="steps">
+        <span class="step completed">1. Verify flash</span>
+        <span class="step current">2. Backup config</span>
+        <span class="step">3. Copy IOS</span>
+        <span class="step">4. Boot system</span>
+        <span class="step">5. Reload</span>
+      </div>
+    </div>
+
+    <p style="font-size:0.8rem;color:#999;">Alternative state: <em>When risk is elevated, the "Can I proceed?" card shows amber with a caution message.</em></p>
+  </section>
+
+  <!-- 4. Impact Analysis Agent -->
+  <section class="mockup-section">
+    <h1>4. Impact Analysis Agent — Impact Explorer</h1>
+    <p style="color:#666;margin-bottom:16px;">CRQ123456</p>
+
+    <div class="card" style="background:var(--info-bg);border:1px solid var(--info-border);">
+      <div class="card-header">SUMMARY</div>
+      <p style="margin:0;font-size:0.9rem;">High business criticality • Moderate regulatory risk<br>
+      <strong>Recommendation:</strong> Approval with mitigation plan for Customer Portal</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">IMPACTED CIs & SERVICES</div>
+      <div class="tree-item parent">DatabaseServer01</div>
+      <div class="tree-item">Customer Portal <span class="badge badge-danger">HIGH</span> 12,000 users &nbsp; Regulatory: Moderate</div>
+      <div class="tree-item">Reporting Engine <span class="badge badge-warning">MED</span> Impact profile missing</div>
+      <div class="tree-item parent">WebApp02</div>
+      <div class="tree-item">No business service impact detected</div>
+    </div>
+  </section>
+
+  <!-- 5. Change Analysis / Risk Assessment Agent (Headless UI) -->
+  <section class="mockup-section">
+    <h1>5. Change Analysis Agent — Risk Assessment Dashboard</h1>
+    <p style="color:#666;margin-bottom:16px;">CRQ000000021803 — BGP routing protocol on Pune Internet links</p>
+    <p style="font-size:0.85rem;color:#888;margin-bottom:24px;">Rendered from structured JSON layout (StatusBadge, RiskMeter, ImpactMatrix, InsightCard, Checklist, DiffViewer)</p>
+
+    <!-- StatusBadge -->
+    <div class="card" style="border-left:4px solid #dc3545;background:var(--danger-bg);">
+      <div class="card-header">OVERALL ASSESSMENT</div>
+      <div class="flex" style="align-items:center;gap:16px;flex-wrap:wrap;">
+        <span class="badge badge-danger" style="font-size:1rem;padding:8px 20px;">High Risk</span>
+        <span style="font-size:0.9rem;color:var(--danger-text);">Proceeding not recommended</span>
+      </div>
+    </div>
+
+    <!-- RiskMeter -->
+    <div class="card">
+      <div class="card-header">OVERALL RISK SCORE</div>
+      <div class="risk-meter">
+        <div class="risk-meter-gauge" style="background:conic-gradient(#28a745 0deg 72deg,#ffc107 72deg 144deg,#fd7e14 144deg 216deg,#dc3545 216deg 360deg);">
+          <div class="risk-meter-gauge-inner" style="color:#842029;">5.0</div>
+        </div>
+        <div class="risk-meter-sub">
+          <div><strong>Documentation</strong> <span style="color:#dc3545;">5.0</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+          <div><strong>Historical Impact</strong> <span style="color:#dc3545;">5</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+          <div><strong>Service Instability</strong> <span style="color:#dc3545;">5.0</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ImpactMatrix -->
+    <div class="card">
+      <div class="card-header">IMPACT MATRIX — Likelihood vs Impact</div>
+      <div class="impact-matrix" style="max-width:400px;">
+        <div class="impact-matrix-cell header"></div>
+        <div class="impact-matrix-cell header">Low Impact</div>
+        <div class="impact-matrix-cell header">High Impact</div>
+        <div class="impact-matrix-cell header">Low Likelihood</div>
+        <div class="impact-matrix-cell"></div>
+        <div class="impact-matrix-cell"></div>
+        <div class="impact-matrix-cell header">High Likelihood</div>
+        <div class="impact-matrix-cell"></div>
+        <div class="impact-matrix-cell active">
+          <strong>Current position</strong><br>
+          Service unstable; past incidents suggest recurrence
+        </div>
+      </div>
+    </div>
+
+    <!-- InsightCards -->
+    <div class="card-header" style="margin-top:24px;">KEY INSIGHTS</div>
+    <div class="insight-card critical">
+      <span class="icon">⚠</span>
+      <strong>Proceeding Not Recommended</strong><br>
+      <span style="font-size:0.9rem;">All assessed risk dimensions are at maximum (5/5). Substantial mitigation required: documentation remediation, historical incident review, and service stabilization before implementation.</span>
+    </div>
+    <div class="insight-card high">
+      <span class="icon">🏥</span>
+      <strong>Parent Service Critical</strong><br>
+      <span style="font-size:0.9rem;">Apex-Online has actualHealth: 30 (CRITICAL) with 2 active incidents. Defer until health &gt; 50 and healthState is no longer CRITICAL.</span>
+    </div>
+    <div class="insight-card high">
+      <span class="icon">📋</span>
+      <strong>Historical Incident Link</strong><br>
+      <span style="font-size:0.9rem;">Incidents INC000000024603, INC000000024623 associated with similar BGP changes. Conduct root cause analysis before proceeding.</span>
+    </div>
+
+    <!-- Checklist -->
+    <div class="card">
+      <div class="card-header">RISK VALIDATION</div>
+      <div class="checklist-item">
+        <span class="state fail">✗</span>
+        <div>
+          <strong>Documentation</strong><br>
+          <span style="font-size:0.85rem;color:#666;">Only 'impl plan.txt' found; unrelated to BGP (firewall port change). Required install plan missing.</span>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <span class="state fail">✗</span>
+        <div>
+          <strong>Historical Impact</strong><br>
+          <span style="font-size:0.85rem;color:#666;">Past incidents INC000000024603, INC000000024623; related CRQ CRQ000000021900</span>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <span class="state fail">✗</span>
+        <div>
+          <strong>Service Instability</strong><br>
+          <span style="font-size:0.85rem;color:#666;">Parent service Apex-Online: health 30 (CRITICAL), 2 active incidents</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DiffViewer -->
+    <div class="card">
+      <div class="card-header">DOCUMENTATION MISMATCH</div>
+      <div class="diff-viewer">
+        <div class="diff-viewer-col" style="background:#e9f9ed;">
+          <div class="label">Expected</div>
+          <div class="content">BGP implementation plan for Pune Internet links</div>
+        </div>
+        <div class="diff-viewer-col" style="background:#fde8e8;">
+          <div class="label">Found</div>
+          <div class="content">impl plan.txt — Firewall port change in non-prod environment (unrelated)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Change Analysis / Risk Assessment Agent (Headless UI) -->
+  <section class="mockup-section">
+    <h1>5. Change Analysis Agent — Risk Assessment Dashboard</h1>
+    <p style="color:#666;margin-bottom:16px;">CRQ000000021803 — BGP routing protocol on Pune Internet links</p>
+    <p style="font-size:0.85rem;color:#888;margin-bottom:20px;">Rendered from structured JSON layout (StatusBadge, RiskMeter, ImpactMatrix, InsightCard, Checklist, DiffViewer)</p>
+
+    <!-- StatusBadge -->
+    <div class="card" style="border-left:4px solid #dc3545;background:var(--danger-bg);">
+      <div class="card-header">OVERALL ASSESSMENT</div>
+      <div class="flex" style="align-items:center;gap:16px;flex-wrap:wrap;">
+        <span class="badge badge-danger" style="font-size:1rem;padding:8px 20px;">High Risk</span>
+        <span style="font-size:0.9rem;color:var(--danger-text);">Proceeding not recommended</span>
+      </div>
+    </div>
+
+    <!-- RiskMeter -->
+    <div class="card">
+      <div class="card-header">OVERALL RISK SCORE</div>
+      <div class="risk-meter">
+        <div class="risk-meter-gauge" style="background:conic-gradient(#28a745 0deg 72deg,#ffc107 72deg 144deg,#fd7e14 144deg 216deg,#dc3545 216deg 288deg,#842029 288deg 360deg);">
+          <div class="risk-meter-gauge-inner">5.0</div>
+        </div>
+        <div class="risk-meter-sub">
+          <div><strong>Documentation</strong> <span style="color:#dc3545;">5.0</span> — No relevant impl plan; quality 0.0/5</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+          <div><strong>Historical Impact</strong> <span style="color:#dc3545;">5</span> — Past incidents linked; CRQ000000021900</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+          <div><strong>Service Instability</strong> <span style="color:#dc3545;">5.0</span> — Apex-Online health 30 (CRITICAL), 2 incidents</div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ImpactMatrix -->
+    <div class="card">
+      <div class="card-header">LIKELIHOOD vs IMPACT</div>
+      <div class="impact-matrix" style="max-width:400px;">
+        <div class="impact-matrix-cell header"></div>
+        <div class="impact-matrix-cell header">Low Impact</div>
+        <div class="impact-matrix-cell header">High Impact</div>
+        <div class="impact-matrix-cell header">Low Likelihood</div>
+        <div class="impact-matrix-cell"></div>
+        <div class="impact-matrix-cell"></div>
+        <div class="impact-matrix-cell header">High Likelihood</div>
+        <div class="impact-matrix-cell"></div>
+        <div class="impact-matrix-cell active">⚠ CRQ000000021803<br><small>Service unstable; past incidents</small></div>
+      </div>
+      <p style="font-size:0.8rem;color:#666;margin-top:12px;">BGP change in High Likelihood × High Impact quadrant.</p>
+    </div>
+
+    <!-- InsightCards -->
+    <div class="card-header" style="margin-top:24px;">KEY INSIGHTS</div>
+    <div class="insight-card critical">
+      <span class="icon">⚠</span>
+      <strong>Proceeding Not Recommended</strong>
+      <p style="margin:8px 0 0;font-size:0.9rem;">All assessed risk dimensions at maximum (5/5). Substantial mitigation required: documentation remediation, historical incident review, and service stabilization.</p>
+    </div>
+    <div class="insight-card high">
+      <span class="icon">❤</span>
+      <strong>Parent Service Critical</strong>
+      <p style="margin:8px 0 0;font-size:0.9rem;">Apex-Online has actualHealth: 30 (CRITICAL) with 2 active incidents. Defer until health &gt; 50.</p>
+    </div>
+    <div class="insight-card high">
+      <span class="icon">📋</span>
+      <strong>Historical Incident Link</strong>
+      <p style="margin:8px 0 0;font-size:0.9rem;">Incidents INC000000024603, INC000000024623 associated with similar BGP changes. Conduct root cause analysis.</p>
+    </div>
+
+    <!-- Checklist -->
+    <div class="card">
+      <div class="card-header">RISK VALIDATION</div>
+      <div class="checklist-item">
+        <div class="state fail">✗</div>
+        <div>
+          <strong>Documentation</strong>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#666;">Only 'impl plan.txt' found; unrelated to BGP (firewall port change). Required install plan missing.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="state fail">✗</div>
+        <div>
+          <strong>Historical Impact</strong>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#666;">Past incidents INC000000024603, INC000000024623; related CRQ CRQ000000021900</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="state fail">✗</div>
+        <div>
+          <strong>Service Instability</strong>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#666;">Parent service Apex-Online: health 30 (CRITICAL), 2 active incidents</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DiffViewer -->
+    <div class="card">
+      <div class="card-header">DOCUMENTATION MISMATCH</div>
+      <div class="diff-viewer">
+        <div class="diff-viewer-col">
+          <div class="label">Expected</div>
+          <div class="content">BGP implementation plan for Pune Internet links</div>
+        </div>
+        <div class="diff-viewer-col" style="background:#fde8e8;">
+          <div class="label">Found</div>
+          <div class="content">impl plan.txt — Firewall port change in non-prod environment (unrelated)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Change Analysis / Risk Assessment Agent (Headless UI) -->
+  <section class="mockup-section">
+    <h1>5. Change Analysis Agent — Risk Assessment Dashboard</h1>
+    <p style="color:#666;margin-bottom:16px;">CRQ000000021803 — BGP routing protocol on Pune Internet links</p>
+
+    <!-- StatusBadge -->
+    <div class="card" style="border-left:4px solid #dc3545;background:var(--danger-bg);">
+      <div class="card-header">OVERALL ASSESSMENT</div>
+      <div class="flex" style="align-items:center;gap:16px;">
+        <span class="badge badge-danger" style="font-size:1rem;padding:8px 20px;">High Risk</span>
+        <span style="font-size:0.9rem;color:var(--danger-text);">Proceeding not recommended</span>
+      </div>
+    </div>
+
+    <!-- RiskMeter -->
+    <div class="card">
+      <div class="card-header">OVERALL RISK SCORE</div>
+      <div class="risk-meter">
+        <div class="risk-meter-gauge">
+          <div class="risk-meter-gauge-inner">5.0</div>
+        </div>
+        <div class="risk-meter-sub">
+          <div><strong>Documentation</strong> <span style="color:#dc3545;">5.0</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+          <div><strong>Historical Impact</strong> <span style="color:#dc3545;">5</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+          <div><strong>Service Instability</strong> <span style="color:#dc3545;">5.0</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="background:#dc3545;width:100%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- ImpactMatrix -->
+      <div class="card">
+        <div class="card-header">IMPACT MATRIX</div>
+        <div class="impact-matrix" style="max-width:320px;">
+          <div class="impact-matrix-cell header"></div>
+          <div class="impact-matrix-cell header">Low Impact</div>
+          <div class="impact-matrix-cell header">High Impact</div>
+          <div class="impact-matrix-cell header">Low Likelihood</div>
+          <div class="impact-matrix-cell"></div>
+          <div class="impact-matrix-cell"></div>
+          <div class="impact-matrix-cell header">High Likelihood</div>
+          <div class="impact-matrix-cell"></div>
+          <div class="impact-matrix-cell active"><strong>Current</strong><br>BGP change</div>
+        </div>
+        <p style="font-size:0.8rem;color:#666;margin-top:12px;">Service unstable; past incidents suggest recurrence → High Likelihood. BGP affects critical connectivity → High Impact.</p>
+      </div>
+
+      <!-- InsightCards (stacked) -->
+      <div>
+        <div class="insight-card critical">
+          <div class="card-header" style="margin-bottom:8px;"><span class="icon">⚠</span> Proceeding Not Recommended</div>
+          <p style="margin:0;font-size:0.85rem;">All assessed risk dimensions at maximum (5/5). Substantial mitigation required: documentation remediation, historical incident review, and service stabilization.</p>
+        </div>
+        <div class="insight-card high">
+          <div class="card-header" style="margin-bottom:8px;"><span class="icon">❤</span> Parent Service Critical</div>
+          <p style="margin:0;font-size:0.85rem;">Apex-Online: health 30 (CRITICAL), 2 active incidents. Defer until health &gt; 50.</p>
+        </div>
+        <div class="insight-card high">
+          <div class="card-header" style="margin-bottom:8px;"><span class="icon">📋</span> Historical Incident Link</div>
+          <p style="margin:0;font-size:0.85rem;">INC000000024603, INC000000024623; related CRQ CRQ000000021900. Conduct root cause analysis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="card">
+      <div class="card-header">RISK VALIDATION</div>
+      <div class="checklist-item">
+        <span class="state fail">✗</span>
+        <div>
+          <strong>Documentation</strong>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#666;">Only 'impl plan.txt' found; unrelated to BGP (firewall port change). Required install plan missing.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <span class="state fail">✗</span>
+        <div>
+          <strong>Historical Impact</strong>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#666;">Past incidents INC000000024603, INC000000024623; related CRQ CRQ000000021900</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <span class="state fail">✗</span>
+        <div>
+          <strong>Service Instability</strong>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#666;">Parent service Apex-Online: health 30 (CRITICAL), 2 active incidents</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DiffViewer -->
+    <div class="card">
+      <div class="card-header">DOCUMENTATION MISMATCH</div>
+      <div class="diff-viewer">
+        <div class="diff-viewer-col">
+          <div class="label">Expected</div>
+          <div class="content">BGP implementation plan for Pune Internet links</div>
+        </div>
+        <div class="diff-viewer-col" style="background:#fde8e8;">
+          <div class="label">Found</div>
+          <div class="content">impl plan.txt — Firewall port change in non-prod environment (unrelated)</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:0.8rem;color:#999;">Rendered from structured JSON layout (StatusBadge, RiskMeter, ImpactMatrix, InsightCard, Checklist, DiffViewer).</p>
+  </section>
+
+  <footer style="margin-top:48px;padding-top:24px;border-top:1px solid #eee;color:#999;font-size:0.8rem;">
+    AI Change Agent Visual Design — Mockups for BMC Helix Innovation Studio. See <code>docs/ai-agent-visual-design.md</code> for full design spec.
+  </footer>
+
+</body>
+</html>

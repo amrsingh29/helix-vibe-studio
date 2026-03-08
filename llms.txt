@@ -1,0 +1,37 @@
+# BMC Helix Innovation Studio — Coded Application Development Cookbook
+
+> A comprehensive guide for AI-assisted development of coded applications on BMC Helix Innovation Studio, covering Angular 18 UI components, Java 17 backend services, BPMN process definitions, BMC-UX Adapt components, REST APIs, build/deploy workflows, and platform-specific patterns.
+
+This cookbook merges all rules, instructions, examples, and checklists into a single navigable knowledge base optimized for LLM-assisted code generation in IDEs like Cursor and VS Code.
+
+- Platform: BMC Helix Innovation Studio 25.4.00+
+- Frontend: Angular 18.x, TypeScript 5.5.4, RxJS 7.8.1
+- Backend: Java 17 (OpenJDK), OSGi, JAX-RS, Spring 5.3.42
+- UI Library: @bmc-ux/adapt-angular 18.24.0, @bmc-ux/adapt-charts, @bmc-ux/adapt-table
+
+## Cookbook
+
+- [Getting Started](cookbook/01-getting-started.md): Project structure, prerequisites, environment setup, application naming, code structure
+- [UI View Components](cookbook/02-ui-view-components.md): Standalone and record editor field view components — design-time, runtime, registration, types, schematics, examples
+- [UI View Actions](cookbook/03-ui-view-actions.md): Custom view actions — services, registration, design managers, parameter wiring, examples
+- [UI Services and APIs](cookbook/04-ui-services-and-apis.md): Platform services (records, logging, modals, processes, navigation), REST API integration (DataPage, RecordInstance CRUD), qualifications
+- [Adapt Components](cookbook/05-adapt-components.md): BMC-UX Adapt library — form controls, buttons, charts, tables, carousels, miscellaneous components with import paths and usage patterns
+- [Java Backend](cookbook/06-java-backend.md): Process activities, REST APIs, commands, DataPageQuery — decorators, service registration, response payloads, third-party libraries
+- [Process Definitions](cookbook/07-process-definitions.md): BPMN .def file creation — format, field mappings, ServiceTask wiring, layout JSON, input/output parameters
+- [Build and Deploy](cookbook/08-build-deploy.md): Docker/Podman environment, frontend build, Maven build, deployment, cache clearing, verification commands
+- [Best Practices](cookbook/09-best-practices.md): Angular 18 coding standards, TypeScript style, Java coding rules, accessibility, state management, error handling, localization
+- [Checklists](cookbook/10-checklists.md): View component review checklist, Java build/deploy checklist, cross-file consistency, post-deployment verification
+- [Troubleshooting](cookbook/11-troubleshooting.md): Common errors, AR System error codes, platform quirks, Docker/Podman bind mount issues, AOT compilation, Module Federation
+- [Glossary](cookbook/12-glossary.md): Unified glossary — bundle, bundleId, record definition, field ID, view component, view action, process activity, data dictionary
+- [Requirement Gathering](cookbook/13-requirement-gathering.md): Systematic questions for scoping view components, Java services, and combined UI+backend features
+
+## Optional
+
+- [Adapt Form Controls Reference](.cursor/_instructions/UI/AdaptComponents/reactive-form/): Detailed per-control documentation (TextField, Select, DateTime, etc.)
+- [Adapt Charts Reference](.cursor/_instructions/UI/AdaptComponents/charts/): Detailed per-chart documentation (Pie, Heatmap, Treemap, etc.)
+- [Adapt Table Reference](.cursor/_instructions/UI/AdaptComponents/table/): Table, Advanced Filter, Empty State detailed docs
+- [Java Services Detail](.cursor/_instructions/Java/Services/): RecordService, CacheService, Logger detailed docs
+- [UI Services Detail](.cursor/_instructions/UI/Services/): RxRecordInstanceService, RxLogService, RxModalService detailed docs
+- [View Component Examples](.cursor/_instructions/UI/ObjectTypes/Examples/): Pizza ordering component, Calculate VAT action full source
+- [View Definition Templates](.cursor/_instructions/UI/Template/): view.json, view-component.json templates for creating Innovation Studio views
+- [Process Definition Templates](.cursor/_instructions/Java/Template/): Process .def file creation guide with full JSON structure

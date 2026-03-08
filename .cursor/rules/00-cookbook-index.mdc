@@ -1,0 +1,69 @@
+---
+description: Master index for BMC Helix Innovation Studio development cookbook. Always apply when working on this codebase to understand available documentation, coding standards, and development workflows.
+globs: 
+alwaysApply: true
+---
+
+# BMC Helix Innovation Studio — Development Cookbook
+
+This project uses a comprehensive cookbook for AI-assisted coded application development. Before writing or modifying any code, consult the relevant section.
+
+## Quick Navigation
+
+| Task | Read First |
+|------|-----------|
+| **Understand the project** | [Getting Started](../../cookbook/01-getting-started.md) |
+| **Create a view component** | [UI View Components](../../cookbook/02-ui-view-components.md) |
+| **Create a view action** | [UI View Actions](../../cookbook/03-ui-view-actions.md) |
+| **Use platform services or REST APIs** | [UI Services & APIs](../../cookbook/04-ui-services-and-apis.md) |
+| **Use Adapt UI components** | [Adapt Components](../../cookbook/05-adapt-components.md) |
+| **Create Java backend services** | [Java Backend](../../cookbook/06-java-backend.md) |
+| **Create BPMN process definitions** | [Process Definitions](../../cookbook/07-process-definitions.md) |
+| **Build and deploy** | [Build & Deploy](../../cookbook/08-build-deploy.md) |
+| **Check coding standards** | [Best Practices](../../cookbook/09-best-practices.md) |
+| **Review completed work** | [Checklists](../../cookbook/10-checklists.md) |
+| **Debug an issue** | [Troubleshooting](../../cookbook/11-troubleshooting.md) |
+| **Look up a term** | [Glossary](../../cookbook/12-glossary.md) |
+| **Scope a new feature** | [Requirement Gathering](../../cookbook/13-requirement-gathering.md) |
+| **Request view component with record def** | [Request Template](../../docs/request-view-component-with-record-definition.md) |
+| **AI Change Agent visual design** | [Visual Design](../../docs/ai-agent-visual-design.md) \| [UI Mockups](../../docs/ai-agent-ui-mockups.html) |
+
+## Detailed Reference (When Cookbook Isn't Enough)
+
+For per-component APIs, full code examples, and templates:
+
+| Area | Location |
+|------|----------|
+| Standalone View Component detailed docs | `.cursor/_instructions/UI/ObjectTypes/StandaloneViewcomponent/` |
+| Record Editor Field docs | `.cursor/_instructions/UI/ObjectTypes/record-editor-field-view-component.md` |
+| View Action detailed docs | `.cursor/_instructions/UI/ObjectTypes/ViewAction/view-action.md` |
+| Angular Service docs | `.cursor/_instructions/UI/ObjectTypes/angular-service.md` |
+| Platform UI services | `.cursor/_instructions/UI/Services/` |
+| Java services | `.cursor/_instructions/Java/Services/` |
+| Java object types | `.cursor/_instructions/Java/ObjectTypes/` |
+| Adapt form controls | `.cursor/_instructions/UI/AdaptComponents/reactive-form/` |
+| Adapt charts | `.cursor/_instructions/UI/AdaptComponents/charts/` |
+| Adapt table | `.cursor/_instructions/UI/AdaptComponents/table/` |
+| Adapt misc components | `.cursor/_instructions/UI/AdaptComponents/misc/` |
+| Full view component example | `.cursor/_instructions/UI/ObjectTypes/Examples/StandaloneViewComponent/pizza-ordering/` |
+| Full view action example | `.cursor/_instructions/UI/ObjectTypes/Examples/ViewAction/calculate-vat/` |
+| View definition template | `.cursor/_instructions/UI/Template/` |
+| Process definition template | `.cursor/_instructions/Java/Template/` |
+| Adapt components large reference | `.cursor/rules/bmc-ux-adapt-*.md` |
+
+## Technology Stack
+
+- **Frontend**: Angular 18.x, TypeScript 5.5.4, RxJS 7.8.1, @bmc-ux/adapt-angular 18.24.0
+- **Backend**: Java 17 (OpenJDK), OSGi, JAX-RS, Spring 5.3.42, Jackson
+- **Platform**: BMC Helix Innovation Studio 25.4.00+
+
+## AI Agent Workflow
+
+1. Read [Getting Started](../../cookbook/01-getting-started.md) to understand project structure
+2. Assess the requirement — use [Requirement Gathering](../../cookbook/13-requirement-gathering.md) if scope is unclear
+3. Check [Best Practices](../../cookbook/09-best-practices.md) before writing code
+4. Read the specific cookbook section for the artifact type
+5. If the cookbook section lacks detail, read the linked detailed reference
+6. After implementation, run through [Checklists](../../cookbook/10-checklists.md)
+7. Build and deploy using [Build & Deploy](../../cookbook/08-build-deploy.md)
+8. If issues arise, consult [Troubleshooting](../../cookbook/11-troubleshooting.md)

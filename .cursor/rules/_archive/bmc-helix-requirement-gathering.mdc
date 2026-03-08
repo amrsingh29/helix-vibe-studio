@@ -1,0 +1,253 @@
+---
+description: Requirement gathering questions for building BMC Helix view components or Java services. Apply when the user wants to build a new view component, Java process activity, REST API, or any new feature and needs requirements clarified.
+globs: 
+alwaysApply: false
+---
+
+# BMC Helix Innovation Studio — Requirement Gathering Questions
+
+Use this guide to systematically gather requirements before building a **View Component** or **Java Service**. Start with Section 1 to determine the type, then proceed to the relevant section. Ask the questions conversationally — do not dump the entire list at once.
+
+---
+
+## Section 1: What Are You Building?
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 1.1 | What type of artifact do you want to build? | **View Component** (Angular UI in View Designer) · **Java Service** (Process Activity / REST API / Command) · **Both** (UI + backend service) |
+| 1.2 | Give a one-sentence description of what it should do. | _e.g., "Display a Kanban board of ITSM tickets grouped by status"_ |
+| 1.3 | What is the component/service name? (kebab-case) | _e.g., `ticket-kanban-board`, `incident-fetcher`_ |
+
+---
+
+## Section 2: View Component Questions
+
+### 2A — Component Category & Layout
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2A.1 | What category best describes your component? | **Data Table** (list of records) · **Create Form** (new record entry) · **Detail View** (view/edit single record) · **Kanban Board** (column-based layout) · **Dashboard / Chart** (data visualization) · **Interactive Utility** (calculator, converter, etc.) · **Display Only** (read-only info panel) · **Custom Widget** (other) |
+| 2A.2 | Does the component need a title bar / header? | Yes / No |
+| 2A.3 | Should users be able to hide/show the component conditionally? | Yes (standard props: hidden, CSS classes, device visibility) / No |
+| 2A.4 | What View Designer group should it appear in? | _e.g., `Sample App`, `ITSM`, `Custom Components`_ |
+| 2A.5 | What icon should represent it in the palette? | `table` · `edit` · `plus-circle` · `file-text` · `calculator` · `bar-chart` · `list` · `grid` · other |
+
+### 2B — Data Source & Record Definition
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2B.1 | Does the component interact with record data? | Yes / No (skip to 2C if No) |
+| 2B.2 | Which record definition(s) does it use? | _e.g., `com.mycompany.sample-app:Contact Book`, `com.bmc.dsm.itsm-applications:ITSM Tickets CRD`_ |
+| 2B.3 | Should the record definition be configurable via the Property Inspector, or hardcoded? | Configurable (text input in inspector) / Hardcoded |
+| 2B.4 | What fields (by ID and name) should be displayed or used? | _e.g., `536870913=Name, 536870914=Phone, 536870915=Email`_ |
+| 2B.5 | Does the component need standard system fields? (ID, Submitter, Create Date, Modified Date, Status, GUID) | Yes (include `1,2,3,5,6,7,8,16,379`) / Only specific ones / No |
+| 2B.6 | Does the component call a **Java service** or **process** for its data (instead of direct REST)? | Yes (specify which) / No (direct DataPage API) |
+
+### 2C — CRUD Operations
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2C.1 | What operations does the component support? | **Read** (list/view) · **Create** (new records) · **Update** (edit existing) · **Delete** (remove records) · Multiple (specify) |
+| 2C.2 | For **Create**: What fields should the form include? | _List field IDs, names, and types (text, number, date, dropdown, etc.)_ |
+| 2C.3 | For **Create**: Which fields are required? | _List required field IDs_ |
+| 2C.4 | For **Create**: Are there any validation rules? | _e.g., max length, regex pattern, numeric range_ |
+| 2C.5 | For **Create**: Does the form need a reset/cancel button? | Yes / No |
+| 2C.6 | For **Update**: Should editing be inline or in a separate form/modal? | Inline edit · Modal dialog · Separate detail view · Navigate to another view |
+| 2C.7 | For **Delete**: Should there be a confirmation prompt? | Yes / No |
+| 2C.8 | After a successful create/update/delete, what should happen? | Refresh the list · Show success message · Navigate somewhere · Emit event · Multiple |
+
+### 2D — Filtering, Sorting & Pagination
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2D.1 | Does the component need filtering? | Yes / No |
+| 2D.2 | If yes, what fields should be filterable? | _e.g., Name (text search), Status (dropdown), Priority (dropdown)_ |
+| 2D.3 | Should filters be shown/hidden via a toggle? | Yes (`showFilter` property in inspector) / Always visible / No filters |
+| 2D.4 | Does the component need sorting? | Yes (specify sortable columns) / No |
+| 2D.5 | Does the component need pagination? | Yes / No |
+| 2D.6 | If yes, should page size be configurable? | Yes (inspector property) / Hardcoded (specify default) |
+| 2D.7 | Default page size? | _e.g., 10, 25, 50, 100_ |
+
+### 2E — Navigation & Drill-Down
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2E.1 | Does the component need to navigate to a detail view? | Yes / No |
+| 2E.2 | If yes, what is the target view/route? | _e.g., `#/com.mycompany.sample-app/preview/<view-name>?id=<recordId>`_ |
+| 2E.3 | Does the component receive parameters from URL/query string? | Yes (specify param names) / No |
+| 2E.4 | Should the component interact with other components on the same view? | Yes (via Set Property action, events) / No |
+
+### 2F — Refresh & Auto-Update
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2F.1 | Does the component need a manual refresh button? | Yes / No |
+| 2F.2 | Does the component need auto-refresh on an interval? | Yes (configurable interval in inspector) / Yes (fixed interval) / No |
+| 2F.3 | Default refresh interval (seconds)? | _e.g., 30, 60, 300_ |
+
+### 2G — UI & Styling
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2G.1 | Should the component use BMC UX Adapt components? | Yes (specify: adapt-table, adapt-charts, buttons, modals, tabs, alerts) / No (plain HTML/CSS) |
+| 2G.2 | Does the component need loading indicators? | Yes (spinner, skeleton, progress bar) / No |
+| 2G.3 | Does the component need empty state messaging? | Yes / No |
+| 2G.4 | Does the component need error state display? | Yes (inline error banner) / No |
+| 2G.5 | Does the component need status badges or color coding? | Yes (specify status-to-color mapping) / No |
+| 2G.6 | Does the component need responsive/mobile support? | Yes / No |
+| 2G.7 | Any specific branding/color requirements? | _Describe or reference_ |
+
+### 2H — Property Inspector (Design-Time Configuration)
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2H.1 | What properties should be configurable in the View Designer Property Inspector? | _List all configurable props with types_ |
+| 2H.2 | For each property, what form control should be used? | `TextFormControlComponent` (text input) · `SwitchFormControlComponent` (toggle) · `NumberFormControlComponent` (number) · `SelectFormControlComponent` (dropdown) |
+| 2H.3 | Should any properties support expression evaluation? | Yes (specify which — allows dynamic values from other components) / No |
+| 2H.4 | Should the component expose a Set Property action? | Yes (specify settable properties) / No |
+| 2H.5 | Should the component include standard props? (Hidden, CSS Classes, Device Visibility) | Yes / No |
+| 2H.6 | What default values should properties have? | _e.g., title="My Component", pageSize="25", showFilter=true_ |
+
+### 2I — Component API (Actions)
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2I.1 | What API methods should the component expose to custom actions? | _e.g., `refresh()`, `reset()`, `getRecords()`, `createRecord()`_ |
+| 2I.2 | Should the component emit events/notifications? | Yes (specify event names and payloads) / No |
+| 2I.3 | Does the component need to call `notifyPropertyChanged` for expression bindings? | Yes (specify which properties) / No |
+
+### 2J — Design-Time Preview
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 2J.1 | What should the component look like in the View Designer preview? | Realistic sample data · Simple placeholder text · Static mockup |
+| 2J.2 | Should the design preview reflect inspector property changes in real-time? | Yes / No (static preview is fine) |
+
+---
+
+## Section 3: Java Service Questions
+
+### 3A — Service Type
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3A.1 | What type of Java service are you building? | **Process Activity** (usable in BPMN processes and rules) · **REST API** (custom JAX-RS endpoint) · **Command** (fire-and-forget) · **DataPageQuery** (custom data source for views) |
+| 3A.2 | Give a one-sentence description of what the service does. | _e.g., "Fetch incident details from HPD:Help Desk by incident ID"_ |
+| 3A.3 | What is the service class name? (PascalCase) | _e.g., `IncidentFetcherProcessActivity`, `TicketListService`_ |
+| 3A.4 | Should the service be registered as `Scope.PUBLIC`? | Yes (accessible from processes/rules) / No (internal only) |
+
+### 3B — Inputs
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3B.1 | What input parameters does the service accept? | _List each with: name, type (String, Integer, Long, Boolean), required/optional_ |
+| 3B.2 | For each input, are there validation rules? | `@NotNull` · `@NotBlank` · Regex pattern · Min/Max value · Custom validation |
+| 3B.3 | Do any inputs have default values? | _e.g., pageSize defaults to 10, startIndex defaults to 0_ |
+| 3B.4 | Does the service accept a dynamic record definition name as input? | Yes (generic/reusable) / No (hardcoded record definition) |
+| 3B.5 | Does the service accept a query expression for filtering? | Yes / No |
+
+### 3C — Record/Data Operations
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3C.1 | Does the service interact with record definitions? | Yes / No (skip to 3D if No) |
+| 3C.2 | Which record definition(s) does it query? | _e.g., `HPD:Help Desk`, `com.mycompany.sample-app:Contact Book`, dynamic (from input)_ |
+| 3C.3 | What operations does it perform? | **Query** (DataPage) · **Read** (single record by ID) · **Create** · **Update** · **Delete** · **Multi-step lookup** (chained queries) |
+| 3C.4 | For **queries**: Which field IDs should be fetched? | _e.g., `1,7,8,379,536870913,536870914`_ |
+| 3C.5 | For **queries**: Should the field list be configurable (input parameter) or hardcoded? | Configurable / Hardcoded |
+| 3C.6 | For **queries**: Does it need pagination support (pageSize, startIndex)? | Yes / No |
+| 3C.7 | For **multi-step lookups**: Describe the chain of queries. | _e.g., "Step 1: Fetch incident, get ServiceCI_ReconID. Step 2: Query AST:Attributes with that ID, get impact"_ |
+| 3C.8 | Does the service need to create or update records? | Yes (specify which fields to set) / No |
+
+### 3D — Output / Response
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3D.1 | What should the service return? | **Simple value** (String, number) · **Response DTO** (structured object) · **Markdown table** (for display in processes) · **JSON payload** |
+| 3D.2 | If a Response DTO, what fields should it contain? | _List each with: name, type, description_ |
+| 3D.3 | Should the response always include `success` (boolean) and `errorMessage` (String)? | Yes (recommended) / No |
+| 3D.4 | For table output: What columns should the markdown table include? | _List column headers and corresponding field IDs_ |
+| 3D.5 | Does the service return a count of records? | Yes (`recordCount` field) / No |
+
+### 3E — Error Handling
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3E.1 | How should errors be handled? | Return error in response DTO (set `success=false`, `errorMessage`) · Throw exception · Log and return empty result |
+| 3E.2 | Should specific error scenarios be handled differently? | _e.g., "Record not found: return empty with specific message", "Permission denied: specific error code"_ |
+| 3E.3 | What logging level should be used? | Debug (inputs/internals) · Info (success/counts) · Warn (edge cases) · Error (exceptions) |
+
+### 3F — External Integrations
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3F.1 | Does the service call any external APIs (non-BMC)? | Yes (specify URL, auth method, payload) / No |
+| 3F.2 | Does the service call other BMC Helix services or processes? | Yes (specify which) / No |
+| 3F.3 | Does the service need HTTP client capabilities? | Yes (REST calls to external systems) / No (RecordService only) |
+
+### 3G — Process Definition
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3G.1 | Does this service need a Process Definition (`.def` file) to be callable from views/rules? | Yes / No (REST API doesn't need one) |
+| 3G.2 | If yes, what should the process name be? | _e.g., `com.mycompany.sample-app:fetchIncident`_ |
+| 3G.3 | Should the process have the same input/output parameters as the Java service? | Yes (mirror all params) / Subset (specify which) |
+
+### 3H — Performance & Limits
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 3H.1 | What is the expected data volume? | Small (< 100 records) · Medium (100–10,000) · Large (> 10,000) |
+| 3H.2 | Should there be a maximum page size or result limit? | Yes (specify max) / No |
+| 3H.3 | Is the operation expected to be long-running? | Yes (consider async) / No (synchronous is fine) |
+
+---
+
+## Section 4: Both (View Component + Java Service)
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 4.1 | Does the view component call the Java service directly via REST, or through a Process? | Direct REST call · Via Process (process definition needed) · Via DataPage API |
+| 4.2 | How does data flow between them? | Component > REST call > Java service > Response DTO > Component renders |
+| 4.3 | Should the Java service be reusable by other components/processes? | Yes (generic inputs, `Scope.PUBLIC`) / No (tightly coupled to this component) |
+| 4.4 | Are there shared data structures (field IDs, constants) between frontend and backend? | Yes (document them) / No |
+
+---
+
+## Section 5: Deployment & Testing
+
+| # | Question | Options / Examples |
+|---|----------|--------------------|
+| 5.1 | Target environment? | Docker dev container · Remote BMC Helix server · Both |
+| 5.2 | Do you need the dev server for live reload during development? | Yes (`nx serve shell`) / No (build and deploy each time) |
+| 5.3 | Are there existing components/services to use as reference? | Yes (specify which) / No |
+| 5.4 | Priority: speed of delivery or code quality/completeness? | Speed (MVP first) · Quality (full error handling, tests, polish) · Balanced |
+
+---
+
+## Quick Reference: Existing Examples to Use as Templates
+
+### View Components
+
+| Example | Category | Key Features |
+|---------|----------|-------------|
+| **calculator** | Interactive utility | Local state, no API calls, simple API (`clear`, `getResult`) |
+| **contact-table** | CRUD table | DataPage query, create form, filtering, pagination |
+| **root-cause-list** | Display-only table | Read-only, auto-refresh interval, status badges |
+| **root-cause-create** | Create form | Record creation, form validation, reset |
+| **pir-table** | List with drill-down | DataPage query, filtering, pagination, navigation to detail view |
+| **pir-create** | Create form | Complex form, field validation (length, required), cancel button |
+| **pir-details** | Detail view | GET by ID, inline edit mode, URL param reading |
+| **ticket-kanban-board** | Kanban board | Multi-column layout, per-column queries, multi-field filtering |
+
+### Java Services
+
+| Example | Type | Key Features |
+|---------|------|-------------|
+| **HelloTestActivity** | Process activity | Simplest example — string in, string out |
+| **CalculatorProcessActivity** | Process activity | Multiple inputs, operation routing, response DTO |
+| **RecordDefReaderActivity** | Process activity | Record definition metadata, markdown table output |
+| **RecordQueryProcessorActivity** | Process activity | Generic query, configurable fields, pagination, markdown table |
+| **TicketListProcessActivity** | Process activity | ITSM-specific query, hardcoded record def, markdown table |
+| **IncidentFetcherProcessActivity** | Process activity | Single record lookup by ID |
+| **ServiceImpactFetcherProcessActivity** | Process activity | Multi-step chained lookup across record definitions |

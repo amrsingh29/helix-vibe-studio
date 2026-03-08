@@ -1,0 +1,316 @@
+---
+description: Guide for creating BMC Helix Innovation Studio process definition (.def) files that wrap Java service actions. Apply when creating or modifying .def files in db/process/.
+globs: **/db/process/**/*.def
+alwaysApply: false
+---
+
+# BMC Helix Process Definition (.def) — Creation Guide
+
+This rule explains how to create a process definition `.def` file that wraps a Java service `@Action` as an invocable process in BMC Helix Innovation Studio.
+
+---
+
+## File Location
+
+```
+com.mycompany.sample-app-1.0.0-SNAPSHOT-INSTALL/db/process/<processName>.def
+```
+
+---
+
+## .def File Format
+
+Every `.def` file uses a custom text format (NOT pure JSON). The outer wrapper is:
+
+```
+begin process definition
+   name           : com.mycompany.sample-app:<processName>
+   definition     : {
+   definition     :   ... JSON content, each line prefixed with "   definition     : " ...
+   definition     : }
+end
+```
+
+**Critical formatting rules:**
+- Every JSON line inside the definition block MUST be prefixed with exactly `   definition     : ` (3 spaces, "definition", 5 spaces, ": ").
+- The `name` line uses the same prefix pattern: `   name           : `.
+- The JSON content is a single JSON object spread across multiple prefixed lines.
+- The file ends with a bare `end` on its own line.
+
+---
+
+## Two Patterns
+
+### Pattern A — Stub Process (Start -> End, No Java Service Call)
+
+Use when you need a mock/placeholder process that returns hardcoded default data. The flow is simply Start -> End with no ServiceTask. Output params have a `defaultValue` with mock data.
+
+Flow: `StartEvent --> SequenceFlow --> EndEvent`
+
+### Pattern B — Service-Invoking Process (Start -> ServiceTask -> End)
+
+Use when you need the process to actually call a registered Java service `@Action`. A `ServiceTaskDefinition` node sits between Start and End, with `inputMap` and `outputMap` wiring.
+
+Flow: `StartEvent --> SequenceFlow --> ServiceTask --> SequenceFlow --> EndEvent`
+
+**This is the recommended pattern for production use.**
+
+---
+
+## Step-by-Step: Creating a Service-Invoking Process (Pattern B)
+
+### Step 1 — Analyze the Java Service
+
+From the Java `ProcessActivity` class, extract:
+
+| What to Find | Where to Look | Example |
+|---|---|---|
+| **Action name** | `@Action(name = "...")` | `genericQuery` |
+| **Action scope** | `@Action(scope = ...)` | `Scope.PUBLIC` |
+| **Input parameters** | Method parameters with `@ActionParameter(name = "...")` | `queryExpression`, `recordDef` |
+| **Required params** | Params annotated with `@NotBlank @NotNull` | `queryExpression`, `recordDef` |
+| **Optional params** | Params without `@NotBlank @NotNull` (or using wrapper types like `Integer`) | `pageSize`, `startIndex` |
+| **Parameter types** | Java types | `String`, `Integer`, `Boolean` |
+| **Return type** | Method return type (a ResponsePayload class) | `GenericQueryResponsePayload` |
+| **Output fields** | `@JsonProperty` fields in the ResponsePayload class | `resultTable`, `recordCount`, `success`, `errorMessage` |
+
+### Step 2 — Assign Field IDs
+
+Process input and output params need unique numeric field IDs.
+
+**Convention:**
+- Input params start at `536870913` and increment: `536870913`, `536870914`, `536870915`, ...
+- Output params start at `536870912` and increment: `536870912`, `536870913`, `536870914`, ...
+- If there's overlap, shift output IDs higher (e.g., start outputs at `536870920`).
+
+**Important:** The first output param typically gets ID `536870912`. If there's only one output (common for single-result processes), it uses `536870912`.
+
+### Step 3 — Map Java Types to Field Definitions
+
+| Java Type | resourceType | storageTypeClass |
+|---|---|---|
+| `String` | `com.bmc.arsys.rx.standardlib.record.CharacterFieldDefinition` | `com.bmc.arsys.rx.services.record.domain.CharacterFieldStorageType` |
+| `Integer` / `int` | `com.bmc.arsys.rx.standardlib.record.IntegerFieldDefinition` | `com.bmc.arsys.rx.services.record.domain.IntegerFieldStorageType` |
+| `Boolean` / `boolean` | `com.bmc.arsys.rx.standardlib.record.CharacterFieldDefinition` | `com.bmc.arsys.rx.services.record.domain.CharacterFieldStorageType` |
+
+**Note:** For Integer fields, include `minValue` and `maxValue` (typically `-2147483648` to `2147483647`) and set `defaultValue` to `0` or `null`.
+
+### Step 4 — Generate GUIDs
+
+Every node in the process needs a unique GUID in format `rx-<uuid-v4>`. Generate unique UUIDs for:
+
+- The process itself (top-level `guid`)
+- StartEventDefinition
+- EndEventDefinition
+- ServiceTaskDefinition
+- Each SequenceFlowDefinition (2 for Pattern B: Start->Task, Task->End)
+
+### Step 5 — Build the ServiceTaskDefinition
+
+This is the core node that calls the Java service:
+
+```json
+{
+  "resourceType": "com.bmc.arsys.rx.services.process.domain.ServiceTaskDefinition",
+  "name": "<Human-readable task name>",
+  "guid": "rx-<uuid>",
+  "multiInstanceLoopDefinition": null,
+  "actionTypeName": "com.mycompany.sample-app:<actionName>",
+  "inputMap": [
+    {
+      "assignTarget": "<actionParameterName>",
+      "expression": "${processContext.<inputFieldId>}"
+    }
+  ],
+  "outputMap": [
+    {
+      "assignTarget": "<outputFieldId>",
+      "expression": "${activityResults.<serviceTaskGuid>.output.<responsePayloadFieldName>}"
+    }
+  ],
+  "runAsUser": null
+}
+```
+
+**Key rules:**
+- `actionTypeName` = `com.mycompany.sample-app:<name from @Action annotation>`
+- `inputMap[].assignTarget` = the `@ActionParameter(name = "...")` value from the Java method
+- `inputMap[].expression` = `${processContext.<fieldId>}` where fieldId is the process input param's `id`
+- `outputMap[].assignTarget` = the output param's `id` (as a string like `"536870912"`)
+- `outputMap[].expression` = `${activityResults.<serviceTaskGuid>.output.<fieldName>}` where fieldName is the `@JsonProperty` field name from the ResponsePayload class
+
+### Step 6 — Build the Layout JSON
+
+The `layout` field is a stringified JSON describing the visual arrangement of nodes (JointJS format):
+
+**Standard positions:**
+- StartEvent: `{"x": 50, "y": 375}`, size `{"width": 30, "height": 30}`, type `rx.StartEvent`
+- ServiceTask: `{"x": 430, "y": 360}`, size `{"width": 90, "height": 60}`, type `rx.ProcessAction`
+- EndEvent: `{"x": 900, "y": 375}`, size `{"width": 30, "height": 30}`, type `rx.EndEvent`
+- SequenceFlows: type `rx.SequenceFlow`, with `source.id` and `target.id` referencing node IDs (without `rx-` prefix)
+
+**Important:** Layout cell IDs omit the `rx-` prefix from the GUID (e.g., if guid is `rx-abc123`, layout id is `abc123`).
+
+### Step 7 — Assemble the Complete Definition
+
+The top-level JSON structure:
+
+```json
+{
+  "version": null,
+  "lastUpdateTime": <epoch_millis>,
+  "lastChangedBy": "<username>",
+  "owner": "<username>",
+  "name": "com.mycompany.sample-app:<processName>",
+  "tags": null,
+  "description": "<description>",
+  "overlayGroupId": "1",
+  "scope": "BUNDLE",
+  "internal": false,
+  "guid": "rx-<process-uuid>",
+  "flowElements": [ <StartEvent>, <SequenceFlows>, <ServiceTask>, <EndEvent> ],
+  "inputParams": [ <...field definitions...> ],
+  "outputParams": [ <...field definitions...> ],
+  "localVariables": [],
+  "contextKeyParam": null,
+  "isEnabled": true,
+  "permissions": [
+    {
+      "ownerId": { "value": 0, "type": "GROUP", "name": "Public" },
+      "type": "EXECUTE"
+    }
+  ],
+  "layout": "<stringified-layout-json>",
+  "artifacts": [],
+  "runAsUser": false,
+  "synchronous": true,
+  "overlayDescriptor": null,
+  "allowOverlay": false,
+  "localizableStrings": null
+}
+```
+
+**Permissions:** Include the Public group EXECUTE permission if the process should be callable by any authenticated user. Omit (use `[]`) for restricted access.
+
+---
+
+## Field Definition Templates
+
+### CharacterFieldDefinition (String)
+
+```json
+{
+  "resourceType": "com.bmc.arsys.rx.standardlib.record.CharacterFieldDefinition",
+  "lastUpdateTime": <epoch_millis>,
+  "lastChangedBy": "<username>",
+  "owner": "<username>",
+  "name": "<paramName>",
+  "tags": null,
+  "description": "",
+  "overlayGroupId": null,
+  "internal": false,
+  "id": <fieldId>,
+  "fieldOption": "REQUIRED|OPTIONAL",
+  "permissions": null,
+  "storageTypeClass": "com.bmc.arsys.rx.services.record.domain.CharacterFieldStorageType",
+  "fieldTypeName": "com.bmc.arsys.rx.services.record.domain.DefaultFieldType",
+  "isInherited": false,
+  "explicitPermissions": null,
+  "overlayDescriptor": null,
+  "fieldMapping": null,
+  "allowPermissionsOverlay": true,
+  "allowOtherPropertiesOverlay": true,
+  "auditOption": null,
+  "allowPermissionsEdit": false,
+  "maxLength": 0,
+  "defaultValue": null,
+  "searchDefinition": null,
+  "namedListDefinition": null,
+  "shouldPersistEncrypted": false,
+  "shouldPersistHashed": false,
+  "associationGuid": null,
+  "pattern": null,
+  "indirectLocalizableDefinition": null,
+  "anyUserAllowedToSubmit": false
+}
+```
+
+### IntegerFieldDefinition (Integer / int)
+
+```json
+{
+  "resourceType": "com.bmc.arsys.rx.standardlib.record.IntegerFieldDefinition",
+  "lastUpdateTime": <epoch_millis>,
+  "lastChangedBy": "<username>",
+  "owner": "<username>",
+  "name": "<paramName>",
+  "tags": null,
+  "description": "",
+  "overlayGroupId": null,
+  "internal": false,
+  "id": <fieldId>,
+  "fieldOption": "REQUIRED|OPTIONAL",
+  "permissions": null,
+  "storageTypeClass": "com.bmc.arsys.rx.services.record.domain.IntegerFieldStorageType",
+  "fieldTypeName": "com.bmc.arsys.rx.services.record.domain.DefaultFieldType",
+  "isInherited": false,
+  "explicitPermissions": null,
+  "overlayDescriptor": null,
+  "fieldMapping": null,
+  "allowPermissionsOverlay": true,
+  "allowOtherPropertiesOverlay": true,
+  "auditOption": null,
+  "allowPermissionsEdit": false,
+  "minValue": -2147483648,
+  "maxValue": 2147483647,
+  "defaultValue": 0,
+  "searchDefinition": null,
+  "anyUserAllowedToSubmit": false
+}
+```
+
+---
+
+## Complete Example — Mapping Java Service to Process Def
+
+Given this Java action:
+
+```java
+@Action(name = "fetchServiceImpact", scope = Scope.PUBLIC)
+public ServiceImpactResponse fetchServiceImpact(
+    @ActionParameter(name = "incidentId") @NotBlank @NotNull String incidentId) {
+    // ...
+}
+```
+
+With response payload field: `impact` (String)
+
+The process def would have:
+- **inputParams**: `incidentId` (CharacterFieldDefinition, id=536870913, REQUIRED)
+- **outputParams**: `service_impact` (CharacterFieldDefinition, id=536870912, OPTIONAL)
+- **ServiceTask inputMap**: `assignTarget: "incidentId"`, `expression: "${processContext.536870913}"`
+- **ServiceTask outputMap**: `assignTarget: "536870912"`, `expression: "${activityResults.<taskGuid>.output.impact}"`
+
+---
+
+## Checklist
+
+Before finalizing a `.def` file:
+
+- [ ] File location is `db/process/<processName>.def`
+- [ ] Process name follows pattern `com.mycompany.sample-app:<processName>`
+- [ ] All GUIDs are unique `rx-<uuid>` format
+- [ ] `actionTypeName` matches the `@Action(name = "...")` from Java: `com.mycompany.sample-app:<actionName>`
+- [ ] Every `@ActionParameter` has a corresponding `inputParam` and `inputMap` entry
+- [ ] `inputMap[].assignTarget` values match `@ActionParameter(name = "...")` exactly
+- [ ] `inputMap[].expression` references correct process input field IDs via `${processContext.<id>}`
+- [ ] `outputMap[].expression` references correct ResponsePayload `@JsonProperty` field names
+- [ ] `outputMap[].assignTarget` matches process output param field IDs
+- [ ] Required params have `"fieldOption": "REQUIRED"`, optional have `"OPTIONAL"`
+- [ ] Java `String` maps to `CharacterFieldDefinition`, `Integer` maps to `IntegerFieldDefinition`
+- [ ] Layout JSON cell IDs match flow element GUIDs (without `rx-` prefix)
+- [ ] SequenceFlow `sourceNode`/`targetNode` correctly chain: Start -> ServiceTask -> End
+- [ ] Layout SequenceFlow `source.id`/`target.id` match the same chain
+- [ ] `"synchronous": true` for processes expected to return results immediately
+- [ ] `permissions` includes Public EXECUTE if process should be publicly callable
+- [ ] Every line in the definition block is prefixed with `   definition     : `

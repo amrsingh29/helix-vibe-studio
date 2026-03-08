@@ -1,0 +1,530 @@
+---
+description: Post-creation review checklist for BMC Helix view components. Validates registration, design-time, runtime, inspector mapping, and integration end-to-end.
+globs: **/view-components/**/*.ts
+alwaysApply: false
+---
+
+# View Component Review Checklist
+
+After creating or modifying a view component, run through every section below. Fix all issues before considering the component complete.
+
+---
+
+## 1. File Structure Completeness
+
+Verify ALL required files exist under `view-components/<component-name>/`:
+
+- [ ] `<name>.types.ts` — shared property interfaces
+- [ ] `<name>-registration.module.ts` — platform registration
+- [ ] `design/<name>-design.component.ts` — design-time component class
+- [ ] `design/<name>-design.component.html` — design-time template
+- [ ] `design/<name>-design.component.scss` — design-time styles
+- [ ] `design/<name>-design.model.ts` — design model (inspector + validation)
+- [ ] `design/<name>-design.types.ts` — design-time property interface
+- [ ] `runtime/<name>.component.ts` — runtime component class
+- [ ] `runtime/<name>.component.html` — runtime template
+- [ ] `runtime/<name>.component.scss` — runtime styles
+
+**Red flag**: Missing any file means the component will fail at design-time or runtime.
+
+---
+
+## 2. Types File (`<name>.types.ts`)
+
+- [ ] Interface extends `IRxStandardProps` from `@helix/platform/view/api`
+- [ ] `name: string` property is present (required for component identification in View Designer)
+- [ ] All custom properties that appear in the inspector are declared here
+- [ ] Property types are specific (avoid `any` — use `string`, `number`, `boolean`, etc.)
+
+```typescript
+// CORRECT
+import { IRxStandardProps } from '@helix/platform/view/api';
+export interface IMyComponentProperties extends IRxStandardProps {
+  name: string;
+  title: string;
+  // ... all custom properties
+}
+```
+
+**Red flag**: If a property is used in runtime/design but not declared in the interface, TypeScript safety is lost.
+
+---
+
+## 3. Registration Module (`<name>-registration.module.ts`)
+
+- [ ] Decorated with `@NgModule()`
+- [ ] Constructor injects `RxViewComponentRegistryService`
+- [ ] `type` follows exact naming convention: `com-mycompany-sample-app-com-mycompany-sample-app-<kebab-name>`
+- [ ] `name` is a human-readable display name
+- [ ] `group` is set (e.g., `'Sample App'`)
+- [ ] `icon` is set to a valid icon name
+- [ ] `component` references the **runtime** component class
+- [ ] `designComponent` references the **design** component class
+- [ ] `designComponentModel` references the **design model** class
+- [ ] `properties` array includes ALL custom properties as objects with `name`, `localizable`, `enableExpressionEvaluation`
+- [ ] `properties` array spreads `...RX_STANDARD_PROPS_DESC` at the end
+- [ ] `RX_STANDARD_PROPS_DESC` is imported from `@helix/platform/view/api`
+
+```typescript
+// CORRECT — verify type name matches runtime @RxViewComponent name and selector
+rxViewComponentRegistryService.register({
+  type: 'com-mycompany-sample-app-com-mycompany-sample-app-calculator',
+  name: 'Calculator',
+  group: 'Sample App',
+  icon: 'calculator',
+  component: CalculatorComponent,
+  designComponent: CalculatorDesignComponent,
+  designComponentModel: CalculatorDesignModel,
+  properties: [
+    { name: 'title', localizable: true, enableExpressionEvaluation: true },
+    ...RX_STANDARD_PROPS_DESC
+  ]
+});
+```
+
+**Cross-check**: The `type` value here MUST exactly match the `name` in `@RxViewComponent()` decorator on the runtime component AND the runtime component's `selector`.
+
+---
+
+## 4. Design Model (`design/<name>-design.model.ts`)
+
+### Class Declaration
+- [ ] Extends `ViewDesignerComponentModel<IProperties, IDesignProperties>`
+- [ ] Implements `IViewDesignerComponentModel<IProperties, IDesignProperties>`
+- [ ] Constructor signature: `constructor(protected injector: Injector, protected sandbox: IViewComponentDesignSandbox<IDesignProperties>)`
+- [ ] Calls `super(injector, sandbox)` first in constructor
+
+### Inspector Configuration
+- [ ] Calls `sandbox.updateInspectorConfig(this.setInspectorConfig(...))` in constructor
+- [ ] `setInspectorConfig` returns `inspectorSectionConfigs` array with labeled sections
+- [ ] Every custom property has a matching control in the inspector config
+- [ ] Control `name` values exactly match property names in the types interface
+- [ ] Ends with `...getStandardPropsInspectorConfigs()` to include Hidden, CSS classes, etc.
+- [ ] Uses correct form control components (`TextFormControlComponent`, `SwitchFormControlComponent`, etc.)
+- [ ] Each control has `label` and `tooltip` (use `new Tooltip('...')` from `@helix/platform/shared/api`)
+
+### Validation
+- [ ] Subscribes to `sandbox.componentProperties$` for validation
+- [ ] Subscription uses `takeUntil(this.sandbox.destroyed$)` to prevent memory leaks
+- [ ] `validate` method calls `validateStandardProps(model)` and returns its issues
+- [ ] Custom validations added to the `validationIssues` array as needed
+
+### Static `getInitialProperties` Method
+- [ ] Method exists and is `static`
+- [ ] Returns object spreading `RX_STANDARD_PROPS_DEFAULT_VALUES`
+- [ ] Sets sensible defaults for all custom properties
+- [ ] Spreads `...currentProperties` last (so saved values override defaults)
+
+```typescript
+static getInitialProperties(currentProperties?: IMyProperties): IMyDesignProperties {
+  return {
+    name: '',
+    title: 'Default Title',
+    ...RX_STANDARD_PROPS_DEFAULT_VALUES,
+    ...currentProperties
+  };
+}
+```
+
+### Data Dictionary
+- [ ] Subscribes to `sandbox.getComponentPropertyValue('name')` for dynamic naming
+- [ ] Calls `sandbox.setSettablePropertiesDataDictionary(...)` with all Set-property-able fields
+- [ ] Calls `sandbox.setCommonDataDictionary(...)` with all expression-readable fields
+- [ ] Uses `this.getExpressionForProperty('propName')` for each entry
+
+**Red flag**: If a property is in the inspector but not in `getSettablePropertiesDataDictionary`, it cannot be set via "Set Property" action at runtime.
+
+---
+
+## 5. Design Component (`design/<name>-design.component.ts`)
+
+- [ ] `standalone: true`
+- [ ] Selector follows convention: `com-mycompany-sample-app-com-mycompany-sample-app-<name>-design`
+- [ ] Has `@Input() model: <Name>DesignModel` — typed to the specific design model class
+- [ ] `templateUrl` and `styleUrls` point to correct files
+- [ ] Template shows a meaningful preview (not just empty div)
+- [ ] Preview uses dashed border and muted colors to distinguish from runtime
+
+---
+
+## 6. Design Types (`design/<name>-design.types.ts`)
+
+- [ ] Interface extends the main component properties interface: `extends IMyComponentProperties`
+- [ ] Add any design-only properties here (properties needed only at design-time)
+- [ ] Exported so the design model can import it
+
+```typescript
+import { IMyComponentProperties } from '../my-component.types';
+export interface IMyComponentDesignProperties extends IMyComponentProperties {
+  // design-only properties if any
+}
+```
+
+---
+
+## 7. Runtime Component (`runtime/<name>.component.ts`)
+
+### Class Setup
+- [ ] `standalone: true`
+- [ ] `imports` array includes `CommonModule` and any other needed modules (`FormsModule`, etc.)
+- [ ] Selector: `com-mycompany-sample-app-com-mycompany-sample-app-<name>` (NO `-design` suffix)
+- [ ] `@RxViewComponent({ name: '...' })` decorator present — name MUST match registration `type`
+- [ ] Extends `BaseViewComponent`
+- [ ] Implements `OnInit` and `IViewComponent`
+- [ ] `@Input() config: Observable<IMyComponentProperties>` — Observable, not plain object
+
+### Lifecycle
+- [ ] `ngOnInit()` calls `super.ngOnInit()` first
+- [ ] `notifyPropertyChanged('api', this.api)` called in `ngOnInit` to expose API
+- [ ] Config subscription uses `distinctUntilChanged()` and `takeUntil(this.destroyed$)`
+- [ ] Sets `this.isHidden = Boolean(config.hidden)` inside config subscription
+
+### API Object
+- [ ] `api` object defined with `setProperty: this.setProperty.bind(this)`
+- [ ] Any additional public methods added to `api` and `.bind(this)`-ed
+- [ ] `setProperty` handles each settable property in a `switch` statement
+- [ ] Each case calls `this.notifyPropertyChanged(propertyPath, propertyValue)`
+- [ ] Default case returns `throwError(...)` for unknown properties
+
+```typescript
+private setProperty(propertyPath: string, propertyValue: any): void | Observable<never> {
+  switch (propertyPath) {
+    case 'hidden':
+      this.state.hidden = propertyValue;
+      this.notifyPropertyChanged(propertyPath, propertyValue);
+      break;
+    case 'title':
+      this.state.title = propertyValue;
+      this.notifyPropertyChanged(propertyPath, propertyValue);
+      break;
+    default:
+      return throwError(`MyComponent: property ${propertyPath} is not settable.`);
+  }
+}
+```
+
+### Imports Verification
+- [ ] `BaseViewComponent` from `@helix/platform/view/runtime`
+- [ ] `IViewComponent` from `@helix/platform/view/runtime`
+- [ ] `RxViewComponent` from `@helix/platform/view/api`
+- [ ] `Observable, throwError` from `rxjs`
+- [ ] `distinctUntilChanged, takeUntil` from `rxjs/operators`
+
+---
+
+## 8. Runtime Template (`runtime/<name>.component.html`)
+
+- [ ] No unescaped `@` characters — use `&#64;` (Angular interprets `@` as control flow)
+- [ ] All event bindings use `(click)`, `(input)`, etc. — not `on-click`
+- [ ] `*ngIf` / `*ngFor` used correctly (or `@if` / `@for` with proper Angular 17+ syntax)
+- [ ] Component state accessed via `state?.property` with safe navigation
+- [ ] No direct DOM manipulation — use Angular bindings
+
+---
+
+## 9. Runtime Styles (`runtime/<name>.component.scss`)
+
+- [ ] Styles scoped to a container class (avoid bare element selectors leaking globally)
+- [ ] No hardcoded colors that conflict with platform themes (prefer CSS variables when possible)
+- [ ] Responsive considerations for different device sizes
+
+---
+
+## 10. Main Module Integration
+
+**File**: `libs/com-mycompany-sample-app/src/lib/com-mycompany-sample-app.module.ts`
+
+- [ ] Registration module is imported: `import { <Name>RegistrationModule } from './view-components/<name>/<name>-registration.module';`
+- [ ] Registration module is added to the `imports` array in `@NgModule`
+
+---
+
+## 11. Index.ts Export
+
+**File**: `libs/com-mycompany-sample-app/src/index.ts`
+
+- [ ] Registration module is exported: `export * from './lib/view-components/<name>/<name>-registration.module';`
+
+**Red flag**: Missing this export means the component won't be bundled into the build output.
+
+---
+
+## 12. Cross-File Consistency (Critical)
+
+These values MUST be identical across files — a mismatch causes silent failures:
+
+| Value | Where It Appears |
+|-------|-----------------|
+| Component type string | Registration `type`, Runtime `@RxViewComponent({ name })`, Runtime `selector` |
+| Properties interface | Types file, Design model generics, Runtime `config` type |
+| Design properties interface | Design types file, Design model generics |
+| Custom property names | Types interface, Registration `properties[].name`, Design model inspector `controls[].name`, Design model `getInitialProperties`, Runtime `setProperty` switch cases |
+| Design model class | Registration `designComponentModel`, Design component `@Input() model` type |
+
+Run this cross-check:
+1. Grep for the component type string — it must appear exactly in registration, `@RxViewComponent`, and selector.
+2. For each property in the types interface, verify it has: an inspector control, an initial value, a `setProperty` case (if settable), and a data dictionary entry (if expression-readable).
+
+---
+
+## 13. Module Federation & AOT Compilation Pitfalls
+
+### Module Federation Naming
+
+- [ ] Component names are compatible with lodash `camelCase` behavior — Module Federation transforms module names using `camelCase`, which can mangle unexpected characters
+- [ ] Verify the component name in the compiled output matches what View Designer expects — mismatches cause silent load failures
+- [ ] Stick to simple kebab-case names (letters and hyphens only) to avoid camelCase transformation surprises
+
+### AOT Compilation Issues
+
+The most common first-component failure is `ɵmod undefined` — the component doesn't show in the View Designer palette even though the build succeeds. This is caused by AOT compilation not processing the registration module correctly.
+
+**Resolution sequence** (may require up to 3 iterations):
+
+1. **AOT compatibility**: Ensure all decorators (`@NgModule`, `@Component`) use static metadata — no function calls or computed values in decorator arguments
+2. **Module naming**: Verify the registration module class name exactly matches the import in `com-mycompany-sample-app.module.ts` — AOT resolves by class name, not file path
+3. **Registration wiring**: Confirm the registration module is both imported in `@NgModule({ imports: [...] })` AND exported in `index.ts` — missing either one causes the AOT compiler to tree-shake it out
+
+- [ ] After first component build, check browser console for `ɵmod` errors — if present, work through the 3-step sequence above
+- [ ] All subsequent components (after the first one works) should work on first try if they follow the same pattern
+
+### Incremental Component Development Strategy
+
+Based on real-world experience: the first component takes multiple iterations to get right; subsequent components work on first try.
+
+- [ ] **Build and deploy the FIRST component before generating any others** — resolve all platform quirks on one component
+- [ ] Only after the first component renders correctly in View Designer AND at runtime, generate remaining components using the proven pattern
+- [ ] All components should follow the exact same 10-file structure — AI-generated components maintain perfect consistency when generated from the same learned pattern
+- [ ] Verify each batch of new components in View Designer before proceeding to the next batch
+
+---
+
+## 14. Common Mistakes to Catch
+
+- **Wrong selector on runtime vs design**: Runtime has NO `-design` suffix; design component DOES.
+- **Forgetting `super.ngOnInit()`**: Breaks `BaseViewComponent` lifecycle; `destroyed$` won't work.
+- **Missing `...RX_STANDARD_PROPS_DESC`**: Hidden, CSS classes, and device visibility won't work.
+- **Missing `...RX_STANDARD_PROPS_DEFAULT_VALUES`**: Standard props reset to undefined on load.
+- **Missing `...getStandardPropsInspectorConfigs()`**: Hidden toggle won't appear in property inspector.
+- **Missing `validateStandardProps(model)`**: Standard property validation bypassed.
+- **Subscription without `takeUntil`**: Memory leak — component never unsubscribes.
+- **`setProperty` missing `notifyPropertyChanged`**: Property updates via actions silently fail.
+- **Inspector control `name` typo**: Property appears in inspector but never binds to the actual value.
+- **Forgetting to spread `...currentProperties`** in `getInitialProperties`: Saved view values are lost on reload.
+- **Unescaped `@` in templates**: Angular 17+ interprets `@` as control flow syntax — use `&#64;` for literal `@` (e.g., email addresses). Error message: `Incomplete block "example". If you meant to write the @ character...`
+- **Over-engineering**: AI tends to generate "complete" solutions upfront (pagination, queue processing, status services) that may not be needed. Start simpler and add complexity incrementally.
+
+---
+
+## 15. Pre-Build Verification
+
+Before running the build, confirm these prerequisites:
+
+- [ ] All TypeScript files compile without errors — run `npx tsc --noEmit` or check IDE for red underlines
+- [ ] No circular dependency between component files (types -> design -> runtime -> types)
+- [ ] All imports resolve — no `Module not found` in the IDE
+- [ ] If component uses `HttpClient`, verify `HttpClientModule` or `provideHttpClient()` is available
+- [ ] If component uses `FormsModule` or `ReactiveFormsModule`, it is in the standalone `imports` array
+
+### Docker Host-to-Container File Sync Verification (Critical)
+
+When developing on the host and building inside Docker, the bind mount (`./workspace:/workspace`) can have **stale file sync** — newly created files appear inside the container, but edits to existing files may NOT propagate. This causes a deceptive failure: the build succeeds, the manifest lists the component, but the compiled JS bundles are missing it.
+
+**Always verify these files match between host and container after editing:**
+
+```bash
+# Compare index.ts
+docker exec bmc-helix-innovation-studio bash -c "cat /workspace/sample-app/bundle/src/main/webapp/libs/com-mycompany-sample-app/src/index.ts"
+
+# Compare main module
+docker exec bmc-helix-innovation-studio bash -c "cat /workspace/sample-app/bundle/src/main/webapp/libs/com-mycompany-sample-app/src/lib/com-mycompany-sample-app.module.ts"
+```
+
+- [ ] `index.ts` inside the container contains the new component's `export *` line
+- [ ] `com-mycompany-sample-app.module.ts` inside the container contains the new registration module import AND it appears in the `imports` array
+
+**If files are out of sync**, apply the edits directly inside the container:
+
+```bash
+# Add export to index.ts
+docker exec bmc-helix-innovation-studio bash -c "echo 'export * from \"./lib/view-components/<name>/<name>-registration.module\";' >> /workspace/sample-app/bundle/src/main/webapp/libs/com-mycompany-sample-app/src/index.ts"
+
+# Add import and NgModule entry to main module (use sed or write the full file)
+docker exec bmc-helix-innovation-studio bash -c "sed -i 's|import { PreviousModule }|import { PreviousModule }\nimport { NewModule }|' ..."
+```
+
+**Red flag**: If the build output chunk sizes are the SAME as the previous build (before adding your component), the new component code was NOT compiled in — the container is using stale source files.
+
+---
+
+## 16. Post-Build Checks
+
+### Frontend Build (`npm run build`)
+
+```bash
+docker exec bmc-helix-innovation-studio bash -c "cd /workspace/sample-app/bundle/src/main/webapp && npm run build"
+```
+
+- [ ] Build completes with exit code 0 — no errors in output
+- [ ] No TypeScript compilation errors (`error TS****`)
+- [ ] No Angular template errors (`error NG****`)
+- [ ] No "Module not found" or "Cannot resolve" errors
+- [ ] No circular dependency warnings (`Circular dependency detected`)
+- [ ] Build output directory exists: `dist/apps/shell/`
+
+### Manifest Verification
+
+**File**: `dist/apps/shell/com-mycompany-sample-app.json`
+
+- [ ] File exists and is valid JSON
+- [ ] `viewComponents` array includes the new component type string: `com-mycompany-sample-app-com-mycompany-sample-app-<name>`
+- [ ] No duplicate entries in the `viewComponents` array
+
+```bash
+# Quick verification — component should appear in manifest
+docker exec bmc-helix-innovation-studio bash -c "cat /workspace/sample-app/bundle/src/main/webapp/dist/apps/shell/com-mycompany-sample-app.json | python3 -m json.tool"
+```
+
+**Red flag**: If the component type is missing from the manifest, the platform will never load it — even if all source files are correct.
+
+### Compiled JS Bundle Verification (Critical)
+
+The manifest can list a component even when it's NOT in the compiled JS. This happens when the manifest generator scans the filesystem (sees the registration file) but the TypeScript compiler uses a stale `index.ts` or main module that doesn't import it. **Always verify the component type string exists in the actual JS chunks.**
+
+```bash
+# Verify component type string exists in the compiled JS bundles
+docker exec bmc-helix-innovation-studio bash -c "grep -c '<component-type-string>' /workspace/sample-app/bundle/src/main/webapp/dist/apps/shell/libs_com-mycompany-sample-app_src_index_ts*.js"
+```
+
+- [ ] Component type string appears in the lazy chunk JS files (count > 0)
+- [ ] Both the runtime selector (`<name>`) and design selector (`<name>-design`) appear in the chunks
+- [ ] Lazy chunk file sizes are **larger** than the previous build (the new component code adds ~5-50KB)
+
+```bash
+# Full verification — list all registered component type strings in the build output
+docker exec bmc-helix-innovation-studio bash -c "grep -o 'com-mycompany-sample-app-com-mycompany-sample-app-[a-z-]*' /workspace/sample-app/bundle/src/main/webapp/dist/apps/shell/libs_com-mycompany-sample-app_src_index_ts*.js | sort -u"
+```
+
+**Red flag**: If the component appears in the manifest JSON but NOT in the grep output above, the `index.ts` or main module inside the Docker container is stale. See Section 15 "Docker Host-to-Container File Sync Verification" to fix.
+
+### Full Maven Build (`mvn clean install`)
+
+```bash
+docker exec bmc-helix-innovation-studio bash -c "cd /workspace/sample-app && mvn clean install -DskipTests"
+```
+
+- [ ] Maven build completes with `BUILD SUCCESS`
+- [ ] JAR file generated: `bundle/target/com.mycompany.sample-app-1.0.0-SNAPSHOT.jar`
+- [ ] Package ZIP generated: `package/target/com.mycompany.sample-app-1.0.0-SNAPSHOT.zip`
+- [ ] No compilation errors in Maven output
+- [ ] No missing dependency errors
+
+**Red flag**: A successful `npm run build` but failed `mvn clean install` usually means the `pom.xml` frontend-maven-plugin config is out of sync or a Java backend issue — check Maven output carefully.
+
+---
+
+## 17. Post-Deployment Checks
+
+### Deployment
+
+```bash
+docker exec bmc-helix-innovation-studio bash -c "cd /workspace/sample-app && mvn clean install -Pdeploy -DskipTests"
+```
+
+- [ ] Deployment completes — look for `Final Status:Deployed` in Maven output
+- [ ] No `401 Unauthorized` errors (check `developerUserName`/`developerPassword` in root `pom.xml`)
+- [ ] No `Connection refused` errors (check `webUrl` in root `pom.xml` and server availability)
+- [ ] Note the deployment tracking URI from the output for status monitoring
+
+### Browser Cache Clearing (Mandatory)
+
+- [ ] Hard refresh performed: `Cmd+Shift+R` (Mac) / `Ctrl+Shift+R` (Windows/Linux)
+- [ ] If component still not visible, right-click refresh button > **"Empty Cache and Hard Reload"** (with DevTools open)
+- [ ] If still stale, logout of BMC Helix > clear all browser data for the domain → login again
+
+**Red flag**: 90% of "my deployed component doesn't show up" issues are solved by cache clearing.
+
+### View Designer Verification
+
+- [ ] Component appears in the View Designer component palette under the correct **group** name
+- [ ] Component displays the correct **icon** and **display name**
+- [ ] Component can be **dragged onto the canvas** without errors
+- [ ] Design preview renders correctly (the design template HTML displays)
+- [ ] No errors in browser console (F12 > Console tab) when placing the component
+
+### Property Inspector Verification
+
+- [ ] Right-clicking or selecting the placed component opens the property inspector
+- [ ] **All custom properties** appear as controls with correct labels and tooltips
+- [ ] **Standard properties** section appears (Hidden, CSS Classes, Available on devices)
+- [ ] Property values can be typed/toggled and the design preview reflects changes
+- [ ] Changing the `name` property updates the component label in the canvas tree
+- [ ] **Save the view** — verify no validation errors block the save
+
+### Runtime Verification
+
+After saving the view, open it in runtime mode:
+
+- [ ] Component renders correctly — no blank white box or missing template
+- [ ] All visual elements match the runtime template and styles
+- [ ] Interactive elements work (buttons, inputs, dropdowns respond to user actions)
+- [ ] No JavaScript errors in the browser console
+- [ ] No failed network requests in the Network tab (F12 > Network)
+- [ ] If component fetches data via API, verify correct API calls are made and data displays
+
+### Property and Action Wiring Verification
+
+- [ ] **Hidden property**: Set `Hidden` to `true` in the property inspector; component disappears at runtime
+- [ ] **Set Property action**: Create a button with a "Set Property" action targeting this component; property updates at runtime
+- [ ] **Expression evaluation**: If properties have `enableExpressionEvaluation: true`, test with an expression (e.g., referencing another component's output)
+- [ ] **Data dictionary**: Open the expression builder; verify component properties appear under the component's name for use in expressions
+
+### API Integration Verification (If Applicable)
+
+- [ ] API calls use `POST` for DataPage queries (not `GET`)
+- [ ] `X-Requested-By: XMLHttpRequest` header is present on all requests (check Network tab)
+- [ ] `Content-Type: application/json` header is set
+- [ ] API responses return expected data structure (`data` array for DataPage)
+- [ ] Error states handled gracefully — show user-friendly messages, not raw error objects
+- [ ] Loading indicators display during async operations
+- [ ] Empty state displays when no data is returned
+
+### Cross-Browser / Device Check (If Time Permits)
+
+- [ ] Component renders in Chrome, Firefox, and Edge
+- [ ] If `Available on devices` is configured, component hides/shows correctly on mobile vs desktop viewports
+- [ ] No horizontal scroll overflow or layout breakage at narrow widths
+
+---
+
+## 18. Post-Deployment Common Failures
+
+| Symptom | Likely Cause | Fix |
+|---------|-------------|-----|
+| Component not in View Designer palette | Missing from `index.ts` export or main module imports | Add export and import, rebuild and redeploy |
+| Component in palette but drag fails | Registration module constructor error | Check browser console; fix registration code |
+| `ɵmod undefined` error in console | AOT compilation didn't process the registration module | Check Module naming, static metadata in decorators, registration wiring (Section 13) |
+| Design preview blank | Design component template error or missing `standalone: true` | Check design `.html` and component decorator |
+| Property inspector empty | `setInspectorConfig` not called or returns malformed config | Verify design model constructor calls `sandbox.updateInspectorConfig(...)` |
+| Runtime shows blank box | Runtime component throws on init | Check browser console; verify `super.ngOnInit()` is called |
+| "Set Property" action has no effect | `setProperty` missing case or missing `notifyPropertyChanged` | Add case in switch, ensure `notifyPropertyChanged` is called |
+| Component not in expression builder | `setCommonDataDictionary` not called in design model | Add data dictionary setup in design model constructor |
+| 405 Method Not Allowed on API call | Using GET instead of POST for DataPage | Switch to `POST /api/rx/application/datapage` |
+| Component shows after deploy but old version | Browser cache serving stale bundle | Hard refresh + logout/login |
+| View save fails with validation error | `validateStandardProps` not called or custom validation too strict | Check `validate` method in design model |
+| Component in manifest JSON but not in View Designer | Component type in `com-mycompany-sample-app.json` but missing from compiled JS chunks | Docker bind mount stale sync — `index.ts` or main module edits didn't propagate to container. Verify with `grep` on the built JS, then apply edits directly inside the container via `docker exec` and rebuild. See Section 15 and Section 16 "Compiled JS Bundle Verification". |
+| Template parse error: `Incomplete block` | Unescaped `@` character in HTML template (e.g., email addresses) | Replace `@` with `&#64;` in template HTML |
+| API returns ERROR 12095 | DateTime field uses ISO 8601 instead of epoch millis | See Java Build & Deploy checklist — AR System Platform Quirks |
+| API returns ERROR 307 on record create | Required field missing (usually Status/Description) or attachment before record | Set field 7 (Status) and field 8 (Description) explicitly |
+| Processing stuck at 0% | Relying on Rules to fire repeatedly for batch processing | Rules fire once per event — inline the processing loop in the service |
+
+---
+
+## 19. Cross-Checklist References
+
+For issues that span both frontend and backend, also consult the **BMC Helix Java Process Activity — Build & Deploy Checklist** (`bmc-helix-java-build-deploy-checklist.mdc`), especially:
+
+- **AR System Platform Quirks** — DateTime format, transaction annotations, required fields, attachment ordering, rule behavior
+- **OSGi ClassNotFoundException** — Third-party library embedding with `Embed-Transitive=true`
+- **AR System Error Code Quick Reference** — ERROR 307, 930, 8790, 12004, 12095
+- **Build Optimization Tips** — `-PskipUICodeGeneration` for backend-only changes
