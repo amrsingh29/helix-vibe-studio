@@ -15,3 +15,7 @@ sdk/com.bmc.arsys.rx.sdk-25.4.00/
 login_get_token.py
 call_assistant_api.py
 call_assistant_api_stream.py
+
+# Large SDK zip files (exceed GitHub 100MB limit)
+*.sdk-*.zip
+com.bmc.arsys.rx.sdk-*.zip
