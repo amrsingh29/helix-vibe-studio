@@ -1,0 +1,198 @@
+<!-- @generated
+ @context Card grid / table with rail, search, facet pills, view toggle, ADAPT-friendly tokens.
+ @decisions @if/@for control flow; native table for sortable columns; focusable cards for keyboard parity with hover.
+ @references cookbook/02-ui-view-components.md, .cursor/rules/bmc-ux-adapt-ui-components.md
+ @modified 2026-03-20 -->
+<div class="cv-root" [class.cv-root--hidden]="isHidden" [attr.data-view]="viewMode">
+  @if (showCategoryRail) {
+    <nav class="cv-rail" [attr.aria-label]="humanizeField(categoryFieldEffective)">
+      <button
+        type="button"
+        class="cv-rail__btn"
+        [class.cv-rail__btn--active]="selectedCategory === 'all'"
+        (click)="pickCategory('all')"
+      >
+        All
+      </button>
+      @for (cat of categoryChoices(); track cat) {
+        <button
+          type="button"
+          class="cv-rail__btn"
+          [class.cv-rail__btn--active]="selectedCategory === cat"
+          (click)="pickCategory(cat)"
+        >
+          {{ cat }}
+        </button>
+      }
+    </nav>
+  }
+
+  <div class="cv-main">
+    <header class="cv-toolbar">
+      <div class="cv-toolbar__search">
+        <label class="cv-sr-only" for="cv-search-input">Search visible fields</label>
+        <input
+          id="cv-search-input"
+          type="search"
+          class="cv-input"
+          [value]="searchQuery"
+          (input)="onSearchInput($any($event.target).value)"
+          placeholder="Search name or description…"
+          autocomplete="off"
+        />
+      </div>
+
+      @if (showFacetRail) {
+        <div
+          class="cv-facets"
+          role="group"
+          [attr.aria-label]="humanizeField(facetFieldKey)"
+        >
+          <button
+            type="button"
+            class="cv-pill"
+            [class.cv-pill--active]="selectedFacet === 'all'"
+            (click)="pickFacet('all')"
+          >
+            All
+          </button>
+          @for (opt of facetChoices(); track opt) {
+            <button
+              type="button"
+              class="cv-pill"
+              [class.cv-pill--active]="selectedFacet === opt"
+              (click)="pickFacet(opt)"
+            >
+              {{ opt }}
+            </button>
+          }
+        </div>
+      }
+
+      <div class="cv-view-toggle" role="group" aria-label="View layout">
+        <button
+          adapt-button
+          type="tertiary"
+          icon-only
+          size="small"
+          class="cv-toggle-btn"
+          [class.cv-toggle-btn--active]="viewMode === 'card'"
+          [attr.aria-pressed]="viewMode === 'card'"
+          (click)="setView('card')"
+          title="Card grid"
+        >
+          <i class="d-icon-layout_tile_grid" aria-hidden="true"></i>
+          <span class="cv-sr-only">Card grid</span>
+        </button>
+        <button
+          adapt-button
+          type="tertiary"
+          icon-only
+          size="small"
+          class="cv-toggle-btn"
+          [class.cv-toggle-btn--active]="viewMode === 'table'"
+          [attr.aria-pressed]="viewMode === 'table'"
+          (click)="setView('table')"
+          title="Table"
+        >
+          <i class="d-icon-list" aria-hidden="true"></i>
+          <span class="cv-sr-only">Table</span>
+        </button>
+      </div>
+    </header>
+
+    @if (displayRows.length === 0) {
+      <p class="cv-empty" role="status">No records match the current filters.</p>
+    } @else if (viewMode === 'card') {
+      <div class="cv-grid" role="list">
+        @for (row of displayRows; track $index) {
+          <article class="cv-card" role="listitem">
+            @if (facetFieldKey && fields.includes(facetFieldKey)) {
+              <div class="cv-card__badge">
+                <span
+                  adapt-badge
+                  [type]="badgeTypeFor(displayValue(row, facetFieldKey))"
+                  class="cv-card__badge-inner"
+                >
+                  {{ displayValue(row, facetFieldKey) }}
+                </span>
+              </div>
+            }
+
+            @if (primaryTitleKey(); as pk) {
+              <h3 class="cv-card__title">{{ displayValue(row, pk) }}</h3>
+            }
+
+            <div class="cv-card__fields">
+              @for (key of fields; track key) {
+                @if (key !== facetFieldKey && key !== primaryTitleKey()) {
+                  <div
+                    class="cv-card__field"
+                    [class.cv-card__field--desc]="isDescriptionField(key)"
+                    [class.cv-card__field--price]="isPriceField(key)"
+                  >
+                    <span class="cv-card__field-label">{{ humanizeField(key) }}</span>
+                    <span class="cv-card__field-value">{{ displayValue(row, key) }}</span>
+                  </div>
+                }
+              }
+            </div>
+
+            <button
+              adapt-button
+              type="primary"
+              class="cv-card__action"
+              [attr.aria-label]="actionAriaLabel(row)"
+              (click)="onRowAction(row)"
+            >
+              {{ state?.buttonLabel || 'Action' }}
+            </button>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="cv-table-wrap">
+        <table class="cv-table">
+          <thead>
+            <tr>
+              @for (col of fields; track col) {
+                <th scope="col" [attr.aria-sort]="ariaSortFor(col)">
+                  <button type="button" class="cv-th-btn" (click)="toggleSort(col)">
+                    {{ humanizeField(col) }}
+                    @if (sortIndicator(col) === 'asc') {
+                      <span class="cv-sort" aria-hidden="true">▲</span>
+                    }
+                    @if (sortIndicator(col) === 'desc') {
+                      <span class="cv-sort" aria-hidden="true">▼</span>
+                    }
+                  </button>
+                </th>
+              }
+              <th scope="col" class="cv-table__actions">{{ state?.buttonLabel || 'Action' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of displayRows; track $index) {
+              <tr>
+                @for (col of fields; track col) {
+                  <td>{{ displayValue(row, col) }}</td>
+                }
+                <td class="cv-table__actions">
+                  <button
+                    adapt-button
+                    type="secondary"
+                    size="small"
+                    [attr.aria-label]="actionAriaLabel(row)"
+                    (click)="onRowAction(row)"
+                  >
+                    {{ state?.buttonLabel || 'Action' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

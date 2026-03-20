@@ -1,0 +1,17 @@
+/**
+ * @generated
+ * @context Styles for design-time catalog preview.
+ * @decisions Uses platform background token for theme consistency.
+ * @references cookbook/02-ui-view-components.md
+ * @modified 2026-03-20
+ */
+
+.cv-design-hint {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.35rem;
+  border: 1px dashed var(--color-border, rgba(128, 128, 128, 0.45));
+  background: var(--color-background-elevated, var(--color-background, transparent));
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
