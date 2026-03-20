@@ -1,10 +1,86 @@
 /**
  * @generated
  * @context Theme-token layout for catalog (rail, toolbar, grid, table) — layout from sample, colors from ADAPT/CSS variables.
- * @decisions Root width/min-width:0 + overflow-safe flex; rail stacks as horizontal strip below 992px; card grid uses auto-fill/minmax to follow container width; sidebar rail capped with ellipsis on labels.
+ * @decisions :host inline-size container queries so narrow Helix columns reflow rail (not only viewport @media); horizontal scroll strip + pill rail buttons; compact toolbar stack; @media fallback for older browsers.
  * @references .cursor/rules/bmc-ux-adapt-ui-components.md
  * @modified 2026-03-21
  */
+
+// @context Stack rail + horizontal category scroller when the component is narrow (split view / phone), even if the browser viewport is wide.
+@mixin catalog-narrow-layout {
+  .cv-root {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-rail {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 auto;
+    padding: 0 0 0.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .cv-rail__btn {
+    flex: 0 0 auto;
+    max-width: none;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    border-radius: 999px;
+    border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
+    background: transparent;
+  }
+
+  .cv-rail__btn--active {
+    font-weight: 600;
+    border-color: var(--color-action, #0b5fff);
+    background: var(--color-background-selected, rgba(11, 95, 255, 0.12));
+  }
+}
+
+// @context Full-width search row then facets + toggle on very narrow hosts.
+@mixin catalog-compact-toolbar {
+  .cv-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-toolbar__search {
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  .cv-facets {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .cv-view-toggle {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+}
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  container-type: inline-size;
+  container-name: catalog-host;
+}
 
 .cv-sr-only {
   position: absolute;
@@ -29,26 +105,6 @@
   box-sizing: border-box;
   color: var(--color-text, inherit);
   background: var(--color-background, transparent);
-}
-
-// @context Below lg: stack rail above main as a full-width chip row so grid gets full horizontal space (tablet / narrow shells).
-@media (max-width: 991px) {
-  .cv-root {
-    flex-direction: column;
-  }
-
-  .cv-rail {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    min-width: 0;
-    width: 100%;
-    max-width: 100%;
-    padding-right: 0;
-    padding-bottom: 0.5rem;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-  }
 }
 
 .cv-root--hidden {
@@ -352,3 +408,19 @@
   width: 1%;
 }
 
+// @context Overrides base rail/toolbar rules — must load last so narrow layouts win over default sidebar styles.
+@container catalog-host (max-width: 991px) {
+  @include catalog-narrow-layout;
+}
+
+@container catalog-host (max-width: 600px) {
+  @include catalog-compact-toolbar;
+}
+
+@media (max-width: 991px) {
+  @include catalog-narrow-layout;
+}
+
+@media (max-width: 600px) {
+  @include catalog-compact-toolbar;
+}
