@@ -10,7 +10,7 @@ Configurable catalog for **BMC Helix Innovation Studio** coded applications. **S
 |------|-----------|
 | **Record definition** | Inspector **Record definition** picker (`RxDefinitionPicker`) — lists definitions from the environment (nothing hard-coded to a single bundle). |
 | **Data** | **Records** and **Fields** are **expressions** (e.g. datapage output and a string array). Runtime does not depend on the picker; the picker documents intent and drives validation hints. |
-| **Layout** | Category rail: **narrow sidebar (max 12rem) on wide viewports**; below **992px** it becomes a **full-width horizontal chip row** above the main area so the grid uses the full width. Toolbar: search, facet pills (optional), view toggle (grid / list). Root uses `width: 100%` / `min-width: 0` to avoid clipping in Helix shells. |
+| **Layout** | Category rail: **sidebar (max 12rem)** when the component is wide; when the **host is ≤991px** wide (container query + viewport fallback), a **horizontal scrollable pill strip** above the main area. **≤600px** host: stacked toolbar (full-width search, facets, Grid/Table). Root uses `width: 100%` / `min-width: 0` to avoid clipping in Helix shells. |
 | **Card view** | **Fluid CSS grid** (`auto-fill` + `minmax`) so column count follows **container** width, not only viewport breakpoints. Badge for facet field; title wraps; description fields line-clamped; price-like fields emphasized. |
 | **Table** | Same columns as `Fields` + action column; sortable headers (asc/desc); sort applies to the **filtered** set. |
 | **Action** | Primary button per card/row calls `notifyPropertyChanged('catalogActionRecord', row)` and `notifyPropertyChanged('catalogActionRecordJson', JSON.stringify(row))` for downstream wiring. |
