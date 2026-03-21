@@ -42,7 +42,7 @@ If you did wire it but still don’t see it: confirm the deploy succeeded, hard-
 | Runtime | `runtime/*` (component, html, scss) |
 | i18n | `localized-strings.json` (merge keys into your bundle’s `localized-strings.json`) |
 
-**Component id** (must stay aligned): `com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-runtime-actions-demo` — used as registration `type`, `@RxViewComponent({ name })`, and component `selector` (aligned with [catalog-view](../catalog-view/catalog-view-registration.module.ts)).
+**Component id** (must stay aligned): `com-amar-helix-vibe-studio-runtime-actions-demo` — used as registration `type`, `@RxViewComponent({ name })`, and component `selector` (aligned with [catalog-view](../catalog-view/catalog-view-registration.module.ts)).
 
 ## Wire into a real coded application
 

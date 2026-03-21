@@ -31,6 +31,10 @@ The platform is template-driven. All business logic (mappings, rules, dedup stra
 | Auth | JWT + role-based middleware |
 | Testing | Vitest + React Testing Library |
 
+### BMC Helix Innovation Studio delivery
+
+For the **coded application** in this repo, the product UI is implemented with **Angular 18 + SCSS** as standalone view components (`data-ingest-admin/`, `data-ingest-user/`) registered via `RxViewComponentRegistryService`. Visual parity targets [`dataingest-v2.html`](dataingest-v2.html); see [`README.md`](README.md) for copy/deploy steps. Backend remains **Java @Action** + record APIs per platform—not Node/PostgreSQL.
+
 ---
 
 ## Design System

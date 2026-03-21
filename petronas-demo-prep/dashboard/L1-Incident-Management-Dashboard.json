@@ -1,0 +1,4882 @@
+{
+  "__elements": {},
+  "__inputs": [],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 2,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "My Work — Hero KPIs",
+      "type": "row"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [
+            {
+              "title": "View ALL",
+              "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAStatusNumber=All&var-SLAApplied=All&var-Priority=All"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pending"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 101,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "titleSize": 18
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "$$hashKey": "object:21",
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "$$hashKey": "object:22",
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:12",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "calculatedFieldList": [
+                {
+                  "$$hashKey": "object:253",
+                  "hideCalculatedField": true,
+                  "selectionAlias": "CF1",
+                  "selectionCalculatedFieldName": "",
+                  "selectionCalculatedFields": "Select Calculated Field",
+                  "selectionQuery": "Select Column Name"
+                }
+              ],
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "$$hashKey": "object:247",
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "$$hashKey": "object:249",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaCalculatedFields": [],
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "$$hashKey": "object:245",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "$$hashKey": "object:243",
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "$$hashKey": "object:251",
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "$$hashKey": "object:241",
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "$$hashKey": "object:281",
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "c91a2af2-234c-0ff1-b055-ec51c49d00cb",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:228",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCurrentDate() __time__, -- DUMMY Just to select timeseries format\n`HPD:Help Desk`.`Status` AS __metric__,\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS COUNT\n\nFROM \n`HPD:Help Desk`\nWHERE \n`HPD:Help Desk`.`Company`In ($company)\nand (`HPD:Help Desk`.`Status` < 'Resolved')\nand `HPD:Help Desk`.`Assignee Login ID` In ($User)\nGroup By \n`HPD:Help Desk`.`Status`\n "
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "All Assigned To Me",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "C1": "Open Incidents"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "BMC Helix",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "C1"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Open incidents"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 1
+      },
+      "id": 102,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": false,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": true,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS 'C1'\nFROM\n`HPD:Help Desk` \nWHERE \n(\n`HPD:Help Desk`.`Status` != 'Closed' \nOr `HPD:Help Desk`.`Status` = 'Cancelled' \nOr `HPD:Help Desk`.`Status` = 'Resolved' \n\n)\n\nLIMIT 100",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "HPD:Help Desk -> Status",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Field",
+                    "formAlias": "F1"
+                  },
+                  "logicalOperator": "Or",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "NotEqual",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Value",
+                    "fieldValue": "Closed"
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                },
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "HPD:Help Desk -> Status",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Field",
+                    "formAlias": "F1"
+                  },
+                  "logicalOperator": "Or",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Value",
+                    "fieldValue": "Cancelled"
+                  },
+                  "showGroup": true,
+                  "splitGroup": false,
+                  "valueLength": 9
+                },
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "HPD:Help Desk -> Status",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Field",
+                    "formAlias": "F1"
+                  },
+                  "logicalOperator": "And",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Value",
+                    "fieldValue": "Resolved"
+                  },
+                  "showGroup": true,
+                  "splitGroup": false,
+                  "valueLength": 8
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "HPD:Help Desk -> Entry ID",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Count"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "HPD:Help Desk",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "1a3de612-bcc1-fcc3-9e20-fa71d55799ef",
+            "header": {
+              "headerList": [
+                {
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Incident Number`) AS C1\nFROM\n`HPD:Help Desk` \nWHERE \n((`HPD:Help Desk`.`Status` < 'Resolved') \nand (`HPD:Help Desk`.`Company` In ($company)) \nand (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \nand (`HPD:Help Desk`.`Priority` In ($priority)) \nand (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\n)\n"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Open",
+      "type": "stat"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "C1"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "light-green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Unassigned incidents"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 1
+      },
+      "id": 103,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": false,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": true,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS 'C1'\nFROM\n`HPD:Help Desk` \nWHERE \n(\n`HPD:Help Desk`.`Assignee` IS NULL \n\n)\n\nLIMIT 100",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "HPD:Help Desk -> Assignee",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Field",
+                    "formAlias": "F1"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Is",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Value",
+                    "fieldValue": "NULL"
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "HPD:Help Desk -> Entry ID",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Count"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "HPD:Help Desk",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "aa32868d-469f-18fc-4a8d-7b4c674ae7be",
+            "header": {
+              "headerList": [
+                {
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Incident Number`) AS C1\nFROM\n`HPD:Help Desk` \nWHERE \n(\n(`HPD:Help Desk`.`Assignee` IS NULL) \n and (`HPD:Help Desk`.`Company` In ($company)) \n and (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \n and (`HPD:Help Desk`.`Priority` In ($priority)) \n and (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\n)\n"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Unassigned",
+      "type": "stat"
+    },
+    {
+      "datasource": "BMC Helix",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "semi-dark-red",
+                "value": ""
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "C1"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "light-green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Overdue incidents"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 1
+      },
+      "id": 104,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "G1",
+                  "selectionColumnName": "Field -> HPD:Help Desk -> SLM Status",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": false,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": true,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "SELECT DISTINCT\n`Data Visualization Definition`.`Name` AS 'C1',\nSUM(`FB:History`.`Value`) AS 'C2'\nFROM\n`Data Visualization Definition` \nINNER JOIN (`FB:History` )\nON (`Data Visualization Definition`.`GUID` = `FB:History`.`Variable System ID`)\nWHERE \n(\n`Data Visualization Definition`.`Name` = 'HPD:INC:Overdue_Incidents' \n\n)\n\nLIMIT 100",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Data Visualization Definition -> Name",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Field",
+                    "formAlias": "F1"
+                  },
+                  "logicalOperator": "And",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "F1",
+                    "fieldType": "Value",
+                    "fieldValue": "HPD:INC:Overdue_Incidents"
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "useOneEqualOne": false,
+                  "valueLength": 20
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Data Visualization Definition -> Name",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                },
+                {
+                  "selectionAlias": "C2",
+                  "selectionColumnName": "FB:History -> Value",
+                  "selectionSrcAlias": "F2",
+                  "selectionType": "Sum"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Data Visualization Definition",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                },
+                {
+                  "sourceAlias": "F2",
+                  "sourceFormName": "FB:History",
+                  "sourceHideClause": true,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Data Visualization Definition -> GUID",
+                        "fieldSourceAlias": "F1",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "FB:History -> Variable System ID",
+                        "fieldSourceAlias": "F2",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Inner Join"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "e3dae93d-fb0f-99ae-9731-c71f342832b0",
+            "header": {
+              "headerList": [
+                {
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\r\nCOUNT(`HPD:Help Desk`.`Incident Number`) AS C1\r\nFROM\r\n`HPD:Help Desk` \r\nWHERE \r\n(\r\n(`HPD:Help Desk`.`SLM Status` > 'Service Target Warning') \r\nand (`HPD:Help Desk`.`Status` < 'Resolved')\r\nand (`HPD:Help Desk`.`Company` In ($company)) \r\nand (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \r\nand (`HPD:Help Desk`.`Priority` In ($priority)) \r\nand (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\r\n\r\n)\r\n"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Overdue",
+      "type": "stat"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "Displays the count of the open major incidents where the MI flag is set to ‘Yes’ ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 1
+      },
+      "id": 105,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:12",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "calculatedFieldList": [
+                {
+                  "$$hashKey": "object:484",
+                  "hideCalculatedField": true,
+                  "selectionAlias": "CF1",
+                  "selectionCalculatedFieldName": "",
+                  "selectionCalculatedFields": "Select Calculated Field",
+                  "selectionQuery": "Select Column Name"
+                }
+              ],
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "$$hashKey": "object:478",
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "$$hashKey": "object:480",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldAlias": null,
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "leftQualification": null,
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldAlias": null,
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "rightQualification": null,
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaCalculatedFields": [],
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "$$hashKey": "object:476",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldAlias": null,
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "leftQualification": null,
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldAlias": null,
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "rightQualification": null,
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "$$hashKey": "object:474",
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "$$hashKey": "object:482",
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "$$hashKey": "object:472",
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "$$hashKey": "object:533",
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldAlias": null,
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "leftQualification": null,
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldAlias": null,
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "rightQualification": null,
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "da7d88e3-5f72-dfd2-d10f-de3144b93659",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:462",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Incident Number`) AS Count\nFROM `HPD:Help Desk`\nWHERE \n`HPD:Help Desk`.`Company`In ($company)\nand `HPD:Help Desk`.`Major Incident` = 'Yes'\nand `HPD:Help Desk`.`Status`< 'Resolved'\n"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Open Major Incidents",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Count": "Open Major Incidents"
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "BMC Helix",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "days"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "C1"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Avg open incidents age"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 15,
+        "y": 1
+      },
+      "id": 106,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": true,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "SELECT DISTINCT\n`Select Column Name` AS C1\nFROM\n`Select Form Name` \n\nLIMIT 100",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "05b439e3-e592-b608-8289-7ac5094a52dc",
+            "header": {
+              "headerList": [
+                {
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT\r\nAVG(DATEDIFF('day',`HPD:Help Desk`.`Submit Date`, CurrentDate())) AS C1\r\nFROM `HPD:Help Desk`\r\nWHERE `HPD:Help Desk`.`Status` < 'Resolved' \r\nand `HPD:Help Desk`.`Company` In ($company) \r\nand (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \r\nand (`HPD:Help Desk`.`Priority` In ($priority)) \r\nand (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\r\n\r\n"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Avg open incidents age",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 2,
+      "panels": [],
+      "title": "My Work — Distribution",
+      "type": "row"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [],
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "In Progress"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=In Progress&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=All"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Assigned"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ead35e",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=Assigned&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=All"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pending"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Detail",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=Pending&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=All"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 6
+      },
+      "id": 200,
+      "options": {
+        "displayLabels": [
+          "value",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent",
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "$$hashKey": "object:21",
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "$$hashKey": "object:22",
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:12",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "calculatedFieldList": [
+                {
+                  "$$hashKey": "object:253",
+                  "hideCalculatedField": true,
+                  "selectionAlias": "CF1",
+                  "selectionCalculatedFieldName": "",
+                  "selectionCalculatedFields": "Select Calculated Field",
+                  "selectionQuery": "Select Column Name"
+                }
+              ],
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "$$hashKey": "object:247",
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "$$hashKey": "object:249",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaCalculatedFields": [],
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "$$hashKey": "object:245",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "$$hashKey": "object:243",
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "$$hashKey": "object:251",
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "$$hashKey": "object:241",
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "$$hashKey": "object:281",
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "TimeSeries",
+            "guid": "c91a2af2-234c-0ff1-b055-ec51c49d00cb",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:228",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCurrentDate() __time__, -- DUMMY Just to select timeseries format\n`HPD:Help Desk`.`Status` AS __metric__,\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS COUNT\n\nFROM \n`HPD:Help Desk`\nWHERE \n`HPD:Help Desk`.`Company`In ($company)\nand (`HPD:Help Desk`.`Status` < 'Resolved')\nand `HPD:Help Desk`.`Assignee Login ID` In ($User)\nGroup By \n`HPD:Help Desk`.`Status`\n "
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "My Assigned Incidents per Status",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "C1": "Open Incidents"
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": "BMC Helix",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [],
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Already Missed"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAStatusNumber=5&var-SLAApplied=YES&var-Priority=All"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Close to Target"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAStatusNumber=9&var-SLAApplied=YES&var-Priority=All"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ongoing"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAStatusNumber=1&var-SLAApplied=YES&var-Priority=All"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Stopped Clock"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Deatails",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAStatusNumber=2&var-SLAApplied=YES&var-Priority=All"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 6
+      },
+      "id": 201,
+      "options": {
+        "displayLabels": [
+          "value",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent",
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.6",
+      "repeat": "SLA_Status",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:6",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "TimeSeries",
+            "guid": "0d702f2a-8163-60a6-3915-096aebf2fea7",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:63",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "Select CurrentDate() __time__,\r\nT1.SLAStatus __metric__,\r\nT1.COUNT\r\n\r\nfrom (SELECT DISTINCT\r\n  CurrentDate() __time__,-- DUMMY for timeseries format\r\n    CASE\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` IN ('5', '7') THEN 'Already Missed'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 9 THEN 'Close to Target'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 2 THEN 'Stopped Clock'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 1 THEN 'Ongoing'\r\n   END AS __metric__,\r\n   CASE\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` IN ('5', '7') THEN 'Already Missed'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 9 THEN 'Close to Target'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 2 THEN 'Stopped Clock'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 1 THEN 'Ongoing'\r\n   END AS SLAStatus,\r\n   \r\n   COUNT(DISTINCT(`HPD:Help Desk`.`Incident Number`)) AS COUNT\r\n   \r\nFROM `AR System Schema`.`HPD:Help Desk`\r\nLEFT OUTER JOIN `AR System Schema`.`SLM:Measurement`\r\nON (\r\n   `HPD:Help Desk`.`Incident Number` = `SLM:Measurement`.`ApplicationUserFriendlyID`\r\n)\r\nWHERE\r\n `HPD:Help Desk`.`Assignee Login ID` In ($User) \r\n and (`HPD:Help Desk`.`Status` < 'Resolved')\r\nGROUP BY __metric__) T1\r\nwhere SLAStatus IS NOT NULL"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Resolution SLA Status",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Measurement_Status": "Measurement Status",
+              "ServiceTarget_Title": "Service Target Title"
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [],
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Critical"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=Critical"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "High"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=High"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Medium"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Detail",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=Medium"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Low"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Details",
+                    "url": "/d/L1_Incident_Management/l1-incident-management-dashboard?&var-Status=All&var-SLAApplied=All&var-SLAStatusNumber=All&var-Priority=Low"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "id": 202,
+      "options": {
+        "displayLabels": [
+          "value",
+          "name"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent",
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.2.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "$$hashKey": "object:21",
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "$$hashKey": "object:22",
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:12",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "calculatedFieldList": [
+                {
+                  "$$hashKey": "object:253",
+                  "hideCalculatedField": true,
+                  "selectionAlias": "CF1",
+                  "selectionCalculatedFieldName": "",
+                  "selectionCalculatedFields": "Select Calculated Field",
+                  "selectionQuery": "Select Column Name"
+                }
+              ],
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "$$hashKey": "object:247",
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "$$hashKey": "object:249",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaCalculatedFields": [],
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "$$hashKey": "object:245",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "$$hashKey": "object:243",
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "$$hashKey": "object:251",
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "$$hashKey": "object:241",
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "$$hashKey": "object:281",
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "TimeSeries",
+            "guid": "c91a2af2-234c-0ff1-b055-ec51c49d00cb",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:228",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCurrentDate() __time__, -- DUMMY Just to select timeseries format\n`HPD:Help Desk`.`Priority` AS __metric__,\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS COUNT\nFROM \n`HPD:Help Desk`\nWHERE \n`HPD:Help Desk`.`Company`In ($company)\nand (`HPD:Help Desk`.`Status` < 'Resolved')\nand `HPD:Help Desk`.`Assignee Login ID` In ($User)\nGroup By \n`HPD:Help Desk`.`Priority`"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "My Assigned Incidents Per Priority",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "C1": "Open Incidents"
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 3,
+      "panels": [],
+      "title": "Incident Trend",
+      "type": "row"
+    },
+    {
+      "datasource": "BMC Helix",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Number of Incidents",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OpenInc"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Open"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byValue",
+              "options": {
+                "op": "gte",
+                "reducer": "allIsZero",
+                "value": 0
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": false
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byValue",
+              "options": {
+                "op": "gte",
+                "reducer": "allIsNull",
+                "value": 0
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 301,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:43",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:44",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:45",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:46",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:47",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:48",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "G1",
+                  "selectionColumnName": "Field -> HPD:Help Desk -> Submit Date",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": false,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": true,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS 'Entry_ID',\n`HPD:Help Desk`.`Submit Date` AS 'time'\nFROM\n`HPD:Help Desk` \nGROUP BY\n`HPD:Help Desk`.`Submit Date`\n\nLIMIT 100",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "Entry ID",
+                  "selectionColumnName": "HPD:Help Desk -> Entry ID",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Count"
+                },
+                {
+                  "selectionAlias": "time",
+                  "selectionColumnName": "HPD:Help Desk -> Submit Date",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "HPD:Help Desk",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "TimeSeries",
+            "guid": "74ddc66e-aa99-7020-2208-73f89cfeb628",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:65",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT\r\nCOUNT(`HPD:Help Desk`.`Incident Number`) AS Created,\r\nSUM(CASE WHEN `HPD:Help Desk`.`Status` < 'Resolved' THEN 1 ELSE 0 END) AS OpenInc,\r\nSUM(CASE WHEN `HPD:Help Desk`.`Priority`='Critical' THEN 1 ELSE 0 END) AS Critical,\r\nSUM(CASE WHEN `HPD:Help Desk`.`Status` = 'Resolved' THEN 1 ELSE 0 END) AS Resolved,\r\nSUM(CASE WHEN `HPD:Help Desk`.`Re-Opened Date`!= null THEN 1 ELSE 0 END) AS Reopened,\r\nSUM(CASE WHEN `HPD:Help Desk`.`Status` = 'Closed' THEN 1 ELSE 0 END) AS Closed,\r\nDate(`HPD:Help Desk`.`Submit Date`) AS __time__\r\nFROM\r\n`HPD:Help Desk`\r\nWHERE (`HPD:Help Desk`.`Company` In ($company)) \r\nand (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \r\nand (`HPD:Help Desk`.`Priority` In ($priority)) \r\nand (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\r\nGROUP BY\r\nDATE(`HPD:Help Desk`.`Submit Date`)\r\nOrder By Date(`HPD:Help Desk`.`Submit Date`) ASC"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Incident trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 4,
+      "panels": [],
+      "title": "Workload by Group",
+      "type": "row"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AssignedGroup"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "View Incident Details",
+                    "url": "/dashboards/d/INC_DETAILS/incident-details-drill-through?viewPanel=6&var-AssignedGroup=${__data.fields.AssignedGroup}&var-customstatus=${__data.fields.status}&${__url_time_range}&${__all_variables}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 401,
+      "options": {
+        "chartConfig": {
+          "barDataField": "status",
+          "barDecimalField": 0,
+          "categoryAxisField": "AssignedGroup",
+          "categoryAxisType": "string",
+          "colorList": [],
+          "valueAxisField": "numberofinc",
+          "valueAxisUnit": "short"
+        },
+        "chartOptions": {
+          "barWidth": 0.91,
+          "orientation": false,
+          "stackOrder": "asc",
+          "stacked": false,
+          "xTickLabelRotation": 0
+        },
+        "customColor": {
+          "colorList": []
+        },
+        "dataLabelsOption": {
+          "alignment": "top",
+          "enable": false,
+          "enableTotal": false,
+          "fontSize": 12,
+          "labelColor": "#FFF",
+          "totalFontSize": 15
+        },
+        "legendOptions": {
+          "alignment": "center",
+          "enable": true,
+          "position": "bottom"
+        },
+        "tooltipOptions": {
+          "shared": false
+        }
+      },
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:16",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:17",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:18",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:19",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:20",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:21",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "G1",
+                  "selectionColumnName": "Field -> HPD:Help Desk -> Priority",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                },
+                {
+                  "selectionAlias": "G2",
+                  "selectionColumnName": "Field -> HPD:Help Desk -> Status",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": false,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": true,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "SELECT DISTINCT\nCOUNT(`HPD:Help Desk`.`Entry ID`) AS C1,\n`HPD:Help Desk`.`Priority` AS C2,\n`HPD:Help Desk`.`Status` AS C3\nFROM\n`HPD:Help Desk` \nGROUP BY\n`HPD:Help Desk`.`Priority`,\n`HPD:Help Desk`.`Status`\n\nLIMIT 100",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "HPD:Help Desk -> Entry ID",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Count"
+                },
+                {
+                  "selectionAlias": "C2",
+                  "selectionColumnName": "HPD:Help Desk -> Priority",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                },
+                {
+                  "selectionAlias": "C3",
+                  "selectionColumnName": "HPD:Help Desk -> Status",
+                  "selectionSrcAlias": "F1",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "HPD:Help Desk",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "5a8847fe-95c6-286c-a105-4edc32f9c40c",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:33",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT\r\n(CASE WHEN `HPD:Help Desk`.`Assigned Group` != Null THEN `HPD:Help Desk`.`Assigned Group` ELSE 'Unassigned' END) AS AssignedGroup,\r\nCOUNT(1) AS numberofinc,\r\nCASE WHEN `HPD:Help Desk`.`Status`< 'Resolved' THEN 'Open' ELSE  'Resolved' END as status\r\nFROM\r\n`HPD:Help Desk`\r\nWHERE (`HPD:Help Desk`.`Company` In ($company)) \r\nand (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \r\nand (`HPD:Help Desk`.`Priority` In ($priority)) \r\nand (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\r\nGROUP BY\r\nAssignedGroup, status\r\nORDER BY AssignedGroup, status"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Incidents status by assigned group",
+      "type": "bmc-ade-bar"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "Displays the count of the open incidents by Top 5 support groups ",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 402,
+      "options": {
+        "chartConfig": {
+          "barDataField": "AssignedGroup",
+          "barDecimalField": 0,
+          "categoryAxisField": "AssignedGroup",
+          "categoryAxisLabel": "Support Group",
+          "categoryAxisType": "string",
+          "colorList": [],
+          "valueAxisField": "numberofinc",
+          "valueAxisLabel": "No. of Open Incidents",
+          "valueAxisUnit": "short"
+        },
+        "chartOptions": {
+          "orientation": true,
+          "stackOrder": "asc",
+          "stacked": false
+        },
+        "customColor": {
+          "colorList": []
+        },
+        "dataLabelsOption": {
+          "alignment": "center",
+          "enable": false
+        },
+        "legendOptions": {
+          "alignment": "center",
+          "enable": true,
+          "position": "bottom"
+        },
+        "tooltipOptions": {
+          "shared": false
+        }
+      },
+      "pluginVersion": "7.5.6",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:12",
+              "sourceType": "entity",
+              "text": "Entity",
+              "value": "entity"
+            },
+            {
+              "$$hashKey": "object:13",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "calculatedFieldList": [
+                {
+                  "$$hashKey": "object:1264",
+                  "hideCalculatedField": true,
+                  "selectionAlias": "CF1",
+                  "selectionCalculatedFieldName": "",
+                  "selectionCalculatedFields": "Select Calculated Field",
+                  "selectionQuery": "Select Column Name"
+                }
+              ],
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "$$hashKey": "object:1258",
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "$$hashKey": "object:1260",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldAlias": null,
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "leftQualification": null,
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldAlias": null,
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "rightQualification": null,
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaCalculatedFields": [],
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "$$hashKey": "object:1256",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldAlias": null,
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "leftQualification": null,
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldAlias": null,
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "rightQualification": null,
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "$$hashKey": "object:1254",
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "$$hashKey": "object:1262",
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "$$hashKey": "object:1252",
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "$$hashKey": "object:1313",
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldAlias": null,
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "leftQualification": null,
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldAlias": null,
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "rightQualification": null,
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "359098be-94d1-ae75-64f3-1b8b02da21e5",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:1242",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT\r\n(CASE WHEN `HPD:Help Desk`.`Assigned Group` != Null THEN `HPD:Help Desk`.`Assigned Group` ELSE 'Unassigned' END) AS AssignedGroup,\r\nCOUNT(1) AS numberofinc\r\nFROM\r\n`HPD:Help Desk`\r\nWHERE \r\n (`HPD:Help Desk`.`Company` In ($company))\r\nand `HPD:Help Desk`.`Status`< 'Resolved'\r\nGROUP BY\r\nAssignedGroup\r\nORDER BY numberofinc DESC\r\nLIMIT 10"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top 10 Support Groups with Most Open Incidents",
+      "type": "bmc-ade-bar"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 5,
+      "panels": [],
+      "title": "Priority × Status & My Incidents",
+      "type": "row"
+    },
+    {
+      "datasource": "BMC Helix",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "cellDisplayMode": "none"
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "View Incident Details",
+              "url": "/dashboards/d/INC_DETAILS/incident-details-drill-through?viewPanel=4&var-Status=$(Status)&var-priority=$(Priority)&${__url_time_range}&${__all_variables}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 33
+      },
+      "id": 501,
+      "options": {
+        "aggregatorType": "Sum",
+        "categories": {
+          "categoriesValueFilter": {
+            "Status": [
+              "Cancelled"
+            ]
+          },
+          "categoriesValues": {
+            "Assigned_Group": {
+              "isShow": false,
+              "values": [
+                "Service Desk",
+                "CA Support 2",
+                "AU Support 1",
+                "Custom HR Bangalore Support 2"
+              ]
+            },
+            "C1": {
+              "isShow": false,
+              "values": [
+                1
+              ]
+            },
+            "Priority": {
+              "isShow": false,
+              "values": [
+                "Medium",
+                "Low",
+                "High"
+              ]
+            },
+            "Status": {
+              "isShow": false,
+              "values": [
+                "Pending",
+                "Assigned"
+              ]
+            }
+          },
+          "colOrder": "key_a_to_z",
+          "columnsCategories": [
+            {
+              "displayName": "Priority",
+              "name": "Priority"
+            }
+          ],
+          "filterable": {},
+          "rowOrder": "key_a_to_z",
+          "rowsCategories": [
+            {
+              "displayName": "Status",
+              "name": "Status"
+            }
+          ],
+          "valueCategory": [
+            {
+              "displayName": "C1",
+              "name": "C1"
+            }
+          ]
+        },
+        "colMax": 60,
+        "columnTextAlign": "left",
+        "rowMax": 100,
+        "rowTextAlign": "left",
+        "showColumnPercentage": false,
+        "showRowPercentage": false,
+        "showSubTotals": false,
+        "showTotals": false,
+        "subTotalColumn": 0,
+        "valueTextAlign": "right"
+      },
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:16",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:17",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:18",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:19",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:20",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:21",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "groupByField": [
+                {
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASCENDING"
+                }
+              ],
+              "sourceList": [
+                {
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "77f3071a-a610-2e31-3aab-17d6eee968e4",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:96",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\nCount(`HPD:Help Desk`.`Incident Number`) AS C1,\n`HPD:Help Desk`.`Status` AS Status,\n`HPD:Help Desk`.`Priority` AS Priority,\n`HPD:Help Desk`.`Assigned Group` AS Assigned_Group\nFROM\n`HPD:Help Desk` \nWHERE (`HPD:Help Desk`.`Company` In ($company)) \nand (`HPD:Help Desk`.`Assigned Group` In ($AssignedGroup)) \nand (`HPD:Help Desk`.`Priority` In ($priority)) \nand (`HPD:Help Desk`.`Status` < 'Resolved')\nand (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\nGroup By Status,Priority,Assigned_Group\n"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "Open incidents cross-tab - Priority and Status",
+      "type": "bmc-ade-cross-tab"
+    },
+    {
+      "datasource": "BMC Helix",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Incident"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Incident",
+                    "url": "https://helixone-demo-smartit.onbmc.com/smartit/app/#/incident/${__data.fields.InstanceId}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 33
+      },
+      "id": 502,
+      "options": {
+        "bgColor": "yellow",
+        "columnStyles": {
+          "styles": []
+        },
+        "isBgColorDefault": false,
+        "isDataPositioningStyleDefault": true,
+        "labelColor": "text",
+        "recordSection": {
+          "entry": {},
+          "sections": [
+            {
+              "sectionFields": [
+                {
+                  "fieldName": "C1",
+                  "label": "Incident",
+                  "value": "Incident"
+                },
+                {
+                  "fieldName": "Status",
+                  "label": "Status",
+                  "value": "Status"
+                },
+                {
+                  "fieldName": "Priority",
+                  "label": "Priority",
+                  "value": "Priority"
+                },
+                {
+                  "fieldName": "SLAStatus",
+                  "label": "SLAStatus",
+                  "value": "SLAStatus"
+                }
+              ],
+              "title": ""
+            }
+          ]
+        },
+        "repeatCount": 25,
+        "showMultipleRecords": false,
+        "widthPercent": 25
+      },
+      "pluginVersion": "9.2.2",
+      "repeat": "MySLA",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": "BMC Helix",
+          "queryType": [
+            {
+              "$$hashKey": "object:21",
+              "label": "Form",
+              "value": "Form"
+            },
+            {
+              "$$hashKey": "object:22",
+              "label": "SQL",
+              "value": "SQL"
+            }
+          ],
+          "queryTypeOptions": [
+            {
+              "$$hashKey": "object:7",
+              "sourceType": "event",
+              "text": "Events",
+              "value": "event"
+            },
+            {
+              "$$hashKey": "object:8",
+              "sourceType": "metric",
+              "text": "Metric",
+              "value": "metric"
+            },
+            {
+              "$$hashKey": "object:9",
+              "sourceType": "cloudsecurity",
+              "text": "CloudSecurity",
+              "value": "cloudsecurity"
+            },
+            {
+              "$$hashKey": "object:10",
+              "sourceType": "log",
+              "text": "Log",
+              "value": "log"
+            },
+            {
+              "$$hashKey": "object:11",
+              "sourceType": "remedy",
+              "text": "Service Management",
+              "value": "remedy"
+            },
+            {
+              "$$hashKey": "object:12",
+              "sourceType": "itsm-insights",
+              "text": "ITSM Insights",
+              "value": "itsm-insights"
+            }
+          ],
+          "refId": "A",
+          "sourceQuery": {
+            "dstType": "SERVER",
+            "form": {
+              "calculatedFieldList": [
+                {
+                  "$$hashKey": "object:253",
+                  "hideCalculatedField": true,
+                  "selectionAlias": "CF1",
+                  "selectionCalculatedFieldName": "",
+                  "selectionCalculatedFields": "Select Calculated Field",
+                  "selectionQuery": "Select Column Name"
+                }
+              ],
+              "dstType": "SERVER",
+              "groupByField": [
+                {
+                  "$$hashKey": "object:247",
+                  "selectionAlias": "",
+                  "selectionColumnName": "",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "havingQualification": [
+                {
+                  "$$hashKey": "object:249",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "hideGroupBy": true,
+              "hideHaving": true,
+              "hideQual": true,
+              "hideSort": true,
+              "maxEntries": 100,
+              "meta": {
+                "hideJson": false,
+                "hideSql": false,
+                "metaCalculatedFields": [],
+                "metaColumnNames": [],
+                "metaFullFormNames": [],
+                "metaGroupNames": [],
+                "rawJson": "",
+                "rawSql": "",
+                "syncToSql": false
+              },
+              "outputNumMatches": true,
+              "qualification": [
+                {
+                  "$$hashKey": "object:245",
+                  "collapseGroup": true,
+                  "groupCounter": 1,
+                  "groupHierarchy": "G1",
+                  "leftOperand": {
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Field"
+                  },
+                  "logicalOperator": "",
+                  "qualificationType": "Relational",
+                  "relationalOperator": "Equal",
+                  "rightOperand": {
+                    "fieldDataType": "CHAR",
+                    "fieldName": "Select Column Name",
+                    "fieldSourceAlias": "",
+                    "fieldType": "Value",
+                    "fieldValue": ""
+                  },
+                  "showGroup": false,
+                  "splitGroup": false,
+                  "valueLength": 7
+                }
+              ],
+              "selectionList": [
+                {
+                  "$$hashKey": "object:243",
+                  "selectionAlias": "C1",
+                  "selectionColumnName": "Select Column Name",
+                  "selectionSrcAlias": "",
+                  "selectionType": "Field"
+                }
+              ],
+              "sortField": [
+                {
+                  "$$hashKey": "object:251",
+                  "sortOperand": {
+                    "selectionAlias": "",
+                    "selectionColumnName": "Select Column Name",
+                    "selectionSrcAlias": "",
+                    "selectionType": "Field"
+                  },
+                  "sortOrder": "ASC"
+                }
+              ],
+              "sourceList": [
+                {
+                  "$$hashKey": "object:241",
+                  "sourceAlias": "F1",
+                  "sourceFormName": "Select Form Name",
+                  "sourceHideClause": false,
+                  "sourceJoinClause": [
+                    {
+                      "$$hashKey": "object:281",
+                      "collapseGroup": true,
+                      "groupCounter": 1,
+                      "groupHierarchy": "G1",
+                      "leftOperand": {
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field"
+                      },
+                      "logicalOperator": "",
+                      "qualificationType": "Relational",
+                      "relationalOperator": "Equal",
+                      "rightOperand": {
+                        "fieldDataType": "CHAR",
+                        "fieldName": "Select Column Name",
+                        "fieldSourceAlias": "",
+                        "fieldType": "Field",
+                        "fieldValue": ""
+                      },
+                      "showGroup": false,
+                      "splitGroup": false
+                    }
+                  ],
+                  "sourceType": "Form"
+                }
+              ],
+              "startEntry": 0,
+              "useAlias": true,
+              "useDistinct": true,
+              "useLocale": true,
+              "useOneEqualOne": false
+            },
+            "formatAs": "Table",
+            "guid": "c91a2af2-234c-0ff1-b055-ec51c49d00cb",
+            "header": {
+              "collapseHeader": true,
+              "headerList": [
+                {
+                  "$$hashKey": "object:228",
+                  "arKey": "date_format",
+                  "arType": "body",
+                  "collapseHeader": false,
+                  "dataType": "string",
+                  "text": "Date Format",
+                  "value": "DD/MM/YYYY"
+                }
+              ],
+              "hideHeader": true
+            },
+            "queryType": "SQL",
+            "rawQuery": "SELECT DISTINCT\r\n`HPD:Help Desk`.`Incident Number` AS C1,\r\n`HPD:Help Desk`.`Status` As Status,\r\n`HPD:Help Desk`.`Priority` As Priority,\r\n`HPD:Help Desk`.`InstanceId`,\r\n`SLM:Measurement`.`MeasurementStatus` as SLAStatusNumber,\r\n    CASE\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` IN ('5', '7') THEN 'Already Missed'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 9 THEN 'Close to Target'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 2 THEN 'Stopped Clock'\r\n      WHEN `SLM:Measurement`.`MeasurementStatus` = 1 THEN 'Ongoing'\r\n      ELSE 'SLA Not Applied'\r\n   END AS SLAStatus\r\n\r\nFROM \r\n`HPD:Help Desk`\r\nLEFT OUTER JOIN `AR System Schema`.`SLM:Measurement`\r\nON (\r\n   `HPD:Help Desk`.`Incident Number` = `SLM:Measurement`.`ApplicationUserFriendlyID`\r\n)\r\nWHERE \r\n`HPD:Help Desk`.`Company`In ($company)\r\nand (`HPD:Help Desk`.`Status` In ($Status))\r\nand (`HPD:Help Desk`.`Priority` In ($Priority))\r\nand `HPD:Help Desk`.`Assignee Login ID` In ($User)\r\nand `HPD:Help Desk`.`Incident Number` In ($MySLA)\r\nand (`SLM:Measurement`.`MeasurementStatus` IS NULL Or `SLM:Measurement`.`MeasurementStatus`In($SLAStatusNumber))"
+          },
+          "sourceType": "remedy"
+        }
+      ],
+      "title": "My Incidents — Take Action",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "C1": "Incident"
+            }
+          }
+        }
+      ],
+      "type": "bmc-record-details"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "L1",
+    "Incident",
+    "Demo"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": "",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Company` FROM `HPD:Help Desk` where (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000) LIMIT 1000\"}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Company",
+        "multi": false,
+        "name": "company",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Company` FROM `HPD:Help Desk` where (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000) LIMIT 1000\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": "",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT `HPD:Help Desk`.`Assigned Group` FROM `HPD:Help Desk` where (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\"}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Assigned group",
+        "multi": false,
+        "name": "AssignedGroup",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT `HPD:Help Desk`.`Assigned Group` FROM `HPD:Help Desk` where (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000)\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": "",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Priority` FROM `HPD:Help Desk` where (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000) LIMIT 1000\"}",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Priority",
+        "multi": false,
+        "name": "priority",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Priority` FROM `HPD:Help Desk` where (`HPD:Help Desk`.`Submit Date` >= $__from/1000 and `HPD:Help Desk`.`Submit Date` <= $__to/1000) LIMIT 1000\"}",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Liam",
+          "value": "Liam"
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT DISTINCT SUBSTR(${__user.login},0,CHARINDEX('@',${__user.login},0)-2) FROM `HPD:Help Desk`\"}",
+        "hide": 2,
+        "includeAll": false,
+        "label": "User",
+        "multi": false,
+        "name": "User",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT DISTINCT SUBSTR(${__user.login},0,CHARINDEX('@',${__user.login},0)-2) FROM `HPD:Help Desk`\"}",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Status` FROM `HPD:Help Desk` where `HPD:Help Desk`.`Status` <'Resolved'  LIMIT 500\"}",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Status",
+        "multi": true,
+        "name": "Status",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Status` FROM `HPD:Help Desk` where `HPD:Help Desk`.`Status` <'Resolved'  LIMIT 500\"}",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 2,
+        "includeAll": true,
+        "label": "SLAStatusNumber",
+        "multi": true,
+        "name": "SLAStatusNumber",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "7",
+            "value": "7"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "9",
+            "value": "9"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          }
+        ],
+        "query": "0,1,2,3,4,5,6,7,8,9,10",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "BMC Helix",
+        "definition": " remedy,{\"sql\": \"Select T1.`Incident Number` FROM (SELECT DISTINCT `HPD:Help Desk`.`Incident Number`,Case WHEN `SLM:Measurement`.`MeasurementStatus` IS NOT NULL THEN 'YES' ELSE 'NO' END FROM `HPD:Help Desk` LEFT OUTER JOIN `AR System Schema`.`SLM:Measurement` ON (`HPD:Help Desk`.`Incident Number` =`SLM:Measurement`.`ApplicationUserFriendlyID`) WHERE (`HPD:Help Desk`.`Status` In ($Status)) and (`HPD:Help Desk`.`Priority` In ($Priority))and `HPD:Help Desk`.`Assignee Login ID` In ($User) and ((Case WHEN `SLM:Measurement`.`MeasurementStatus` IS NOT NULL THEN 'YES' ELSE 'NO' END) IN ($SLAApplied))and (`SLM:Measurement`.`MeasurementStatus` IS NULL Or `SLM:Measurement`.`MeasurementStatus`In($SLAStatusNumber)))T1\"}",
+        "hide": 2,
+        "includeAll": true,
+        "label": "MySLA",
+        "multi": true,
+        "name": "MySLA",
+        "options": [],
+        "query": " remedy,{\"sql\": \"Select T1.`Incident Number` FROM (SELECT DISTINCT `HPD:Help Desk`.`Incident Number`,Case WHEN `SLM:Measurement`.`MeasurementStatus` IS NOT NULL THEN 'YES' ELSE 'NO' END FROM `HPD:Help Desk` LEFT OUTER JOIN `AR System Schema`.`SLM:Measurement` ON (`HPD:Help Desk`.`Incident Number` =`SLM:Measurement`.`ApplicationUserFriendlyID`) WHERE (`HPD:Help Desk`.`Status` In ($Status)) and (`HPD:Help Desk`.`Priority` In ($Priority))and `HPD:Help Desk`.`Assignee Login ID` In ($User) and ((Case WHEN `SLM:Measurement`.`MeasurementStatus` IS NOT NULL THEN 'YES' ELSE 'NO' END) IN ($SLAApplied))and (`SLM:Measurement`.`MeasurementStatus` IS NULL Or `SLM:Measurement`.`MeasurementStatus`In($SLAStatusNumber)))T1\"}",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT DISTINCT Case WHEN `SLM:Measurement`.`MeasurementStatus` IS NOT NULL THEN 'YES' ELSE 'NO' END FROM `AR System Schema`.`HPD:Help Desk` LEFT OUTER JOIN `AR System Schema`.`SLM:Measurement` ON (  `HPD:Help Desk`.`Incident Number` = `SLM:Measurement`.`ApplicationUserFriendlyID`) WHERE `HPD:Help Desk`.`Assignee Login ID` In ($User) and (`HPD:Help Desk`.`Status` < 'Resolved')\"}",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "SLAApplied",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT DISTINCT Case WHEN `SLM:Measurement`.`MeasurementStatus` IS NOT NULL THEN 'YES' ELSE 'NO' END FROM `AR System Schema`.`HPD:Help Desk` LEFT OUTER JOIN `AR System Schema`.`SLM:Measurement` ON (  `HPD:Help Desk`.`Incident Number` = `SLM:Measurement`.`ApplicationUserFriendlyID`) WHERE `HPD:Help Desk`.`Assignee Login ID` In ($User) and (`HPD:Help Desk`.`Status` < 'Resolved')\"}",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "Medium"
+          ],
+          "value": [
+            "Medium"
+          ]
+        },
+        "datasource": "BMC Helix",
+        "definition": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Priority` FROM `HPD:Help Desk` where `HPD:Help Desk`.`Status` <'Resolved'  LIMIT 500\"}",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Priority",
+        "multi": true,
+        "name": "Priority",
+        "options": [],
+        "query": "remedy,{\"sql\": \"SELECT DISTINCT `HPD:Help Desk`.`Priority` FROM `HPD:Help Desk` where `HPD:Help Desk`.`Status` <'Resolved'  LIMIT 500\"}",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "L1 Incident Management Dashboard",
+  "uid": "L1_Incident_Management",
+  "version": 1,
+  "weekStart": ""
+}

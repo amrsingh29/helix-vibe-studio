@@ -18,10 +18,11 @@ import { RuntimeActionsDemoComponent } from './runtime/runtime-actions-demo.comp
 export class RuntimeActionsDemoRegistrationModule {
   constructor(rxViewComponentRegistryService: RxViewComponentRegistryService) {
     rxViewComponentRegistryService.register({
-      type: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-runtime-actions-demo',
+      type: 'com-amar-helix-vibe-studio-runtime-actions-demo',
       name: 'Runtime actions demo',
       group: 'Helix Vibe Studio',
       icon: 'flash_on',
+      availableInBundles: ['com.amar.helix-vibe-studio'],
       component: RuntimeActionsDemoComponent,
       designComponent: RuntimeActionsDemoDesignComponent,
       designComponentModel: RuntimeActionsDemoDesignModel,

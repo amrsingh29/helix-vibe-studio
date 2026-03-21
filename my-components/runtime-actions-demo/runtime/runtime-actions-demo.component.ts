@@ -21,14 +21,14 @@ import { IRuntimeActionsDemoProperties } from '../runtime-actions-demo.types';
 
 @Component({
   standalone: true,
-  selector: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-runtime-actions-demo',
+  selector: 'com-amar-helix-vibe-studio-runtime-actions-demo',
   styleUrls: ['./runtime-actions-demo.component.scss'],
   templateUrl: './runtime-actions-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, AdaptButtonModule, TranslateModule]
 })
 @RxViewComponent({
-  name: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-runtime-actions-demo'
+  name: 'com-amar-helix-vibe-studio-runtime-actions-demo'
 })
 export class RuntimeActionsDemoComponent extends BaseViewComponent implements OnInit, IViewComponent {
   @Input()

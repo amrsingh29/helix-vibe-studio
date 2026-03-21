@@ -1,0 +1,21 @@
+/**
+ * @generated
+ * @context Design-time hint panel for DataIngest Admin VC.
+ * @decisions Compact padding; neutral border.
+ * @modified 2026-03-21
+ */
+.dia-design-hint {
+  padding: 12px 14px;
+  border: 1px dashed var(--color-border, #e4e4e0);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+
+  p {
+    margin: 0 0 8px;
+  }
+
+  code {
+    font-size: 11px;
+  }
+}

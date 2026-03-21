@@ -1,7 +1,7 @@
 /**
  * @generated
  * @context Registers active cart standalone view with Innovation Studio palette.
- * @decisions No expression evaluation on pickers and field id strings; localizable titles/messages only where needed.
+ * @decisions NgModule imports include standalone VC classes for AOT/federation; availableInBundles matches other Helix Vibe Studio VCs.
  * @references cookbook/02-ui-view-components.md
  * @modified 2026-03-21
  */
@@ -11,14 +11,21 @@ import { CartViewDesignComponent } from './design/cart-view-design.component';
 import { CartViewDesignModel } from './design/cart-view-design.model';
 import { CartViewComponent } from './runtime/cart-view.component';
 
-@NgModule()
+/**
+ * Standalone runtime + design components must be in `imports` so the federated bundle retains them
+ * and `RxViewComponentRegistryService.register()` runs at load (avoids "Unknown component" in View Designer).
+ */
+@NgModule({
+  imports: [CartViewComponent, CartViewDesignComponent]
+})
 export class CartViewRegistrationModule {
   constructor(rxViewComponentRegistryService: RxViewComponentRegistryService) {
     rxViewComponentRegistryService.register({
-      type: 'com-example-sample-application-cart-view',
+      type: 'com-amar-helix-vibe-studio-cart-view',
       name: 'Active cart (grouped)',
-      group: 'Reusable UI',
+      group: 'Helix Vibe Studio',
       icon: 'shopping_cart',
+      availableInBundles: ['com.amar.helix-vibe-studio'],
       component: CartViewComponent,
       designComponent: CartViewDesignComponent,
       designComponentModel: CartViewDesignModel,

@@ -87,7 +87,7 @@ The design model defines:
 
 ```typescript
 rxViewComponentRegistryService.register({
-  type: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-<component-name>',
+  type: 'com-amar-helix-vibe-studio-<component-name>',
   name: 'Display Name',
   group: 'Helix Vibe Studio',
   icon: 'qrcode',  // must be from Adapt icon set
@@ -215,9 +215,11 @@ docker exec bmc-helix-innovation-studio bash -c \
 
 ### Learning 2: Unknown Component Error
 
-**Symptom:** Opening a view showed: `Unknown component: com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-pizza-ordering`
+**Symptom:** Opening a view showed: `Unknown component: com-amar-helix-vibe-studio-pizza-ordering` (or a similar type string).
 
-**Cause:** The application's JavaScript module failed to load or failed during initialization. If any part of the module throws during load (e.g. a bad import), the whole module fails, no components get registered, and the shell reports "Unknown component" for every component in that app.
+**Causes:**
+1. **Wrong component type string** — The registration `type`, `@RxViewComponent({ name })`, and `selector` must match the platform convention: one Angular `prefix` plus the kebab-case component name (e.g. `com-amar-helix-vibe-studio-catalog-view`). A duplicated prefix such as `com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-catalog-view` will not resolve.
+2. **Module failed to load** — If any part of the application module throws during load (e.g. a bad import), the whole module fails, no components get registered, and the shell reports "Unknown component" for every component in that app.
 
 **Diagnostics:**
 - **Network tab:** Check that `com-amar-helix-vibe-studio-remote-entry.js` and `libs_com-amar-helix-vibe-studio_src_index_ts_*.js` return 200 (not 404)

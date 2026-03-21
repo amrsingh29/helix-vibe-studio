@@ -1,11 +1,14 @@
 /**
  * @generated
- * @context Configurable catalog/grid-table view: records + field keys from any record definition; optional built-in Data Page load (Record grid–style); card slot mapping; optional RxOpenViewActionService target view + viewParams.
- * @decisions useBuiltInRecordQuery uses RxRecordInstanceDataPageService (cookbook/04); slot field IDs optional — fallback to previous heuristics when empty.
+ * @context Configurable catalog/grid-table view: records + field keys from any record definition; optional built-in Data Page load (Record grid–style); card slot mapping; optional RxOpenViewActionService target view + viewParams; actionSinks for designer-configured rx-actions on row button.
+ * @decisions useBuiltInRecordQuery uses RxRecordInstanceDataPageService (cookbook/04); slot field IDs optional — fallback to previous heuristics when empty; no IAction[] on config — chains live under ActionSink in view tree.
  * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, docs/request-view-component-with-record-definition.md
  * @modified 2026-03-21
  */
-import { IRxStandardProps } from '@helix/platform/view/api';
+import { IActionSinkConfig, IRxStandardProps } from '@helix/platform/view/api';
+
+/** Row shape emitted on action click — field ids (strings) to cell values. */
+export type CatalogActionRecordRow = Record<string, unknown>;
 
 export type CatalogViewMode = 'card' | 'table';
 
@@ -14,6 +17,8 @@ export type CatalogViewMode = 'card' | 'table';
  */
 export interface ICatalogViewProperties extends IRxStandardProps {
   name: string;
+  /** Populated at runtime from view model — { name, guid } per registration actionSinks (e.g. buttonActions). */
+  actionSinks?: IActionSinkConfig[];
   /**
    * When true, loads rows via Record Instance Data Page using recordDefinitionName — no Records expression or canvas Data Page.
    * Omitted/false keeps legacy: view input, then Records expression.
@@ -105,4 +110,16 @@ export interface ICatalogViewProperties extends IRxStandardProps {
    * Example: `379,536870913` or `productId,name`
    */
   viewParamFieldKeysCsv?: string;
+
+  /**
+   * **Output** (runtime): selected row when the user clicks the action button — keys are record field ids (strings).
+   * Use in **Edit actions** → **Launch process** input expressions, e.g. bind a process input to a field value.
+   */
+  catalogActionRecord?: CatalogActionRecordRow;
+  /** **Output**: same row as JSON string (for debugging or string-only pipelines). */
+  catalogActionRecordJson?: string;
+  /**
+   * **Output**: shallow map of field id → value (same entries as {@link catalogActionRecord}); convenient for bracket expressions.
+   */
+  catalogFieldValuesByFieldId?: CatalogActionRecordRow;
 }

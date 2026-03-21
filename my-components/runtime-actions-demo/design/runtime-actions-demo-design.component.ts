@@ -10,7 +10,7 @@ import { RuntimeActionsDemoDesignModel } from './runtime-actions-demo-design.mod
 
 @Component({
   standalone: true,
-  selector: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-runtime-actions-demo-design',
+  selector: 'com-amar-helix-vibe-studio-runtime-actions-demo-design',
   styleUrls: ['./runtime-actions-demo-design.component.scss'],
   templateUrl: './runtime-actions-demo-design.component.html'
 })

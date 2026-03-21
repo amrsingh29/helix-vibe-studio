@@ -1,0 +1,609 @@
+<!-- @generated
+ @context Admin shell + pages + wizard modal matching dataingest-v2.html Admin flows.
+ @decisions @if/@for control flow; translate keys from localized-strings.json.
+ @modified 2026-03-21 -->
+<div class="dia-root" [class.dia-root--hidden]="isHidden">
+  <div class="dia-app">
+    <aside class="dia-sidebar">
+      <div class="dia-brand">
+        <div class="dia-brand-mark">
+          <div class="dia-brand-icon">DI</div>
+          <div>
+            <div class="dia-brand-name">DataIngest</div>
+            <div class="dia-brand-ver">v2.0</div>
+          </div>
+        </div>
+      </div>
+      <nav class="dia-nav">
+        <div class="dia-nav-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.nav.manage' | translate }}</div>
+        <button
+          type="button"
+          class="dia-nav-item"
+          [class.dia-nav-item--active]="curPage === 'admin-dash'"
+          (click)="nav('admin-dash')"
+        >
+          <span class="dia-nav-dot">⬡</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.nav.dashboard' | translate }}
+        </button>
+        <button type="button" class="dia-nav-item" [class.dia-nav-item--active]="curPage === 'admin-templates'" (click)="nav('admin-templates')">
+          <span class="dia-nav-dot">◫</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.nav.templates' | translate }}
+          <span class="dia-nav-badge">{{ templates.length }}</span>
+        </button>
+        <button type="button" class="dia-nav-item" [class.dia-nav-item--active]="curPage === 'admin-submissions'" (click)="nav('admin-submissions')">
+          <span class="dia-nav-dot">↓</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.nav.submissions' | translate }}
+          <span class="dia-nav-badge">{{ submissions.length }}</span>
+        </button>
+        <div class="dia-nav-lbl dia-nav-lbl--spaced">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.nav.configure' | translate }}</div>
+        <button type="button" class="dia-nav-item" [class.dia-nav-item--active]="curPage === 'admin-settings'" (click)="nav('admin-settings')">
+          <span class="dia-nav-dot">◌</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.nav.settings' | translate }}
+        </button>
+      </nav>
+      <div class="dia-sidebar-foot">
+        <div class="dia-user-chip">
+          <div class="dia-avatar">{{ sidebarInitials }}</div>
+          <div>
+            <div class="dia-user-name">{{ sidebarUserName }}</div>
+            <div class="dia-user-role">{{ sidebarUserRole }}</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dia-main">
+      <div class="dia-topbar">
+        <div class="dia-page-title">{{ pageTitles[curPage] | translate }}</div>
+        <div class="dia-topbar-right">
+          @if (curPage === 'admin-dash' || curPage === 'admin-templates') {
+            <button type="button" class="dia-btn dia-btn--primary" (click)="openWizard()">
+              {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.new-template' | translate }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="dia-content">
+        @if (curPage === 'admin-dash') {
+          <div class="dia-stats-row">
+            <div class="dia-stat-card dia-stat-card--hi">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.active-templates' | translate }}</div>
+              <div class="dia-stat-val">4</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.active-templates-sub' | translate }}</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.total-submissions' | translate }}</div>
+              <div class="dia-stat-val">79</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.month' | translate }}</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.success-rate' | translate }}</div>
+              <div class="dia-stat-val">91%</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.success-sub' | translate }}</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.active-users' | translate }}</div>
+              <div class="dia-stat-val">14</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.active-users-sub' | translate }}</div>
+            </div>
+          </div>
+          <div class="dia-dash-grid">
+            <div class="dia-card">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.recent-sub' | translate }}</div>
+                <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost" (click)="nav('admin-submissions')">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.view-all' | translate }}
+                </button>
+              </div>
+              <div class="dia-tbl-wrap">
+                <table class="dia-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.template' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.user' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.rows' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.status' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.when' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (s of submissions.slice(0, 4); track s.id) {
+                      <tr>
+                        <td><span class="dia-mono-muted">{{ s.id }}</span></td>
+                        <td>{{ s.tmpl }}</td>
+                        <td>{{ s.user }}</td>
+                        <td>{{ s.rows }}</td>
+                        <td>
+                          <span [class]="statusBadgeClass(s.status)"><span class="dia-dot"></span> {{ statusLabelKey(s.status) | translate }}</span>
+                        </td>
+                        <td class="dia-muted">{{ s.date }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="dia-card">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.dash.templates' | translate }}</div>
+                <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost" (click)="nav('admin-templates')">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.manage' | translate }}
+                </button>
+              </div>
+              <div class="dia-card-body dia-card-body--tight">
+                @for (t of templates; track t.id) {
+                  <button type="button" class="dia-template-row" (click)="nav('admin-templates')">
+                    <div class="dia-template-row-icon">{{ t.icon }}</div>
+                    <div class="dia-template-row-text">
+                      <div class="dia-template-row-name">{{ t.name }}</div>
+                      <div class="dia-template-row-meta">{{ t.cols }} cols · {{ t.subs }} submissions</div>
+                    </div>
+                    @if (t.status === 'published') {
+                      <span class="dia-badge dia-badge--green"><span class="dia-dot"></span> Live</span>
+                    } @else {
+                      <span class="dia-badge dia-badge--gray">Draft</span>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (curPage === 'admin-templates') {
+          <div class="dia-template-grid">
+            @for (t of templates; track t.id) {
+              <div class="dia-template-card">
+                <div class="dia-template-card-head">
+                  <div class="dia-template-card-icon">{{ t.icon }}</div>
+                  <div class="dia-template-card-meta">
+                    <div class="dia-template-card-title">{{ t.name }}</div>
+                    <div class="dia-template-card-sub">{{ t.cat }} · {{ t.cols }} columns</div>
+                  </div>
+                  @if (t.status === 'published') {
+                    <span class="dia-badge dia-badge--green"><span class="dia-dot"></span> Live</span>
+                  } @else {
+                    <span class="dia-badge dia-badge--gray">Draft</span>
+                  }
+                </div>
+                <p class="dia-template-card-desc">{{ t.desc }}</p>
+                <div class="dia-template-card-badges">
+                  <span class="dia-badge dia-badge--indigo">{{ t.cols }} columns</span>
+                  <span class="dia-badge dia-badge--gray">{{ t.subs }} submissions</span>
+                </div>
+                <div class="dia-divider"></div>
+                <div class="dia-template-card-actions">
+                  <button type="button" class="dia-btn dia-btn--sm" (click)="notify('com.amar.helix-vibe-studio.view-components.data-ingest-admin.toast.download-xlsx')">
+                    ↓ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.download' | translate }}
+                  </button>
+                  <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost" (click)="openWizard()">
+                    {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.edit' | translate }}
+                  </button>
+                  @if (t.status === 'draft') {
+                    <button type="button" class="dia-btn dia-btn--sm dia-btn--primary dia-push-right" (click)="notify('com.amar.helix-vibe-studio.view-components.data-ingest-admin.toast.published')">
+                      {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.publish' | translate }}
+                    </button>
+                  } @else {
+                    <button type="button" class="dia-btn dia-btn--sm dia-btn--warn dia-push-right" (click)="notify('com.amar.helix-vibe-studio.view-components.data-ingest-admin.toast.unpublished')">
+                      {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.unpublish' | translate }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (curPage === 'admin-submissions') {
+          <div class="dia-stats-row">
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.sub.total' | translate }}</div>
+              <div class="dia-stat-val">79</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.sub.ok' | translate }}</div>
+              <div class="dia-stat-val dia-stat-val--green">71</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.sub.partial' | translate }}</div>
+              <div class="dia-stat-val dia-stat-val--amber">6</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.sub.failed' | translate }}</div>
+              <div class="dia-stat-val dia-stat-val--red">2</div>
+            </div>
+          </div>
+          <div class="dia-card">
+            <div class="dia-card-header">
+              <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.sub.all' | translate }}</div>
+              <div class="dia-card-header-actions">
+                <input class="dia-search-input" type="search" [placeholder]="'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.search' | translate" />
+                <select class="dia-form-select dia-form-select--narrow">
+                  <option>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.sub.filter-all' | translate }}</option>
+                  @for (t of templates; track t.id) {
+                    <option>{{ t.name }}</option>
+                  }
+                </select>
+                <button type="button" class="dia-btn dia-btn--sm" (click)="notify('com.amar.helix-vibe-studio.view-components.data-ingest-admin.toast.export-csv')">
+                  ↓ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.export' | translate }}
+                </button>
+              </div>
+            </div>
+            <div class="dia-tbl-wrap">
+              <table class="dia-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.template' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.submitted-by' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.total-rows' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.errors' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.status' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.date' | translate }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (s of submissions; track s.id) {
+                    <tr>
+                      <td><span class="dia-mono-muted">{{ s.id }}</span></td>
+                      <td>{{ s.tmpl }}</td>
+                      <td>{{ s.user }}</td>
+                      <td>{{ s.rows }}</td>
+                      <td [class.dia-error-cell]="s.errs > 0" [class.dia-ok-cell]="s.errs === 0">{{ s.errs }}</td>
+                      <td>
+                        <span [class]="statusBadgeClass(s.status)"><span class="dia-dot"></span> {{ statusLabelKey(s.status) | translate }}</span>
+                      </td>
+                      <td class="dia-muted">{{ s.date }}</td>
+                      <td>
+                        <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost" (click)="notify('com.amar.helix-vibe-studio.view-components.data-ingest-admin.toast.sub-detail')">
+                          {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.view' | translate }}
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        @if (curPage === 'admin-settings') {
+          <div class="dia-settings">
+            <div class="dia-card">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.general' | translate }}</div>
+              </div>
+              <div class="dia-card-body">
+                <div class="dia-form-group">
+                  <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.platform-name' | translate }}</label>
+                  <input class="dia-form-input" type="text" [(ngModel)]="settingsPlatformName" />
+                </div>
+                <div class="dia-form-row">
+                  <div class="dia-form-group">
+                    <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.max-mb' | translate }}</label>
+                    <input class="dia-form-input" type="number" [(ngModel)]="settingsMaxMb" />
+                  </div>
+                  <div class="dia-form-group">
+                    <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.allowed' | translate }}</label>
+                    <input class="dia-form-input" type="text" [(ngModel)]="settingsAllowed" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dia-card">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.notifications' | translate }}</div>
+              </div>
+              <div class="dia-card-body dia-card-body--toggles">
+                <div class="dia-toggle-row">
+                  <div>
+                    <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.email-sub' | translate }}</div>
+                    <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.email-sub-d' | translate }}</div>
+                  </div>
+                  <button type="button" class="dia-tog" [class.dia-tog--on]="settingsEmail" (click)="settingsEmail = !settingsEmail"><span class="dia-tog-thumb"></span></button>
+                </div>
+                <div class="dia-toggle-row">
+                  <div>
+                    <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.notify-err' | translate }}</div>
+                    <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.notify-err-d' | translate }}</div>
+                  </div>
+                  <button type="button" class="dia-tog" [class.dia-tog--on]="settingsErr" (click)="settingsErr = !settingsErr"><span class="dia-tog-thumb"></span></button>
+                </div>
+                <div class="dia-toggle-row">
+                  <div>
+                    <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.digest' | translate }}</div>
+                    <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.set.digest-d' | translate }}</div>
+                  </div>
+                  <button type="button" class="dia-tog" [class.dia-tog--on]="settingsDigest" (click)="settingsDigest = !settingsDigest"><span class="dia-tog-thumb"></span></button>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="dia-btn dia-btn--primary" (click)="saveSettings()">
+              {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.save' | translate }}
+            </button>
+          </div>
+        }
+      </div>
+    </main>
+  </div>
+
+  @if (wizardOpen) {
+    <div class="dia-modal-bg" role="dialog" aria-modal="true">
+      <div class="dia-wizard">
+        <div class="dia-wizard-header">
+          <div class="dia-wizard-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.title' | translate }}</div>
+          <button type="button" class="dia-wizard-close" (click)="closeWizard()">×</button>
+        </div>
+        <div class="dia-wizard-body">
+          <div class="dia-wizard-steps">
+            @for (ws of wizardSteps; track $index; let i = $index) {
+              @if (i > 0) {
+                <div class="dia-wstep-connector" [class.dia-wstep-connector--done]="wizardStep > i"></div>
+              }
+              <button
+                type="button"
+                class="dia-wstep"
+                [class.dia-wstep--active]="wizardStep === i + 1"
+                [class.dia-wstep--done]="wizardStep > i + 1"
+                (click)="goWizardStep(i + 1)"
+              >
+                <span class="dia-wstep-num">{{ wizardStep > i + 1 ? '✓' : i + 1 }}</span>
+                <span class="dia-wstep-lbl">{{ ws.labelKey | translate }}</span>
+              </button>
+            }
+          </div>
+          <div class="dia-wizard-panel">
+            @if (wizardStep === 1) {
+              <div class="dia-wizard-panel-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.upload-title' | translate }}</div>
+              <p class="dia-wizard-panel-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.upload-desc' | translate }}</p>
+              <div class="dia-form-group">
+                <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.job-name' | translate }} <span class="dia-req">*</span></label>
+                <input class="dia-form-input" type="text" [(ngModel)]="wizardJobName" [placeholder]="'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.job-ph' | translate" />
+              </div>
+              <div class="dia-form-group">
+                <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.job-desc' | translate }}</label>
+                <input class="dia-form-input" type="text" [(ngModel)]="wizardJobDesc" />
+              </div>
+              <div class="dia-form-group">
+                <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.data-file' | translate }} <span class="dia-req">*</span></label>
+                <button type="button" class="dia-drop-zone" (click)="simulateWizardUpload()">
+                  <div class="dia-drop-icon">📄</div>
+                  <div class="dia-drop-title">{{ wizardFileName || ('com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.drop-hint' | translate) }}</div>
+                  <div class="dia-drop-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.drop-types' | translate }}</div>
+                </button>
+                @if (wizardFileName) {
+                  <div class="dia-file-chip">
+                    <span class="dia-file-chip-name">{{ wizardFileName }}</span>
+                    <button type="button" class="dia-file-chip-remove" (click)="wizardFileName = null">×</button>
+                  </div>
+                }
+              </div>
+              <div class="dia-callout">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.callout' | translate }}</div>
+            }
+
+            @if (wizardStep === 2) {
+              <div class="dia-wizard-panel-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.map-title' | translate }}</div>
+              <p class="dia-wizard-panel-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.map-desc' | translate }}</p>
+              <div class="dia-tabs">
+                <button type="button" class="dia-tab" [class.dia-tab--active]="wizardTab2 === 'mapping'" (click)="setWizardTab2('mapping')">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.tab-mapping' | translate }}
+                </button>
+                <button type="button" class="dia-tab" [class.dia-tab--active]="wizardTab2 === 'dup2'" (click)="setWizardTab2('dup2')">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.tab-dup' | translate }}
+                </button>
+                <button type="button" class="dia-tab" [class.dia-tab--active]="wizardTab2 === 'opts2'" (click)="setWizardTab2('opts2')">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.tab-opts' | translate }}
+                </button>
+              </div>
+              @if (wizardTab2 === 'mapping') {
+                <button type="button" class="dia-auto-map" (click)="autoMap()">⚡ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.auto-map' | translate }}</button>
+                <div class="dia-def-block">
+                  <div class="dia-def-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.definition' | translate }}</div>
+                  <div class="dia-radio-row">
+                    <label class="dia-radio-lbl"><input type="radio" name="defType" checked /> {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.rec' | translate }}</label>
+                    <label class="dia-radio-lbl"><input type="radio" name="defType" /> {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.assoc' | translate }}</label>
+                  </div>
+                  <select class="dia-form-select" [(ngModel)]="wizardSelectedTable">
+                    @for (t of dbTables; track t) {
+                      <option [value]="t">{{ t }}</option>
+                    }
+                  </select>
+                  <div class="dia-table-picker">
+                    <div class="dia-table-picker-bar">
+                      <button type="button" class="dia-btn dia-btn--sm dia-btn--inverse">All records</button>
+                      <input class="dia-search-input dia-search-input--grow" type="search" [(ngModel)]="tableSearch" [placeholder]="'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.search-tables' | translate" />
+                    </div>
+                    <div class="dia-table-list">
+                      <div class="dia-table-list-hdr">▼ Global</div>
+                      @for (t of filteredTables(); track t) {
+                        <button type="button" class="dia-table-list-item" [class.dia-table-list-item--sel]="wizardSelectedTable === t" (click)="selectTable(t)">{{ t }}</button>
+                      }
+                    </div>
+                  </div>
+                  <div class="dia-selected">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.selected' | translate }} <span>{{ wizardSelectedTable }}</span></div>
+                </div>
+                <div class="dia-divider"></div>
+                <div class="dia-map-head-row">
+                  <span class="dia-map-head-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.source-fields' | translate }}</span>
+                  <span class="dia-map-head-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.target-fields' | translate }}</span>
+                  <button type="button" class="dia-btn dia-btn--sm dia-push-right" (click)="addMappingRow()">+ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.add-mapping' | translate }}</button>
+                </div>
+                <div class="dia-map-header">
+                  <span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.source-fields' | translate }}</span>
+                  <span></span>
+                  <span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.target-fields' | translate }}</span>
+                  <span></span>
+                </div>
+                @for (row of wizardMappingRows; track $index; let mi = $index) {
+                  <div class="dia-map-row">
+                    <div class="dia-map-src">{{ row.source }}</div>
+                    <div class="dia-map-arrow">→</div>
+                    <div class="dia-map-tgt">
+                      <select class="dia-form-select dia-form-select--sm" [(ngModel)]="row.target">
+                        <option value="">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.select-target' | translate }}</option>
+                        @for (f of tgtFields; track f) {
+                          <option [value]="f">{{ f }}</option>
+                        }
+                      </select>
+                    </div>
+                    <button type="button" class="dia-map-del" (click)="removeMappingRow(mi)">×</button>
+                  </div>
+                }
+              }
+              @if (wizardTab2 === 'dup2') {
+                <p class="dia-wizard-panel-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.dup-tab-hint' | translate }}</p>
+                @for (o of dupOptions; track o.mode) {
+                  <button type="button" class="dia-dup-option" [class.dia-dup-option--selected]="wizardDupMode === o.mode" (click)="selectDup(o.mode)">
+                    <span class="dia-dup-radio"></span>
+                    <div>
+                      <div class="dia-dup-lbl">{{ o.labelKey | translate }}</div>
+                      <div class="dia-dup-desc">{{ o.descKey | translate }}</div>
+                    </div>
+                  </button>
+                }
+              }
+              @if (wizardTab2 === 'opts2') {
+                <div class="dia-card dia-card--flat">
+                  <div class="dia-card-body dia-card-body--toggles">
+                    <div class="dia-toggle-row">
+                      <div>
+                        <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-trim' | translate }}</div>
+                        <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-trim-d' | translate }}</div>
+                      </div>
+                      <button type="button" class="dia-tog" [class.dia-tog--on]="optTrim" (click)="optTrim = !optTrim"><span class="dia-tog-thumb"></span></button>
+                    </div>
+                    <div class="dia-toggle-row">
+                      <div>
+                        <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-date' | translate }}</div>
+                        <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-date-d' | translate }}</div>
+                      </div>
+                      <button type="button" class="dia-tog" [class.dia-tog--on]="optDate" (click)="optDate = !optDate"><span class="dia-tog-thumb"></span></button>
+                    </div>
+                  </div>
+                </div>
+              }
+            }
+
+            @if (wizardStep === 3) {
+              <div class="dia-wizard-panel-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.dup-step-title' | translate }}</div>
+              <p class="dia-wizard-panel-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.dup-step-desc' | translate }}</p>
+              <div class="dia-def-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.dup-by' | translate }}</div>
+              @for (o of dupOptions; track o.mode) {
+                <button type="button" class="dia-dup-option" [class.dia-dup-option--selected]="wizardDupMode === o.mode" (click)="selectDup(o.mode)">
+                  <span class="dia-dup-radio"></span>
+                  <div>
+                    <div class="dia-dup-lbl">{{ o.labelKey | translate }}</div>
+                    <div class="dia-dup-desc">{{ o.descKey | translate }}</div>
+                  </div>
+                </button>
+              }
+            }
+
+            @if (wizardStep === 4) {
+              <div class="dia-wizard-panel-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.val-title' | translate }}</div>
+              <p class="dia-wizard-panel-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.val-desc' | translate }}</p>
+              <div class="dia-card dia-card--flat">
+                <div class="dia-card-header">
+                  <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.field-rules' | translate }}</div>
+                  <button type="button" class="dia-btn dia-btn--sm" (click)="addValRow()">+ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.add-rule' | translate }}</button>
+                </div>
+                <div class="dia-card-body dia-card-body--rules">
+                  <div class="dia-vr-header">
+                    <span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.field' | translate }}</span>
+                    <span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.rule-type' | translate }}</span>
+                    <span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.value' | translate }}</span>
+                    <span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.on-error' | translate }}</span>
+                    <span></span>
+                  </div>
+                  @for (vr of wizardValRows; track $index; let vi = $index) {
+                    <div class="dia-vr-row">
+                      <select class="dia-form-select dia-form-select--xs" [(ngModel)]="vr.field">
+                        @for (f of srcFields; track f) {
+                          <option [value]="f">{{ f }}</option>
+                        }
+                      </select>
+                      <select class="dia-form-select dia-form-select--xs" [(ngModel)]="vr.ruleType">
+                        <option>required</option>
+                        <option>regex</option>
+                        <option>min value</option>
+                        <option>max value</option>
+                        <option>max length</option>
+                        <option>decimal places</option>
+                        <option>unique in file</option>
+                        <option>allowed values</option>
+                      </select>
+                      <input class="dia-form-input dia-form-input--xs" type="text" [(ngModel)]="vr.value" />
+                      <select class="dia-form-select dia-form-select--xs" [(ngModel)]="vr.onError">
+                        <option>skip row</option>
+                        <option>warn</option>
+                        <option>reject all</option>
+                      </select>
+                      <button type="button" class="dia-map-del" (click)="removeValRow(vi)">×</button>
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="dia-card dia-card--flat">
+                <div class="dia-card-header">
+                  <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.options' | translate }}</div>
+                </div>
+                <div class="dia-card-body dia-card-body--toggles">
+                  <div class="dia-toggle-row">
+                    <div>
+                      <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-trim' | translate }}</div>
+                      <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-trim-d' | translate }}</div>
+                    </div>
+                    <button type="button" class="dia-tog" [class.dia-tog--on]="optTrim" (click)="optTrim = !optTrim"><span class="dia-tog-thumb"></span></button>
+                  </div>
+                  <div class="dia-toggle-row">
+                    <div>
+                      <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-date' | translate }}</div>
+                      <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-date-d' | translate }}</div>
+                    </div>
+                    <button type="button" class="dia-tog" [class.dia-tog--on]="optDate" (click)="optDate = !optDate"><span class="dia-tog-thumb"></span></button>
+                  </div>
+                  <div class="dia-toggle-row">
+                    <div>
+                      <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-currency' | translate }}</div>
+                      <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-currency-d' | translate }}</div>
+                    </div>
+                    <button type="button" class="dia-tog" [class.dia-tog--on]="optCurrency" (click)="optCurrency = !optCurrency"><span class="dia-tog-thumb"></span></button>
+                  </div>
+                  <div class="dia-toggle-row">
+                    <div>
+                      <div class="dia-toggle-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-stop' | translate }}</div>
+                      <div class="dia-toggle-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.opt-stop-d' | translate }}</div>
+                    </div>
+                    <button type="button" class="dia-tog" [class.dia-tog--on]="optStopOnError" (click)="optStopOnError = !optStopOnError"><span class="dia-tog-thumb"></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="dia-ready-banner">
+                <div class="dia-ready-icon">✓</div>
+                <div>
+                  <div class="dia-ready-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.ready-title' | translate }}</div>
+                  <div class="dia-ready-desc">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.ready-desc' | translate }}</div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="dia-wizard-foot">
+          <button type="button" class="dia-btn dia-btn--ghost" [style.visibility]="wizardStep === 1 ? 'hidden' : 'visible'" (click)="wizardBack()">
+            ← {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.back' | translate }}
+          </button>
+          <div class="dia-wizard-foot-right">
+            <button type="button" class="dia-btn" (click)="closeWizard()">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.cancel' | translate }}</button>
+            @if (wizardStep === 4) {
+              <button type="button" class="dia-btn dia-btn--primary" (click)="wizardNext()">
+                {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.publish' | translate }}
+              </button>
+            } @else {
+              <button type="button" class="dia-btn dia-btn--primary" (click)="wizardNext()">
+                {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.wizard.next' | translate }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

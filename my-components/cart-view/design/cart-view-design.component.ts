@@ -10,7 +10,7 @@ import { CartViewDesignModel } from './cart-view-design.model';
 
 @Component({
   standalone: true,
-  selector: 'com-example-sample-application-cart-view-design',
+  selector: 'com-amar-helix-vibe-studio-cart-view-design',
   styleUrls: ['./cart-view-design.component.scss'],
   templateUrl: './cart-view-design.component.html'
 })

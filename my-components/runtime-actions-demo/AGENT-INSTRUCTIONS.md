@@ -22,7 +22,7 @@ Read first (attach with @):
 
 Target location: `my-components/runtime-actions-demo/` — types, registration module, `design/` (component, html, scss, model, design types), `runtime/` (component, html, scss), `localized-strings.json`, `index.ts`.
 
-Naming: keep **identical** across registration `type`, `@RxViewComponent({ name })`, and component `selector`. Use `com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-runtime-actions-demo` (or match project’s existing component prefix).
+Naming: keep **identical** across registration `type`, `@RxViewComponent({ name })`, and component `selector`. Use `com-amar-helix-vibe-studio-runtime-actions-demo` (or match project’s existing component prefix).
 
 ---
 

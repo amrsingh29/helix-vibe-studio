@@ -45,14 +45,14 @@ export interface ICartGroupViewModel {
 
 @Component({
   standalone: true,
-  selector: 'com-example-sample-application-cart-view',
+  selector: 'com-amar-helix-vibe-studio-cart-view',
   styleUrls: ['./cart-view.component.scss'],
   templateUrl: './cart-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, AdaptButtonModule, AdaptIconModule]
 })
 @RxViewComponent({
-  name: 'com-example-sample-application-cart-view'
+  name: 'com-amar-helix-vibe-studio-cart-view'
 })
 export class CartViewComponent extends BaseViewComponent implements OnInit, OnDestroy, IViewComponent {
   @Input()

@@ -15,7 +15,7 @@ Theming and responsiveness follow **`catalog-view`**: CSS variables (`--color-*`
 ## Copy into your bundle library
 
 1. Copy `my-components/cart-view/` into your app library, e.g. `libs/<application-name>/src/lib/view-components/cart-view/`.
-2. Replace selectors and registration `type` / `@RxViewComponent({ name })` if your application prefix is not `com-example-sample-application` (must match your other view components).
+2. Align selectors and registration `type` / `@RxViewComponent({ name })` with your bundle prefix (this repo uses `com-amar-helix-vibe-studio-cart-view`; all three must match). Palette group is **Helix Vibe Studio** (`group: 'Helix Vibe Studio'` in registration).
 3. Import `CartViewRegistrationModule` in your view-components registration module (same pattern as other VC registration modules).
 4. Deploy the bundle and add **Active cart (grouped)** from the palette in View Designer.
 

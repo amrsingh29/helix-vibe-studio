@@ -1,0 +1,362 @@
+<!-- @generated @context User shell + pages per dataingest-v2.html. @modified 2026-03-21 -->
+<div class="dia-root" [class.dia-root--hidden]="isHidden">
+  <div class="dia-app">
+    <aside class="dia-sidebar">
+      <div class="dia-brand">
+        <div class="dia-brand-mark">
+          <div class="dia-brand-icon">DI</div>
+          <div>
+            <div class="dia-brand-name">DataIngest</div>
+            <div class="dia-brand-ver">v2.0</div>
+          </div>
+        </div>
+      </div>
+      <nav class="dia-nav">
+        <div class="dia-nav-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.nav.workspace' | translate }}</div>
+        <button type="button" class="dia-nav-item" [class.dia-nav-item--active]="curPage === 'user-dash'" (click)="nav('user-dash')">
+          <span class="dia-nav-dot">⬡</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.nav.dashboard' | translate }}
+        </button>
+        <button type="button" class="dia-nav-item" [class.dia-nav-item--active]="curPage === 'user-upload'" (click)="nav('user-upload')">
+          <span class="dia-nav-dot">↑</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.nav.new-upload' | translate }}
+        </button>
+        <button type="button" class="dia-nav-item" [class.dia-nav-item--active]="curPage === 'user-history'" (click)="nav('user-history')">
+          <span class="dia-nav-dot">◷</span>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.nav.history' | translate }}
+          <span class="dia-nav-badge">{{ historyRows.length }}</span>
+        </button>
+      </nav>
+      <div class="dia-sidebar-foot">
+        <div class="dia-user-chip">
+          <div class="dia-avatar">{{ sidebarInitials }}</div>
+          <div>
+            <div class="dia-user-name">{{ sidebarUserName }}</div>
+            <div class="dia-user-role">{{ sidebarUserRole }}</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dia-main">
+      <div class="dia-topbar">
+        <div class="dia-page-title">{{ pageTitles[curPage] | translate }}</div>
+        <div class="dia-topbar-right">
+          @if (curPage === 'user-dash') {
+            <button type="button" class="dia-btn dia-btn--primary" (click)="nav('user-upload')">
+              ↑ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.action.new-upload' | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="dia-content">
+        @if (curPage === 'user-dash') {
+          <div class="dia-stats-row dia-stats-row--user">
+            <div class="dia-stat-card dia-stat-card--hi">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.my-uploads' | translate }}</div>
+              <div class="dia-stat-val">7</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.my-uploads-sub' | translate }}</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.rows' | translate }}</div>
+              <div class="dia-stat-val">1,204</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.rows-sub' | translate }}</div>
+            </div>
+            <div class="dia-stat-card">
+              <div class="dia-stat-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.last' | translate }}</div>
+              <div class="dia-stat-val dia-stat-val--sm">2 hrs ago</div>
+              <div class="dia-stat-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.last-sub' | translate }}</div>
+            </div>
+          </div>
+          <div class="dia-user-dash-grid">
+            <div class="dia-card">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.recent' | translate }}</div>
+                <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost" (click)="nav('user-history')">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.action.all' | translate }}
+                </button>
+              </div>
+              <div class="dia-tbl-wrap">
+                <table class="dia-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.template' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.rows' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.status' | translate }}</th>
+                      <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.when' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (s of submissions.slice(0, 4); track s.id) {
+                      <tr>
+                        <td>{{ s.tmpl }}</td>
+                        <td>{{ s.rows }}</td>
+                        <td>
+                          <span [class]="statusBadgeClass(s.status)"><span class="dia-dot"></span> {{ statusLabelKey(s.status) | translate }}</span>
+                        </td>
+                        <td class="dia-muted">{{ s.date }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="dia-card">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.dash.available' | translate }}</div>
+              </div>
+              <div class="dia-card-body dia-card-body--tight">
+                @for (t of templates; track t.id) {
+                  <div class="dia-user-template-row" (click)="nav('user-upload')">
+                    <div style="font-size: 18px">{{ t.icon }}</div>
+                    <div style="flex: 1">
+                      <div style="font-size: 12px; font-weight: 600; color: var(--dia-text1)">{{ t.name }}</div>
+                      <div style="font-size: 11px; color: var(--dia-text3)">{{ t.cols }} cols · {{ t.cat }}</div>
+                    </div>
+                    <button type="button" class="dia-btn dia-btn--sm" (click)="downloadBlank(); $event.stopPropagation()">↓</button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (curPage === 'user-upload') {
+          <div class="dia-usteps">
+            @for (step of [1, 2, 3]; track step; let i = $index) {
+              @if (i > 0) {
+                <div class="dia-ustep-line" [class.dia-ustep-line--done]="uploadStep >= step"></div>
+              }
+              <div class="dia-ustep" [class.dia-ustep--done]="uploadStep > step" [class.dia-ustep--act]="uploadStep === step">
+                <div class="dia-ustep-n">{{ uploadStep > step ? '✓' : step }}</div>
+                <div class="dia-ustep-lbl">{{ ('com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.s' + step) | translate }}</div>
+              </div>
+            }
+          </div>
+
+          @if (uploadStep === 1) {
+            <div class="dia-upload-toolbar">
+              <input class="dia-search-input" style="width: 280px" type="search" [(ngModel)]="templateSearch" [placeholder]="'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.search-ph' | translate" />
+              <select class="dia-form-select dia-form-select--narrow" [(ngModel)]="categoryFilter">
+                <option value="all">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.cat-all' | translate }}</option>
+                <option value="Commerce">Commerce</option>
+                <option value="Procurement">Procurement</option>
+                <option value="HR">HR</option>
+                <option value="IT">IT</option>
+              </select>
+            </div>
+            <div class="dia-tmpl-grid">
+              @for (t of filteredPublishedTemplates(); track t.id) {
+                <button type="button" class="dia-tmpl-card" [class.dia-tmpl-card--sel]="selTmpl === t.id" (click)="selectTemplate(t.id)">
+                  <div class="dia-tmpl-icon">{{ t.icon }}</div>
+                  <div class="dia-tmpl-name">{{ t.name }}</div>
+                  <div class="dia-tmpl-desc">{{ t.desc }}</div>
+                  <div style="display: flex; gap: 6px">
+                    <span class="dia-badge dia-badge--indigo">{{ t.cols }} cols</span>
+                    <span class="dia-badge dia-badge--gray">{{ t.cat }}</span>
+                  </div>
+                  @if (selTmpl === t.id) {
+                    <div class="dia-tmpl-check">✓</div>
+                  }
+                </button>
+              }
+            </div>
+            <div class="dia-upload-foot">
+              <button type="button" class="dia-btn" (click)="downloadBlank()">
+                ↓ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.download-blank' | translate }}
+              </button>
+              <button type="button" class="dia-btn dia-btn--primary" [disabled]="!selTmpl" (click)="nextUploadStep()">
+                {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.next-upload' | translate }}
+              </button>
+            </div>
+          }
+
+          @if (uploadStep === 2) {
+            <div style="margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--dia-text1)">
+              {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.for' | translate }}
+              <span style="color: var(--dia-accent)">{{ selectedTemplateName() }}</span>
+            </div>
+            <div style="font-size: 12px; color: var(--dia-text3); margin-bottom: 16px">
+              {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.hint' | translate }}
+            </div>
+            <button type="button" class="dia-drop-zone" (click)="simulateUpload()">
+              @if (!uploadSimulated) {
+                <div class="dia-drop-icon">⬆</div>
+                <div class="dia-drop-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.drop-title' | translate }}</div>
+                <div class="dia-drop-sub">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.drop-sub' | translate }}</div>
+              } @else {
+                <div class="dia-drop-title">products_q1_2026.xlsx — 204 rows processed</div>
+                <div class="dia-drop-sub">192 valid rows · 12 errors found</div>
+              }
+            </button>
+            @if (uploadSimulated) {
+              <div style="margin-top: 20px">
+                <div class="dia-val-summary">
+                  <div class="dia-vs-card dia-vs-card--ok">
+                    <div class="dia-vs-num">192</div>
+                    <div class="dia-vs-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.valid' | translate }}</div>
+                  </div>
+                  <div class="dia-vs-card dia-vs-card--er">
+                    <div class="dia-vs-num">12</div>
+                    <div class="dia-vs-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.errors' | translate }}</div>
+                  </div>
+                  <div class="dia-vs-card dia-vs-card--tot">
+                    <div class="dia-vs-num">204</div>
+                    <div class="dia-vs-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.total' | translate }}</div>
+                  </div>
+                </div>
+                <div class="dia-card">
+                  <div class="dia-card-header">
+                    <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.val-err' | translate }}</div>
+                    <span class="dia-badge dia-badge--red" style="margin-left: 8px">12 issues</span>
+                    <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost dia-push-right" (click)="toastErrorReport()">
+                      ↓ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.download-report' | translate }}
+                    </button>
+                  </div>
+                  <div class="dia-card-body">
+                    <div class="dia-err-row">
+                      <span class="dia-err-row-num">Row 7</span>
+                      <div>
+                        <div class="dia-err-col">SKU Code</div>
+                        <div class="dia-err-msg">Does not match format ^[A-Z]{2}-\d{4}$ — got "abc123"</div>
+                      </div>
+                    </div>
+                    <div class="dia-err-row">
+                      <span class="dia-err-row-num">Row 15</span>
+                      <div>
+                        <div class="dia-err-col">Unit Price</div>
+                        <div class="dia-err-msg">Value must be greater than 0 — got "-5.00"</div>
+                      </div>
+                    </div>
+                    <div class="dia-err-row">
+                      <span class="dia-err-row-num">Row 23</span>
+                      <div>
+                        <div class="dia-err-col">Product Name</div>
+                        <div class="dia-err-msg">Required field is empty</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            <div class="dia-upload-foot">
+              <button type="button" class="dia-btn dia-btn--ghost" (click)="backToUploadStep1()">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.back' | translate }}</button>
+              @if (uploadSimulated) {
+                <button type="button" class="dia-btn dia-btn--primary" (click)="goConfirm()">
+                  {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.review' | translate }}
+                </button>
+              }
+            </div>
+          }
+
+          @if (uploadStep === 3) {
+            <div class="dia-card" style="margin-bottom: 18px">
+              <div class="dia-card-header">
+                <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.summary' | translate }}</div>
+              </div>
+              <div class="dia-card-body">
+                <div class="dia-summary-grid">
+                  <div class="dia-summary-box">
+                    <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.template' | translate }}</div>
+                    <div class="dia-summary-box-val">{{ selectedTemplateName() }}</div>
+                  </div>
+                  <div class="dia-summary-box">
+                    <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.file' | translate }}</div>
+                    <div class="dia-summary-box-val" style="font-family: 'DM Mono', monospace; font-size: 13px">products_q1_2026.xlsx</div>
+                  </div>
+                  <div class="dia-summary-box dia-summary-box--green">
+                    <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.rows-submit' | translate }}</div>
+                    <div class="dia-summary-stat">192</div>
+                  </div>
+                  <div class="dia-summary-box dia-summary-box--red">
+                    <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.rows-skip' | translate }}</div>
+                    <div class="dia-summary-stat">12</div>
+                  </div>
+                </div>
+                <div class="dia-form-group">
+                  <label class="dia-form-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.note' | translate }}</label>
+                  <input class="dia-form-input" type="text" [(ngModel)]="submissionNote" [placeholder]="'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.note-ph' | translate" />
+                </div>
+                <div class="dia-summary-box" style="margin-top: 8px">
+                  <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.preview' | translate }}</div>
+                  <table class="dia-preview-table">
+                    <thead>
+                      <tr>
+                        @for (h of previewHeaders; track h) {
+                          <th>{{ h }}</th>
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (r of previewRows; track $index) {
+                        <tr>
+                          @for (c of r; track $index) {
+                            <td>{{ c }}</td>
+                          }
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="dia-upload-foot">
+              <button type="button" class="dia-btn dia-btn--ghost" (click)="uploadStep = 2">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.back' | translate }}</button>
+              <button type="button" class="dia-btn dia-btn--primary" style="padding: 8px 24px" (click)="submitUpload()">
+                {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.submit' | translate }}
+              </button>
+            </div>
+          }
+        }
+
+        @if (curPage === 'user-history') {
+          <div class="dia-card">
+            <div class="dia-card-header">
+              <div class="dia-card-title">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.history.title' | translate }}</div>
+              <div class="dia-card-header-actions">
+                <input class="dia-search-input" type="search" [placeholder]="'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.search' | translate" />
+                <button type="button" class="dia-btn dia-btn--sm" (click)="toastExport()">
+                  ↓ {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.export' | translate }}
+                </button>
+              </div>
+            </div>
+            <div class="dia-tbl-wrap">
+              <table class="dia-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.template' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.history.total-rows' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.history.valid' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.errors' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.col.status' | translate }}</th>
+                    <th>{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.history.submitted' | translate }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (s of historyRows; track s.id) {
+                    <tr>
+                      <td><span class="dia-mono-muted">{{ s.id }}</span></td>
+                      <td>{{ s.tmpl }}</td>
+                      <td>{{ s.rows }}</td>
+                      <td style="color: var(--dia-green); font-family: 'DM Mono', monospace">{{ s.rows - s.errs }}</td>
+                      <td [style.color]="s.errs > 0 ? 'var(--dia-red)' : 'var(--dia-text3)'" style="font-family: 'DM Mono', monospace">{{ s.errs }}</td>
+                      <td>
+                        <span [class]="statusBadgeClass(s.status)"><span class="dia-dot"></span> {{ statusLabelKey(s.status) | translate }}</span>
+                      </td>
+                      <td class="dia-muted">{{ s.date }}</td>
+                      <td>
+                        <button type="button" class="dia-btn dia-btn--sm dia-btn--ghost" (click)="toastViewDetail()">
+                          {{ 'com.amar.helix-vibe-studio.view-components.data-ingest-admin.action.view' | translate }}
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    </main>
+  </div>
+</div>

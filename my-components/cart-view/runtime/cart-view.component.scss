@@ -1,10 +1,20 @@
 /**
  * @generated
- * @context Active cart styling — Helix tokens; title + DPL cart icon; elevated line cards; accent total bar; primary/secondary action row.
- * @decisions Container queries; cadence left-border accent; action row flex with gap (cancel secondary, submit primary).
+ * @context Active cart styling — white page canvas; white elevated cards (border #e6e6e6, soft shadow); slate primary / muted secondary text; indigo accents to match catalog product card reference.
+ * @decisions Explicit #fff surfaces (not grey elevated tokens); container queries unchanged.
  * @references my-components/catalog-view/runtime/catalog-view.component.scss
  * @modified 2026-03-21
  */
+
+// @context Product-card reference — white page + white cards with edge + shadow; not grey-on-grey.
+$acv-page-bg: #ffffff;
+$acv-card-bg: #ffffff;
+$acv-card-border: #e6e6e6;
+$acv-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+$acv-card-radius: 0.5rem;
+$acv-text-primary: #111827;
+$acv-text-muted: #6b7280;
+$acv-accent: #4f46e5;
 
 @mixin acv-line-stack {
   .acv-line__main {
@@ -23,6 +33,7 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  background: $acv-page-bg;
   container-type: inline-size;
   container-name: cart-host;
 }
@@ -33,8 +44,8 @@
   max-width: 100%;
   min-width: 0;
   padding: 0.5rem 0 1.5rem;
-  color: var(--color-text, inherit);
-  background: var(--color-background, transparent);
+  color: $acv-text-primary;
+  background: $acv-page-bg;
 }
 
 .acv-root--hidden {
@@ -52,7 +63,7 @@
 .acv-title__icon-wrap {
   display: inline-flex;
   flex: 0 0 auto;
-  color: var(--color-action, #0b5fff);
+  color: $acv-accent;
   line-height: 0;
 
   /* DPL icon sizing inside adapt-icon host */
@@ -68,7 +79,7 @@
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: var(--color-text, inherit);
+  color: $acv-text-primary;
 }
 
 .acv-banner {
@@ -87,7 +98,7 @@
 .acv-empty {
   margin: 1.5rem 0;
   font-size: 0.9375rem;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
+  color: $acv-text-muted;
 }
 
 .acv-groups {
@@ -103,7 +114,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.55));
+  color: $acv-text-muted;
 }
 
 .acv-lines {
@@ -126,10 +137,10 @@
   justify-content: space-between;
   gap: 0.75rem 1rem;
   padding: 1rem 1.1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-  background: var(--color-background-elevated, rgba(128, 128, 128, 0.08));
-  box-shadow: 0 1px 2px var(--color-shadow, rgba(0, 0, 0, 0.06));
+  border-radius: $acv-card-radius;
+  border: 1px solid $acv-card-border;
+  background: $acv-card-bg;
+  box-shadow: $acv-card-shadow;
   min-width: 0;
 }
 
@@ -157,6 +168,7 @@
   font-size: 0.9375rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
+  color: $acv-text-primary;
 }
 
 .acv-line__cadence {
@@ -168,7 +180,7 @@
   padding: 0.2rem 0 0.2rem 0.5rem;
   border-left: 3px solid var(--color-border-strong, rgba(128, 128, 128, 0.45));
   font-size: 0.8125rem;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.62));
+  color: $acv-text-muted;
 }
 
 .acv-line__cadence-label {
@@ -181,7 +193,7 @@
 
 .acv-line__cadence-value {
   font-weight: 600;
-  color: var(--color-text, inherit);
+  color: $acv-text-primary;
 }
 
 .acv-line__cadence--monthly {
@@ -206,7 +218,7 @@
 
 .acv-line__price {
   font-size: 0.8125rem;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
+  color: $acv-text-muted;
 }
 
 .acv-line__price--muted {
@@ -226,12 +238,12 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.35rem 0.5rem;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
+  color: $acv-text-muted;
 }
 
 .acv-line__money-line--strong {
   font-weight: 600;
-  color: var(--color-text, inherit);
+  color: $acv-text-primary;
 }
 
 .acv-line__money-label {
@@ -253,7 +265,7 @@
   border: 1px solid transparent;
   border-radius: 0.35rem;
   background: transparent;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.55));
+  color: $acv-text-muted;
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -285,24 +297,24 @@
   gap: 0.5rem 1rem;
   margin-top: 1.25rem;
   padding: 0.95rem 1.15rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.4));
-  border-left: 4px solid var(--color-action, #0b5fff);
-  background: var(--color-background-selected, rgba(128, 128, 128, 0.1));
-  box-shadow: 0 1px 3px var(--color-shadow, rgba(0, 0, 0, 0.08));
+  border-radius: $acv-card-radius;
+  border: 1px solid $acv-card-border;
+  border-left: 4px solid $acv-accent;
+  background: $acv-card-bg;
+  box-shadow: $acv-card-shadow;
 }
 
 .acv-cart-total__label {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--color-text, inherit);
+  color: $acv-text-primary;
 }
 
 .acv-cart-total__value {
   font-size: 1.35rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--color-action-text, var(--color-action, #0b5fff));
+  color: $acv-accent;
 }
 
 .acv-qty {
@@ -311,10 +323,11 @@
   gap: 0;
   flex: 0 0 auto;
   border-radius: 0.4rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
+  border: 1px solid $acv-card-border;
   overflow: hidden;
-  background: var(--color-background-elevated, var(--color-background, #fff));
-  box-shadow: 0 1px 1px var(--color-shadow, rgba(0, 0, 0, 0.04));
+  background: $acv-card-bg;
+  color: $acv-text-primary;
+  box-shadow: $acv-card-shadow;
 }
 
 .acv-qty__btn {
@@ -330,7 +343,7 @@
 
 .acv-qty__btn:hover:not(:disabled),
 .acv-qty__btn:focus-visible:not(:disabled) {
-  background: var(--color-background-hover, rgba(128, 128, 128, 0.12));
+  background: #f3f4f6;
 }
 
 .acv-qty__btn:disabled {
@@ -342,8 +355,8 @@
   width: 2.75rem;
   min-height: 2.25rem;
   border: none;
-  border-left: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-  border-right: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
+  border-left: 1px solid $acv-card-border;
+  border-right: 1px solid $acv-card-border;
   text-align: center;
   font: inherit;
   font-size: 0.875rem;
@@ -360,7 +373,7 @@
 }
 
 .acv-qty__input:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline: 2px solid $acv-accent;
   outline-offset: -2px;
 }
 
@@ -374,6 +387,7 @@
 .acv-notes__label {
   font-size: 0.875rem;
   font-weight: 600;
+  color: $acv-text-primary;
 }
 
 .acv-textarea {
@@ -381,16 +395,17 @@
   box-sizing: border-box;
   min-height: 6rem;
   padding: 0.65rem 0.75rem;
-  border-radius: 0.35rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
-  background: var(--color-background-elevated, var(--color-background, #fff));
-  color: inherit;
+  border-radius: $acv-card-radius;
+  border: 1px solid $acv-card-border;
+  background: $acv-card-bg;
+  color: $acv-text-primary;
   font: inherit;
   resize: vertical;
+  box-shadow: $acv-card-shadow;
 }
 
 .acv-textarea:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline: 2px solid $acv-accent;
   outline-offset: 2px;
 }
 
@@ -400,7 +415,7 @@
 
 .acv-notes__hint {
   font-size: 0.75rem;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.55));
+  color: $acv-text-muted;
 }
 
 .acv-actions {

@@ -600,7 +600,7 @@ With OpenAI TTS instead of browser: add ~800ms for API round-trip, bringing tota
 |---|---|
 | Bundle ID | `com.amar.helix-vibe-studio` |
 | Application Name | `com-amar-helix-vibe-studio` |
-| Component Type | `com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-voice-assistant` |
+| Component Type | `com-amar-helix-vibe-studio-voice-assistant` |
 | Java Package | `com.amar.helixvibestudio.bundle` |
 | Angular Lib Path | `libs/com-amar-helix-vibe-studio/src/lib/` |
 

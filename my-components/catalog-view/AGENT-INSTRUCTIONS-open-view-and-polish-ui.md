@@ -25,7 +25,7 @@ Use this document when implementing changes to **`my-components/catalog-view/`**
 
 Use **`RxOpenViewActionService`** from `@helix/platform/view/actions` inside the **runtime** component (`runtime/catalog-view.component.ts`). This is the supported way to open a view from Angular code (same outcome as the **Open view** view action, but wired to your internal button).
 
-Do **not** rely on the palette **Edit actions** dialog for the button *inside* this custom component unless you have confirmed SDK support for that on custom VCs; see `docs/how-to-build-coded-component-examples/custom-view-component-with-designer-configured-actions.md`.
+**Edit actions (palette parity):** The catalog registers **`actionSinks`** (`buttonActions`) so authors can use the same **Edit actions** picker as the palette **Action button**; runtime uses `triggerSinkActions('buttonActions')` after emitting row outputs. If the chain is empty, use **Legacy — Open view** below or `docs/how-to-build-coded-component-examples/custom-view-component-with-designer-configured-actions.md`.
 
 ### Implementation checklist
 

@@ -1,8 +1,8 @@
 /**
  * @generated
- * @context Inspector: record definition drives multi-select field list (like Record grid); auto-select all on RD change; expressions remain as overrides.
- * @decisions RxRecordDefinitionService + SelectFormControl multiple; auto-fill only on first load if empty or when RD changes; catalogSelectedFieldIds precedes CSV/expression at runtime.
- * @references cookbook/02-ui-view-components.md, single-field-viewer-design.model.ts
+ * @context Inspector: ActionSinkWidget; data dictionary lists catalogActionRecord + per-RD-field expressions for Launch process inputs; patch invalid selection values (AR 1588).
+ * @decisions prepareDataDictionary(fieldOptions) refreshes with combineLatest; per-field paths use dot notation like record grid firstSelectedRow.<id>.
+ * @references cookbook/02-ui-view-components.md, my-components/runtime-actions-demo/design/runtime-actions-demo-design.model.ts
  * @modified 2026-03-21
  */
 
@@ -43,7 +43,11 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, distinctUntilChanged, map, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import {
   extractCatalogFieldId,
+  flattenOpenViewPresentationType,
+  flattenRecordDefinitionNameValue,
   normalizeCatalogFieldIds,
+  normalizeTargetViewDefinitionNameValue,
+  patchCatalogPropertiesForViewDefinitionSave,
   shouldUseBuiltInRecordQuery
 } from '../catalog-view.utils';
 import { ICatalogViewProperties } from '../catalog-view.types';
@@ -95,12 +99,13 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
     super(injector, sandbox);
 
     const recordDefinitionName$ = this.sandbox.getComponentPropertyValue('recordDefinitionName').pipe(
+      map((raw) => flattenRecordDefinitionNameValue(raw)),
       distinctUntilChanged()
     );
 
     const fieldOptions$ = recordDefinitionName$.pipe(
       switchMap((rd) => {
-        if (!rd || typeof rd !== 'string') {
+        if (!rd) {
           return of([] as { id: string; name: string }[]);
         }
         return this.rxRecordDefinitionService.get(rd, {}, true).pipe(
@@ -120,7 +125,7 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
       .pipe(
         withLatestFrom(this.sandbox.componentProperties$),
         switchMap(([rd, props]) => {
-          if (!rd || typeof rd !== 'string') {
+          if (!rd) {
             return of({ rd: '', props, allIds: [] as string[] });
           }
           return this.rxRecordDefinitionService.get(rd, {}, true).pipe(
@@ -164,7 +169,21 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
     ])
       .pipe(takeUntil(this.sandbox.destroyed$))
       .subscribe(([model, fieldOptions]) => {
-        this.sandbox.updateInspectorConfig(this.setInspectorConfig(model, fieldOptions));
+        const selectionPatch = patchCatalogPropertiesForViewDefinitionSave(model);
+        if (selectionPatch) {
+          this.sandbox.updateComponentProperties(selectionPatch);
+        }
+        const effective = selectionPatch ? { ...model, ...selectionPatch } : model;
+        this.sandbox.updateInspectorConfig(this.setInspectorConfig(effective, fieldOptions));
+
+        const componentName = (effective.name && String(effective.name).trim())
+          ? `${this.sandbox.descriptor.name} (${String(effective.name).trim()})`
+          : this.sandbox.descriptor.name;
+        this.sandbox.setSettablePropertiesDataDictionary(
+          componentName,
+          this.getSettablePropertiesDataDictionaryBranch()
+        );
+        this.sandbox.setCommonDataDictionary(this.prepareDataDictionary(componentName, fieldOptions));
       });
 
     this.sandbox.componentProperties$
@@ -172,20 +191,16 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
       .subscribe((properties: ICatalogViewDesignProperties) => {
         this.sandbox.setValidationIssues(this.validate(this.sandbox, properties));
       });
-
-    this.sandbox.getComponentPropertyValue('name').subscribe((name) => {
-      const componentName = name ? `${this.sandbox.descriptor.name} (${name})` : this.sandbox.descriptor.name;
-      this.sandbox.setSettablePropertiesDataDictionary(componentName, this.getSettablePropertiesDataDictionaryBranch());
-      this.sandbox.setCommonDataDictionary(this.prepareDataDictionary(componentName));
-    });
   }
 
   static getInitialProperties(currentProperties?: ICatalogViewProperties): ICatalogViewDesignProperties {
-    return {
+    const merged = {
       ...initialComponentProperties,
       ...RX_STANDARD_PROPS_DEFAULT_VALUES,
       ...currentProperties
-    };
+    } as ICatalogViewDesignProperties;
+    const selectionPatch = patchCatalogPropertiesForViewDefinitionSave(merged);
+    return selectionPatch ? { ...merged, ...selectionPatch } : merged;
   }
 
   private getSettablePropertiesDataDictionaryBranch(): IViewComponentDesignSettablePropertiesDataDictionary {
@@ -193,14 +208,45 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
       { label: 'Hidden', expression: this.getExpressionForProperty('hidden') },
       { label: 'Records', expression: this.getExpressionForProperty('records') },
       { label: 'Fields', expression: this.getExpressionForProperty('fields') },
-      { label: 'Button label', expression: this.getExpressionForProperty('buttonLabel') }
+      { label: 'Button label', expression: this.getExpressionForProperty('buttonLabel') },
+      {
+        label: 'Selected row (catalogActionRecord)',
+        expression: this.getExpressionForProperty('catalogActionRecord')
+      },
+      {
+        label: 'Field values by id (catalogFieldValuesByFieldId)',
+        expression: this.getExpressionForProperty('catalogFieldValuesByFieldId')
+      },
+      {
+        label: 'Selected row JSON (catalogActionRecordJson)',
+        expression: this.getExpressionForProperty('catalogActionRecordJson')
+      }
     ];
   }
 
-  private prepareDataDictionary(componentName: string): IViewComponentDesignCommonDataDictionaryBranch {
+  private prepareDataDictionary(
+    componentName: string,
+    fieldOptions: { id: string; name: string }[]
+  ): IViewComponentDesignCommonDataDictionaryBranch {
+    const byRecord = this.buildCatalogFieldOutputBranches(fieldOptions, 'catalogActionRecord');
+    const byMap = this.buildCatalogFieldOutputBranches(fieldOptions, 'catalogFieldValuesByFieldId');
     return {
       label: componentName,
       children: [
+        {
+          label: 'Selected row (object)',
+          expression: this.getExpressionForProperty('catalogActionRecord'),
+          children: byRecord.length ? byRecord : undefined
+        },
+        {
+          label: 'Field values by field id (map)',
+          expression: this.getExpressionForProperty('catalogFieldValuesByFieldId'),
+          children: byMap.length ? byMap : undefined
+        },
+        {
+          label: 'Selected row (JSON string)',
+          expression: this.getExpressionForProperty('catalogActionRecordJson')
+        },
         { label: 'Records', expression: this.getExpressionForProperty('records') },
         { label: 'Fields', expression: this.getExpressionForProperty('fields') },
         { label: 'Button label', expression: this.getExpressionForProperty('buttonLabel') }
@@ -208,12 +254,42 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
     };
   }
 
+  private buildCatalogFieldDotPathExpression(
+    property: 'catalogActionRecord' | 'catalogFieldValuesByFieldId',
+    fieldId: string
+  ): string {
+    const base = this.getExpressionForProperty(property);
+    if (base.startsWith('${') && base.endsWith('}')) {
+      const inner = base.slice(2, -1).trim();
+      return `\${${inner}.${fieldId}}`;
+    }
+    return `\${${base}.${fieldId}}`;
+  }
+
+  private buildCatalogFieldOutputBranches(
+    fieldOptions: { id: string; name: string }[],
+    property: 'catalogActionRecord' | 'catalogFieldValuesByFieldId'
+  ): IViewComponentDesignCommonDataDictionaryBranch[] {
+    return fieldOptions
+      .filter((f) => f.id !== '')
+      .map((f) => ({
+        label: f.name,
+        expression: this.buildCatalogFieldDotPathExpression(property, f.id)
+      }));
+  }
+
   private setInspectorConfig(
     model: ICatalogViewProperties,
     fieldOptions: { id: string; name: string }[]
   ) {
+    const sinkControls = this.sandbox.getActionsInspectorConfig().controls;
+
     return {
       inspectorSectionConfigs: [
+        {
+          label: 'Action button (actions)',
+          controls: sinkControls[0] ? [sinkControls[0]] : []
+        },
         {
           label: 'Catalog data',
           controls: [
@@ -388,27 +464,24 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
           ]
         },
         {
-          label: 'Open view (row / card button)',
+          label: 'Legacy — Open view (no action chain)',
           controls: [
             {
               name: 'targetViewDefinitionName',
-              component: ExpressionFormControlComponent,
+              component: TextFormControlComponent,
               options: {
                 label: 'Target view definition name',
                 tooltip: new Tooltip(
-                  'Fully qualified view to open on button click, e.g. com.my.bundle:product-detail. Leave empty to only fire catalogActionRecord outputs.'
-                ),
-                dataDictionary$: this.expressionConfigurator.getDataDictionary(),
-                operators: this.expressionConfigurator.getOperators(),
-                isRequired: false
-              } as IExpressionFormControlOptions
+                  'Used when **Action button (actions)** above is empty. Enter the bare FQDN only, e.g. com.amar.hssb:Order Create — do **not** wrap in extra quotation marks (that causes save error 1588). Leave empty when using **Action button (actions)** only; clear **Open view: presentation** to Docked right modal if you are not using legacy open view.'
+                )
+              }
             },
             {
               name: 'openViewPresentationType',
               component: SelectFormControlComponent,
               options: {
                 label: 'Open view: presentation',
-                tooltip: new Tooltip('How the target view is shown (modal, docked, or full width).'),
+                tooltip: new Tooltip('Legacy: used when no action chain is configured on the button.'),
                 sortAlphabetically: false,
                 options: OPEN_VIEW_PRESENTATION_OPTIONS
               } as ISelectFormControlOptions
@@ -517,7 +590,7 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
 
     const builtIn = shouldUseBuiltInRecordQuery(model);
 
-    if (!model.recordDefinitionName?.trim()) {
+    if (!flattenRecordDefinitionNameValue(model.recordDefinitionName)) {
       validationIssues.push(
         sandbox.createWarning(
           'Select a record definition so field pickers and defaults resolve correctly.',
@@ -543,7 +616,7 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
       );
     }
 
-    if (builtIn && !model.recordDefinitionName?.trim()) {
+    if (builtIn && !flattenRecordDefinitionNameValue(model.recordDefinitionName)) {
       validationIssues.push(
         sandbox.createWarning('Automatic load requires a record definition.', 'recordDefinitionName')
       );
@@ -587,12 +660,12 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
       );
     }
 
-    const pres = model.openViewPresentationType ?? OpenViewActionType.DockedRightModal;
+    const pres = flattenOpenViewPresentationType(model.openViewPresentationType);
     const hasOpenViewExtras =
       Boolean(model.openViewModalTitle?.trim()) ||
       Boolean(model.viewParamFieldKeysCsv?.trim()) ||
       pres !== OpenViewActionType.DockedRightModal;
-    if (hasOpenViewExtras && !model.targetViewDefinitionName?.trim()) {
+    if (hasOpenViewExtras && !normalizeTargetViewDefinitionNameValue(model.targetViewDefinitionName)) {
       validationIssues.push(
         sandbox.createWarning(
           'Set Target view definition name when using open-view options, or clear presentation / params.',

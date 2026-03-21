@@ -10,7 +10,22 @@
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-WEBAPP_DIR="${SCRIPT_DIR}/workspace/helix-vibe-studio/bundle/src/main/webapp"
+
+# Default: workspace/helix-vibe-studio (create-project.sh). Override with WEBAPP_DIR or HELIX_PROJECT_DIR.
+HELIX_PROJECT_DIR="${HELIX_PROJECT_DIR:-${SCRIPT_DIR}/workspace/helix-vibe-studio}"
+WEBAPP_DIR="${WEBAPP_DIR:-${HELIX_PROJECT_DIR}/bundle/src/main/webapp}"
+
+if [ ! -d "$WEBAPP_DIR" ] && [ -d "${SCRIPT_DIR}/workspace" ]; then
+  # First coded app under workspace/ (any folder name)
+  for candidate in "${SCRIPT_DIR}/workspace"/*/bundle/src/main/webapp; do
+    if [ -d "$candidate" ]; then
+      WEBAPP_DIR="$candidate"
+      HELIX_PROJECT_DIR="$(cd "$(dirname "$WEBAPP_DIR")/../../.." && pwd)"
+      echo "Using detected project: $HELIX_PROJECT_DIR"
+      break
+    fi
+  done
+fi
 
 # preinstall.js requires RX_SDK_HOME (loads config from SDK)
 SDK_VERSION="${SDK_VERSION:-25.4.00}"
@@ -27,9 +42,14 @@ fi
 
 if [ ! -d "$WEBAPP_DIR" ]; then
   echo "Error: Webapp directory not found: $WEBAPP_DIR"
-  echo "Ensure workspace/helix-vibe-studio exists (run create-project.sh first)."
+  echo "Set WEBAPP_DIR to bundle/src/main/webapp, or run ./create-project.sh, or:"
+  echo "  export HELIX_PROJECT_DIR=/path/to/your/coded-app"
   exit 1
 fi
+
+# webapp is .../bundle/src/main/webapp → project root is 3 levels up from .../main
+MAVEN_PROJECT_DIR="$(cd "$(dirname "$WEBAPP_DIR")/../../.." && pwd)"
+export MAVEN_PROJECT_DIR
 
 echo "Building Angular UI on host..."
 cd "$WEBAPP_DIR"
@@ -37,8 +57,11 @@ yarn install
 yarn run build:webpack
 
 echo ""
-echo "UI build complete. Now run Maven in the container with -PusePrebuiltUI:"
+echo "UI build complete. Maven project root: $MAVEN_PROJECT_DIR"
+echo "Run in container (path must match container mount, often /workspace/<project-name>):"
+REL_NAME="$(basename "$MAVEN_PROJECT_DIR")"
 echo '  docker exec bmc-helix-innovation-studio bash -c \'
-echo '    "cd /workspace/helix-vibe-studio && mvn clean install -Pdeploy -DskipTests -PusePrebuiltUI"'
+echo "    \"cd /workspace/${REL_NAME} && mvn clean install -Pdeploy -DskipTests -PusePrebuiltUI\""
 echo ""
+echo "If your project is not at /workspace/${REL_NAME} in the container, cd to the same path as on the host."
 echo "(Replace docker with podman if using Podman)"

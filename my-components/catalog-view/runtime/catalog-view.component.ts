@@ -1,8 +1,8 @@
 /**
  * @generated
- * @context Runtime catalog: optional built-in Record Instance Data Page; card slot mapping; table + filters; RD field names for column labels; RxOpenViewActionService on row action when target view set.
- * @decisions OnPush; forkJoin record definition metadata with row load; open view uses takeUntil(destroyed$) + catchError→EMPTY; TranslateService for log keys only.
- * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, cookbook/09-best-practices.md, .cursor/_instructions/UI/Services/open-view.md
+ * @context Runtime catalog: optional built-in Record Instance Data Page; card slot mapping; table + filters; RD field names; buttonActions sink (triggerSinkActions) then legacy RxOpenViewActionService.
+ * @decisions notifyPropertyChanged catalogFieldValuesByFieldId + catalogActionRecord before tryRunSinkActions for Launch process input expressions; OnPush; forkJoin labels + rows.
+ * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, BaseViewComponent.triggerSinkActions
  * @modified 2026-03-21
  */
 import { CommonModule } from '@angular/common';
@@ -22,9 +22,11 @@ import { BaseViewComponent, IViewComponent, RuntimeViewModelApi } from '@helix/p
 import { EMPTY, forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
 import {
+  buildCatalogFieldValuesByFieldId,
   buildCatalogPropertySelection,
   extractCatalogFieldId,
   normalizeCatalogFieldIds,
+  normalizeTargetViewDefinitionNameValue,
   shouldUseBuiltInRecordQuery
 } from '../catalog-view.utils';
 import { CatalogViewMode, ICatalogViewProperties } from '../catalog-view.types';
@@ -33,14 +35,14 @@ type RecordRow = Record<string, unknown>;
 
 @Component({
   standalone: true,
-  selector: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-catalog-view',
+  selector: 'com-amar-helix-vibe-studio-catalog-view',
   styleUrls: ['./catalog-view.component.scss'],
   templateUrl: './catalog-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, AdaptButtonModule, AdaptBadgeModule, TranslateModule]
 })
 @RxViewComponent({
-  name: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-catalog-view'
+  name: 'com-amar-helix-vibe-studio-catalog-view'
 })
 export class CatalogViewComponent extends BaseViewComponent implements OnInit, IViewComponent {
   @Input()
@@ -431,14 +433,17 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
   }
 
   onRowAction(row: RecordRow): void {
+    const fieldMap = buildCatalogFieldValuesByFieldId(row);
+    this.notifyPropertyChanged('catalogFieldValuesByFieldId', fieldMap);
     this.notifyPropertyChanged('catalogActionRecord', row);
     this.notifyPropertyChanged('catalogActionRecordJson', safeStringify(row));
 
+    if (this.tryRunSinkActions('buttonActions')) {
+      return;
+    }
+
     const viewDefRaw = this.state?.targetViewDefinitionName;
-    const viewDef = (
-      extractCatalogFieldId(viewDefRaw) ||
-      (typeof viewDefRaw === 'string' ? viewDefRaw.trim() : '')
-    ).trim();
+    const viewDef = normalizeTargetViewDefinitionNameValue(viewDefRaw);
     if (!viewDef) {
       return;
     }
@@ -478,6 +483,28 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
           this.translate.instant('com.amar.helix-vibe-studio.view-components.catalog.open-view-closed')
         );
       });
+  }
+
+  /**
+   * Runs rx-actions configured for the row/card Action button (same path as palette Action button).
+   * @returns true when a non-empty enabled chain was started
+   */
+  private tryRunSinkActions(sinkName: string): boolean {
+    const guid = this.state?.actionSinks?.find((s) => s.name === sinkName)?.guid;
+    if (!guid) {
+      return false;
+    }
+    const enabled = this.runtimeViewModelApi.getEnabledActions(guid);
+    if (!enabled.length) {
+      return false;
+    }
+    this.triggerSinkActions(sinkName)
+      .pipe(
+        takeUntil(this.destroyed$),
+        catchError(() => EMPTY)
+      )
+      .subscribe(() => this.cdr.markForCheck());
+    return true;
   }
 
   actionAriaLabel(row: RecordRow): string {

@@ -1,30 +1,34 @@
 /**
  * @generated
- * @context Registers Catalog view; palette name states card grid and table layouts; visible in View Designer for all bundles (no availableInBundles filter).
- * @decisions OpenViewActionModule for RxOpenViewActionService; optional view-input + CSV fields for simple config; expressions remain for advanced binding.
- * @references cookbook/02-ui-view-components.md, .cursor/_instructions/UI/Services/open-view.md
+ * @context Registers Catalog view; actionSinks + outputs catalogActionRecord / catalogFieldValuesByFieldId for Launch process input expressions.
+ * @decisions buttonActions sink + OpenView/LaunchProcess modules; legacy inspector fields when chain empty.
+ * @references cookbook/02-ui-view-components.md, my-components/runtime-actions-demo/RUNTIME-ACTIONS-DEMO-ARCHITECTURE.md
  * @modified 2026-03-21
  */
 import { NgModule } from '@angular/core';
-import { RX_STANDARD_PROPS_DESC, RxViewComponentRegistryService } from '@helix/platform/view/api';
-import { OpenViewActionModule } from '@helix/platform/view/actions';
+import { RX_STANDARD_PROPS_DESC, RX_VIEW_DEFINITION, RxViewComponentRegistryService } from '@helix/platform/view/api';
+import { LaunchProcessViewActionModule, OpenViewActionModule } from '@helix/platform/view/actions';
 import { CatalogViewDesignComponent } from './design/catalog-view-design.component';
 import { CatalogViewDesignModel } from './design/catalog-view-design.model';
 import { CatalogViewComponent } from './runtime/catalog-view.component';
 
 @NgModule({
-  imports: [OpenViewActionModule]
+  imports: [OpenViewActionModule, LaunchProcessViewActionModule]
 })
 export class CatalogViewRegistrationModule {
   constructor(rxViewComponentRegistryService: RxViewComponentRegistryService) {
     rxViewComponentRegistryService.register({
-      type: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-catalog-view',
+      type: 'com-amar-helix-vibe-studio-catalog-view',
       name: 'Catalog view (cards & table)',
       group: 'Helix Vibe Studio',
       icon: 'table',
+      availableInBundles: ['com.amar.helix-vibe-studio'],
       component: CatalogViewComponent,
       designComponent: CatalogViewDesignComponent,
       designComponentModel: CatalogViewDesignModel,
+      isContainerComponent: true,
+      outlets: [{ name: RX_VIEW_DEFINITION.defaultOutletName }],
+      actionSinks: [{ name: 'buttonActions', label: 'Action button (actions)' }],
       properties: [
         { name: 'name', localizable: true, enableExpressionEvaluation: true },
         { name: 'useBuiltInRecordQuery', localizable: false, enableExpressionEvaluation: false },
@@ -50,6 +54,9 @@ export class CatalogViewRegistrationModule {
         { name: 'openViewPresentationType', localizable: false, enableExpressionEvaluation: false },
         { name: 'openViewModalTitle', localizable: true, enableExpressionEvaluation: true },
         { name: 'viewParamFieldKeysCsv', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogActionRecord', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogActionRecordJson', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogFieldValuesByFieldId', localizable: false, enableExpressionEvaluation: false },
         ...RX_STANDARD_PROPS_DESC
       ]
     });
