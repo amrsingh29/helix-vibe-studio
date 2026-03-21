@@ -1,0 +1,12 @@
+{
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.title": "Runtime actions demo",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.btn-open-view": "Open view",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.btn-launch-process": "Launch process",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.btn-notification": "Show notification",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.notify-success": "Notification demo: success.",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.notify-warning": "Notification demo: warning (optional second toast).",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.warn-no-view-name": "Set Target view definition name in the inspector before opening a view.",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.warn-no-process-name": "Set Target process definition name in the inspector before launching a process.",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.warn-process-failed": "Process launch failed — check the definition name and inputs.",
+  "com.amar.helix-vibe-studio.view-components.runtime-actions-demo.log-process-done": "RuntimeActionsDemo: process completed."
+}

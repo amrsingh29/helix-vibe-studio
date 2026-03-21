@@ -166,6 +166,8 @@ Deliverables:
 
 | Topic | Location |
 |--------|-----------|
+| **Runtime actions demo** — `actionSinks` + Edit actions picker (working example) | [RUNTIME-ACTIONS-DEMO-ARCHITECTURE.md](../../my-components/runtime-actions-demo/RUNTIME-ACTIONS-DEMO-ARCHITECTURE.md) |
+| **Add rx-actions to existing component** — prompt for another agent | [add-rx-actions-to-existing-view-component.md](./add-rx-actions-to-existing-view-component.md) |
 | Button **Edit actions** walkthrough | [linking-view-actions-to-buttons.md](./linking-view-actions-to-buttons.md) |
 | View actions (code + registration) | [cookbook/03-ui-view-actions.md](../../cookbook/03-ui-view-actions.md) |
 | Composite flows (button → action → REST, …) | [composite-coded-examples.md](./composite-coded-examples.md) |

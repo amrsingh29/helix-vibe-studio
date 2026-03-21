@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DataIngest — Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #f5f5f3;
+  --surface:  #ffffff;
+  --surface2: #f9f9f8;
+  --surface3: #f2f2f0;
+  --border:   #e4e4e0;
+  --border2:  #d0d0ca;
+  --text1:    #1a1a18;
+  --text2:    #5c5c58;
+  --text3:    #9a9a94;
+  --accent:   #4f46e5;
+  --accent-lt:#eeedfb;
+  --accent-md:#c7c4f5;
+  --green:    #16a34a;
+  --green-lt: #dcfce7;
+  --red:      #dc2626;
+  --red-lt:   #fee2e2;
+  --amber:    #d97706;
+  --amber-lt: #fef3c7;
+  --blue:     #2563eb;
+  --blue-lt:  #dbeafe;
+  --sans:     'Geist', sans-serif;
+  --mono:     'DM Mono', monospace;
+  --serif:    'Instrument Serif', serif;
+  --r:        6px;
+  --r-lg:     10px;
+  --shadow:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text1);font-family:var(--sans);font-size:13px;line-height:1.5;}
+
+/* ── LAYOUT ── */
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:224px;min-width:224px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;}
+.content{flex:1;overflow-y:auto;padding:28px 32px;background:var(--bg);}
+
+/* ── SIDEBAR ── */
+.brand{padding:18px 18px 14px;border-bottom:1px solid var(--border);}
+.brand-mark{display:flex;align-items:center;gap:8px;}
+.brand-icon{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0;}
+.brand-name{font-family:var(--serif);font-size:17px;color:var(--text1);letter-spacing:-0.2px;}
+.brand-ver{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:1px;}
+
+.persona-toggle{margin:10px 12px;display:flex;background:var(--surface3);border-radius:var(--r);padding:3px;border:1px solid var(--border);}
+.persona-btn{flex:1;padding:5px 4px;border:none;background:none;cursor:pointer;font-family:var(--sans);font-size:11px;color:var(--text2);border-radius:4px;transition:all .15s;font-weight:500;}
+.persona-btn.active{background:var(--surface);color:var(--accent);box-shadow:var(--shadow);font-weight:600;}
+
+.nav-sec{padding:8px 10px 4px;}
+.nav-lbl{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:0 8px;margin-bottom:4px;font-family:var(--mono);}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--r);cursor:pointer;color:var(--text2);transition:all .12s;margin-bottom:1px;font-size:12.5px;font-weight:450;}
+.nav-item:hover{background:var(--surface3);color:var(--text1);}
+.nav-item.active{background:var(--accent-lt);color:var(--accent);font-weight:600;}
+.nav-dot{width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--accent-lt);color:var(--accent);font-size:10px;padding:1px 6px;border-radius:10px;font-family:var(--mono);}
+
+.sidebar-foot{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+.user-chip{display:flex;align-items:center;gap:9px;}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--accent-lt);border:1.5px solid var(--accent-md);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--accent);font-weight:700;flex-shrink:0;font-family:var(--mono);}
+.user-name{font-size:12px;color:var(--text1);font-weight:600;}
+.user-role{font-size:10px;color:var(--text3);}
+
+/* ── TOPBAR ── */
+.page-title{font-family:var(--serif);font-size:17px;color:var(--text1);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--r);font-family:var(--sans);font-size:12px;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:all .12s;white-space:nowrap;font-weight:500;}
+.btn:hover{border-color:var(--text3);color:var(--text1);background:var(--surface2);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+.btn-primary:hover{background:#4338ca;border-color:#4338ca;color:#fff;}
+.btn-ghost{background:none;border-color:transparent;color:var(--text2);}
+.btn-ghost:hover{background:var(--surface3);border-color:var(--border);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-success{background:var(--green-lt);border-color:#86efac;color:var(--green);}
+.btn-danger{background:var(--red-lt);border-color:#fca5a5;color:var(--red);}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.card-title{font-size:13px;font-weight:600;color:var(--text1);}
+.card-body{padding:18px;}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);}
+.stat-lbl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;font-family:var(--mono);}
+.stat-val{font-family:var(--serif);font-size:26px;color:var(--text1);line-height:1;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px;}
+.stat-card.hi .stat-val{color:var(--accent);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);padding:9px 14px;border-bottom:1px solid var(--border);text-align:left;font-weight:500;font-family:var(--mono);background:var(--surface2);}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--surface2);}
+tbody tr{cursor:pointer;transition:background .1s;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.badge-green{background:var(--green-lt);color:var(--green);}
+.badge-amber{background:var(--amber-lt);color:var(--amber);}
+.badge-red{background:var(--red-lt);color:var(--red);}
+.badge-blue{background:var(--blue-lt);color:var(--blue);}
+.badge-indigo{background:var(--accent-lt);color:var(--accent);}
+.badge-gray{background:var(--surface3);color:var(--text2);border:1px solid var(--border);}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:16px;}
+.form-lbl{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;letter-spacing:.2px;}
+.form-lbl .req{color:var(--red);margin-left:2px;}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:8px 11px;color:var(--text1);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .15s;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.1);}
+.form-select{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:8px 11px;color:var(--text1);font-family:var(--sans);font-size:13px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239a9a94' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.1);outline:none;}
+.form-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+/* ── TOGGLE ── */
+.tog{width:34px;height:18px;background:var(--border2);border-radius:9px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none;}
+.tog.on{background:var(--accent);}
+.tog-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tog.on .tog-thumb{left:18px;}
+
+/* ── WIZARD MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;}
+.modal-bg.hidden{display:none;}
+.wizard{background:var(--surface);border-radius:12px;width:100%;max-width:760px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden;}
+.wizard-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.wizard-title{font-size:15px;font-weight:600;color:var(--text1);}
+.wizard-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:4px;}
+.wizard-close:hover{background:var(--surface3);color:var(--text1);}
+
+/* ── WIZARD SIDEBAR STEPS ── */
+.wizard-body{display:flex;flex:1;overflow:hidden;}
+.wizard-steps{width:180px;min-width:180px;background:var(--surface2);border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column;gap:2px;}
+.wstep{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .12s;position:relative;}
+.wstep:hover{background:var(--surface3);}
+.wstep.active{background:var(--accent-lt);}
+.wstep-num{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0;font-family:var(--mono);}
+.wstep.active .wstep-num{background:var(--accent);border-color:var(--accent);color:#fff;}
+.wstep.done .wstep-num{background:var(--green-lt);border-color:var(--green);color:var(--green);}
+.wstep-lbl{font-size:12px;color:var(--text2);font-weight:500;}
+.wstep.active .wstep-lbl{color:var(--accent);font-weight:600;}
+.wstep.done .wstep-lbl{color:var(--green);}
+.wstep-connector{width:1.5px;height:18px;background:var(--border);margin:0 0 0 26px;}
+.wstep-connector.done{background:var(--green);}
+
+.wizard-panel{flex:1;overflow-y:auto;padding:24px;}
+.wizard-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--surface2);}
+
+/* ── UPLOAD DROP ZONE ── */
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--r-lg);padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--accent);background:var(--accent-lt);}
+.drop-icon{font-size:32px;margin-bottom:10px;}
+.drop-title{font-size:14px;font-weight:600;color:var(--text1);margin-bottom:4px;}
+.drop-sub{font-size:11px;color:var(--text3);}
+.file-chip{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--accent-lt);border:1px solid var(--accent-md);border-radius:var(--r);margin-top:12px;}
+.file-chip-name{font-size:12px;color:var(--accent);font-weight:600;flex:1;font-family:var(--mono);}
+.file-chip-remove{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;line-height:1;}
+
+/* ── MAPPING TABLE ── */
+.map-row{display:grid;grid-template-columns:1fr 36px 1fr 32px;gap:10px;align-items:center;margin-bottom:8px;}
+.map-src{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:12px;color:var(--text1);font-family:var(--mono);}
+.map-arrow{color:var(--accent);font-size:16px;text-align:center;font-weight:700;}
+.map-tgt select{width:100%;}
+.map-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;padding:4px;border-radius:4px;}
+.map-del:hover{color:var(--red);background:var(--red-lt);}
+.map-header{display:grid;grid-template-columns:1fr 36px 1fr 32px;gap:10px;padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.map-header span{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);}
+
+/* ── VALIDATION RULE ROW ── */
+.vr-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 32px;gap:10px;align-items:center;margin-bottom:8px;}
+.vr-header{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 32px;gap:10px;padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+.vr-header span{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);}
+.rule-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);background:var(--accent-lt);color:var(--accent);}
+
+/* ── DUPLICATE OPTIONS ── */
+.dup-option{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--r-lg);margin-bottom:10px;cursor:pointer;transition:all .15s;}
+.dup-option:hover{border-color:var(--accent-md);background:var(--accent-lt);}
+.dup-option.selected{border-color:var(--accent);background:var(--accent-lt);}
+.dup-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.dup-option.selected .dup-radio{border-color:var(--accent);background:var(--accent);}
+.dup-option.selected .dup-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
+.dup-lbl{font-size:13px;font-weight:600;color:var(--text1);}
+.dup-desc{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* ── TEMPLATE CARDS ── */
+.tmpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.tmpl-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:all .15s;position:relative;box-shadow:var(--shadow);}
+.tmpl-card:hover{border-color:var(--accent-md);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.tmpl-card.sel{border-color:var(--accent);background:var(--accent-lt);}
+.tmpl-icon{font-size:24px;margin-bottom:10px;}
+.tmpl-name{font-size:13px;font-weight:700;color:var(--text1);margin-bottom:4px;}
+.tmpl-desc{font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:10px;}
+.tmpl-check{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;}
+
+/* ── VALIDATION ERRORS ── */
+.err-row{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--red-lt);border:1px solid #fca5a5;border-radius:var(--r);margin-bottom:7px;}
+.err-row-num{font-size:10px;color:var(--red);background:#fee2e2;border:1px solid #fca5a5;padding:2px 7px;border-radius:4px;white-space:nowrap;font-family:var(--mono);font-weight:600;flex-shrink:0;}
+.err-col{font-size:11px;color:var(--red);font-weight:700;}
+.err-msg{font-size:11px;color:var(--text2);}
+
+/* ── VAL SUMMARY ── */
+.val-summary{display:flex;gap:10px;margin-bottom:18px;}
+.vs-card{flex:1;padding:14px;border-radius:var(--r-lg);text-align:center;border:1px solid var(--border);}
+.vs-card.ok{background:var(--green-lt);border-color:#86efac;}
+.vs-card.er{background:var(--red-lt);border-color:#fca5a5;}
+.vs-card.tot{background:var(--surface2);}
+.vs-num{font-family:var(--serif);font-size:26px;font-weight:700;}
+.vs-card.ok .vs-num{color:var(--green);}
+.vs-card.er .vs-num{color:var(--red);}
+.vs-card.tot .vs-num{color:var(--text1);}
+.vs-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-top:4px;}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:0;}
+.tab{padding:9px 16px;font-size:12.5px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;font-weight:500;}
+.tab:hover{color:var(--text1);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+
+/* ── UPLOAD STEPS (user) ── */
+.usteps{display:flex;align-items:center;margin-bottom:26px;}
+.ustep{display:flex;align-items:center;gap:7px;}
+.ustep-n{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);flex-shrink:0;}
+.ustep.act .ustep-n{background:var(--accent);border-color:var(--accent);color:#fff;}
+.ustep.done .ustep-n{background:var(--green-lt);border-color:var(--green);color:var(--green);}
+.ustep-lbl{font-size:11px;color:var(--text3);}
+.ustep.act .ustep-lbl{color:var(--accent);font-weight:600;}
+.ustep.done .ustep-lbl{color:var(--green);}
+.ustep-line{flex:1;height:1px;background:var(--border);margin:0 8px;}
+.ustep-line.done{background:var(--green);}
+
+/* ── MISC ── */
+.sec-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;}
+.sec-title{font-family:var(--serif);font-size:20px;color:var(--text1);}
+.sec-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.sec-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.page{display:none;}
+.page.active{display:block;}
+.notif{position:fixed;top:18px;right:18px;z-index:300;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 16px;font-size:12.5px;color:var(--text1);max-width:280px;transform:translateX(120%);transition:transform .28s;box-shadow:var(--shadow-lg);}
+.notif.show{transform:translateX(0);}
+.notif.ok{border-left:3px solid var(--green);}
+.notif.er{border-left:3px solid var(--red);}
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.search-input{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:6px 11px 6px 30px;color:var(--text1);font-family:var(--sans);font-size:12px;outline:none;width:220px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239a9a94' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:9px center;}
+.search-input:focus{border-color:var(--accent);}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.auto-map-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;background:var(--accent);border:none;border-radius:var(--r);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:background .12s;margin-bottom:16px;}
+.auto-map-btn:hover{background:#4338ca;}
+.table-search-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.table-list{max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r);}
+.table-list-item{padding:9px 14px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;display:flex;align-items:center;gap:8px;}
+.table-list-item:last-child{border-bottom:none;}
+.table-list-item:hover{background:var(--surface2);}
+.table-list-item.sel{background:var(--accent-lt);color:var(--accent);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <div class="brand-icon">DI</div>
+        <div>
+          <div class="brand-name">DataIngest</div>
+          <div class="brand-ver">v2.0</div>
+        </div>
+      </div>
+    </div>
+    <div class="persona-toggle">
+      <button class="persona-btn active" onclick="switchPersona('admin')">Admin</button>
+      <button class="persona-btn" onclick="switchPersona('user')">User</button>
+    </div>
+    <nav id="admin-nav" class="nav-sec" style="flex:1;">
+      <div class="nav-lbl">Manage</div>
+      <div class="nav-item active" onclick="nav('admin-dash')"><span class="nav-dot">⬡</span>Dashboard</div>
+      <div class="nav-item" onclick="nav('admin-templates')"><span class="nav-dot">◫</span>Templates<span class="nav-badge">4</span></div>
+      <div class="nav-item" onclick="nav('admin-submissions')"><span class="nav-dot">↓</span>Submissions<span class="nav-badge">12</span></div>
+      <div class="nav-lbl" style="margin-top:12px;">Configure</div>
+      <div class="nav-item" onclick="nav('admin-settings')"><span class="nav-dot">◌</span>Settings</div>
+    </nav>
+    <nav id="user-nav" class="nav-sec" style="flex:1;display:none;">
+      <div class="nav-lbl">Workspace</div>
+      <div class="nav-item active" onclick="nav('user-dash')"><span class="nav-dot">⬡</span>Dashboard</div>
+      <div class="nav-item" onclick="nav('user-upload')"><span class="nav-dot">↑</span>New upload</div>
+      <div class="nav-item" onclick="nav('user-history')"><span class="nav-dot">◷</span>My history<span class="nav-badge">7</span></div>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-chip">
+        <div class="avatar" id="av">AK</div>
+        <div>
+          <div class="user-name" id="uname">Amar Kumar</div>
+          <div class="user-role" id="urole">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="ptitle">Dashboard</div>
+      <div class="topbar-right" id="tactions"></div>
+    </div>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<!-- WIZARD MODAL -->
+<div class="modal-bg hidden" id="wizard-modal">
+  <div class="wizard">
+    <div class="wizard-header">
+      <div class="wizard-title">New import template</div>
+      <button class="wizard-close" onclick="closeWizard()">×</button>
+    </div>
+    <div class="wizard-body">
+      <!-- Steps sidebar -->
+      <div class="wizard-steps" id="wsteps-sidebar"></div>
+      <!-- Panel -->
+      <div class="wizard-panel" id="wpanel"></div>
+    </div>
+    <div class="wizard-foot">
+      <button class="btn btn-ghost" id="wbtn-back" onclick="wizardBack()">← Previous</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="closeWizard()">Cancel</button>
+        <button class="btn btn-primary" id="wbtn-next" onclick="wizardNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+// ═══════════════════════════
+// STATE
+// ═══════════════════════════
+let persona = 'admin';
+let curPage = 'admin-dash';
+let wStep   = 1;
+let wData   = { name:'', desc:'', file:null, table:'', mappings:[], dupMode:'generate-new', validations:[] };
+let selTmpl = null;
+let uploadStep = 1;
+let selDupMode = 'generate-all';
+
+const templates = [
+  {id:1,name:'Product Catalog',cat:'Commerce',cols:12,status:'published',subs:34,icon:'◈',desc:'Bulk create or update product listings.'},
+  {id:2,name:'Vendor Onboarding',cat:'Procurement',cols:8,status:'published',subs:17,icon:'◎',desc:'Register new suppliers and compliance data.'},
+  {id:3,name:'Employee Directory',cat:'HR',cols:15,status:'draft',subs:0,icon:'⬟',desc:'Import employee records and org structure.'},
+  {id:4,name:'Asset Register',cat:'IT',cols:10,status:'published',subs:8,icon:'▣',desc:'Track hardware and software assets.'},
+];
+
+const submissions = [
+  {id:'SUB-041',tmpl:'Product Catalog',user:'Priya S.',rows:204,errs:0,status:'success',date:'2 hrs ago'},
+  {id:'SUB-040',tmpl:'Vendor Onboarding',user:'Rahul M.',rows:12,errs:3,status:'partial',date:'5 hrs ago'},
+  {id:'SUB-039',tmpl:'Asset Register',user:'Lin T.',rows:88,errs:0,status:'success',date:'Yesterday'},
+  {id:'SUB-038',tmpl:'Product Catalog',user:'Amar K.',rows:56,errs:12,status:'failed',date:'2 days ago'},
+  {id:'SUB-037',tmpl:'Vendor Onboarding',user:'Priya S.',rows:5,errs:0,status:'success',date:'3 days ago'},
+];
+
+const dbTables = ['Global','ABYI-AdditionalFields-Parent','ABYI-AdditionalFields-SRM','ABYI-AdditionalFields-Tasks','ACT_GE_BYTEARRAY','ACT_GE_PROPERTY','ACT_HI_ACTINST','ACT_HI_ATTACHMENT','Product','Employee','Vendor','Asset','Department','CostCenter'];
+const srcFields = ['Product Name','SKU Code','Category','Unit Price','Stock Qty','Launch Date','Brand','Description','Weight','Dimensions'];
+const tgtFields = ['Data Set Id','Name','SKU','Price','Quantity','Category ID','Brand Name','Description','Status','Created Date'];
+
+// ═══════════════════════════
+// NAVIGATION
+// ═══════════════════════════
+function switchPersona(p) {
+  persona = p;
+  document.querySelectorAll('.persona-btn').forEach((b,i) => b.classList.toggle('active',(i===0&&p==='admin')||(i===1&&p==='user')));
+  document.getElementById('admin-nav').style.display = p==='admin' ? '' : 'none';
+  document.getElementById('user-nav').style.display  = p==='user'  ? '' : 'none';
+  document.getElementById('av').textContent    = p==='admin' ? 'AK' : 'PS';
+  document.getElementById('uname').textContent = p==='admin' ? 'Amar Kumar' : 'Priya Sharma';
+  document.getElementById('urole').textContent = p==='admin' ? 'Administrator' : 'Data Custodian';
+  nav(p==='admin' ? 'admin-dash' : 'user-dash');
+}
+
+function nav(page) {
+  curPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${page}'`));
+  });
+  render(page);
+}
+
+// ═══════════════════════════
+// RENDER
+// ═══════════════════════════
+const titles = {'admin-dash':'Dashboard','admin-templates':'Import templates','admin-submissions':'Submissions','admin-settings':'Settings','user-dash':'My workspace','user-upload':'New upload','user-history':'Upload history'};
+function render(page) {
+  document.getElementById('ptitle').textContent = titles[page]||page;
+  document.getElementById('tactions').innerHTML = '';
+  const fns = {
+    'admin-dash': renderAdminDash,
+    'admin-templates': renderAdminTemplates,
+    'admin-submissions': renderAdminSubmissions,
+    'admin-settings': renderAdminSettings,
+    'user-dash': renderUserDash,
+    'user-upload': renderUserUpload,
+    'user-history': renderUserHistory,
+  };
+  if (fns[page]) { document.getElementById('content').innerHTML = fns[page](); attachToggles(); }
+}
+
+// ═══════════════════════════
+// ADMIN DASHBOARD
+// ═══════════════════════════
+function renderAdminDash() {
+  document.getElementById('tactions').innerHTML = `<button class="btn btn-primary" onclick="openWizard()">+ New template</button>`;
+  return `
+  <div class="stats-row">
+    <div class="stat-card hi"><div class="stat-lbl">Active templates</div><div class="stat-val">4</div><div class="stat-sub">3 published · 1 draft</div></div>
+    <div class="stat-card"><div class="stat-lbl">Total submissions</div><div class="stat-val">79</div><div class="stat-sub">This month</div></div>
+    <div class="stat-card"><div class="stat-lbl">Success rate</div><div class="stat-val">91%</div><div class="stat-sub">Rows without errors</div></div>
+    <div class="stat-card"><div class="stat-lbl">Active users</div><div class="stat-val">14</div><div class="stat-sub">Uploaded in last 30d</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px;">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Recent submissions</div><button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="nav('admin-submissions')">View all →</button></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>ID</th><th>Template</th><th>User</th><th>Rows</th><th>Status</th><th>When</th></tr></thead>
+        <tbody>${submissions.slice(0,4).map(s=>`<tr>
+          <td><span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${s.id}</span></td>
+          <td>${s.tmpl}</td><td>${s.user}</td><td>${s.rows}</td>
+          <td>${sBadge(s.status)}</td>
+          <td style="color:var(--text3)">${s.date}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Templates</div><button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="nav('admin-templates')">Manage →</button></div>
+      <div class="card-body" style="padding:10px 14px;">
+        ${templates.map(t=>`<div onclick="nav('admin-templates')" style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:var(--r);cursor:pointer;transition:background .1s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">
+          <div style="font-size:18px;">${t.icon}</div>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text1)">${t.name}</div><div style="font-size:11px;color:var(--text3)">${t.cols} cols · ${t.subs} submissions</div></div>
+          ${t.status==='published'?'<span class="badge badge-green"><span class="dot"></span> Live</span>':'<span class="badge badge-gray">Draft</span>'}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════
+// ADMIN TEMPLATES
+// ═══════════════════════════
+function renderAdminTemplates() {
+  document.getElementById('tactions').innerHTML = `<button class="btn btn-primary" onclick="openWizard()">+ New template</button>`;
+  return `
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+    ${templates.map(t=>`
+    <div class="card" style="padding:18px 20px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+        <div style="font-size:26px;flex-shrink:0">${t.icon}</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:700;color:var(--text1);margin-bottom:2px;">${t.name}</div>
+          <div style="font-size:11px;color:var(--text3);">${t.cat} · ${t.cols} columns</div>
+        </div>
+        ${t.status==='published'?'<span class="badge badge-green"><span class="dot"></span> Live</span>':'<span class="badge badge-gray">Draft</span>'}
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">${t.desc}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+        <span class="badge badge-indigo">${t.cols} columns</span>
+        <span class="badge badge-gray">${t.subs} submissions</span>
+      </div>
+      <div class="divider" style="margin:12px 0;"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-sm" onclick="notify('Downloading XLSX template...','ok')">↓ Download</button>
+        <button class="btn btn-sm btn-ghost" onclick="openWizard()">Edit</button>
+        ${t.status==='draft'?`<button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="notify('Template published!','ok')">Publish</button>`:`<button class="btn btn-sm" style="margin-left:auto;color:var(--amber);border-color:var(--amber-lt);background:var(--amber-lt)" onclick="notify('Template unpublished','ok')">Unpublish</button>`}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ═══════════════════════════
+// ADMIN SUBMISSIONS
+// ═══════════════════════════
+function renderAdminSubmissions() {
+  return `
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-lbl">Total</div><div class="stat-val">79</div></div>
+    <div class="stat-card"><div class="stat-lbl">Successful</div><div class="stat-val" style="color:var(--green)">71</div></div>
+    <div class="stat-card"><div class="stat-lbl">Partial</div><div class="stat-val" style="color:var(--amber)">6</div></div>
+    <div class="stat-card"><div class="stat-lbl">Failed</div><div class="stat-val" style="color:var(--red)">2</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">All submissions</div>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <input class="search-input" placeholder="Search..."/>
+        <select class="form-select" style="width:160px;padding:6px 10px;font-size:12px;"><option>All templates</option>${templates.map(t=>`<option>${t.name}</option>`).join('')}</select>
+        <button class="btn btn-sm" onclick="notify('Exported to CSV','ok')">↓ Export</button>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>ID</th><th>Template</th><th>Submitted by</th><th>Total rows</th><th>Errors</th><th>Status</th><th>Date</th><th></th></tr></thead>
+      <tbody>${submissions.map(s=>`<tr>
+        <td><span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${s.id}</span></td>
+        <td>${s.tmpl}</td><td>${s.user}</td><td>${s.rows}</td>
+        <td style="color:${s.errs>0?'var(--red)':'var(--green)'};font-family:var(--mono)">${s.errs}</td>
+        <td>${sBadge(s.status)}</td>
+        <td style="color:var(--text3)">${s.date}</td>
+        <td><button class="btn btn-sm btn-ghost" onclick="notify('Opening submission detail...','ok')">View</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ═══════════════════════════
+// ADMIN SETTINGS
+// ═══════════════════════════
+function renderAdminSettings() {
+  return `<div style="max-width:560px;">
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-header"><div class="card-title">General</div></div>
+      <div class="card-body">
+        <div class="form-group"><label class="form-lbl">Platform name</label><input class="form-input" value="DataIngest Platform"/></div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Max file size (MB)</label><input class="form-input" type="number" value="50"/></div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Allowed types</label><input class="form-input" value=".csv, .xlsx, .xls"/></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-header"><div class="card-title">Notifications</div></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px;">
+        ${[['Email on submission','Send email when a user submits'],['Notify on errors','Alert admin when validation fails'],['Weekly digest','Weekly summary of ingestion activity']].map(([l,d])=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text1)">${l}</div><div style="font-size:11px;color:var(--text3)">${d}</div></div>
+          <button class="tog on" onclick="this.classList.toggle('on')"><div class="tog-thumb"></div></button>
+        </div>`).join('')}
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="notify('Settings saved','ok')">Save changes</button>
+  </div>`;
+}
+
+// ═══════════════════════════
+// USER DASHBOARD
+// ═══════════════════════════
+function renderUserDash() {
+  document.getElementById('tactions').innerHTML = `<button class="btn btn-primary" onclick="nav('user-upload')">↑ New upload</button>`;
+  return `
+  <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-card hi"><div class="stat-lbl">My uploads</div><div class="stat-val">7</div><div class="stat-sub">Total submitted</div></div>
+    <div class="stat-card"><div class="stat-lbl">Rows processed</div><div class="stat-val">1,204</div><div class="stat-sub">All time</div></div>
+    <div class="stat-card"><div class="stat-lbl">Last upload</div><div class="stat-val" style="font-size:18px;padding-top:4px">2 hrs ago</div><div class="stat-sub">Product Catalog · 204 rows</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px;">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Recent uploads</div><button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="nav('user-history')">All →</button></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Template</th><th>Rows</th><th>Status</th><th>When</th></tr></thead>
+        <tbody>${submissions.slice(0,4).map(s=>`<tr>
+          <td>${s.tmpl}</td><td>${s.rows}</td><td>${sBadge(s.status)}</td><td style="color:var(--text3)">${s.date}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Available templates</div></div>
+      <div class="card-body" style="padding:10px 14px;">
+        ${templates.filter(t=>t.status==='published').map(t=>`<div onclick="nav('user-upload')" style="display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:var(--r);cursor:pointer;transition:background .1s;" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">
+          <div style="font-size:18px">${t.icon}</div>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text1)">${t.name}</div><div style="font-size:11px;color:var(--text3)">${t.cols} cols · ${t.cat}</div></div>
+          <button class="btn btn-sm" onclick="event.stopPropagation();notify('Downloading ${t.name}...','ok')">↓</button>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════
+// USER UPLOAD WIZARD
+// ═══════════════════════════
+function renderUserUpload() {
+  uploadStep = uploadStep||1;
+  const steps = [['Choose template',1],['Upload file',2],['Confirm & submit',3]];
+  const stepsHtml = steps.map(([l,n],i)=>`
+    ${i>0?`<div class="ustep-line ${n<=uploadStep?'done':''}"></div>`:''}
+    <div class="ustep ${n<uploadStep?'done':n===uploadStep?'act':''}">
+      <div class="ustep-n">${n<uploadStep?'✓':n}</div>
+      <div class="ustep-lbl">${l}</div>
+    </div>`).join('');
+
+  let body = '';
+  if (uploadStep===1) {
+    body = `
+    <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+      <input class="search-input" style="width:280px" placeholder="Search templates..."/>
+      <select class="form-select" style="width:160px;padding:6px 10px;font-size:12px;"><option>All categories</option><option>Commerce</option><option>HR</option><option>IT</option></select>
+    </div>
+    <div class="tmpl-grid">
+      ${templates.filter(t=>t.status==='published').map(t=>`
+      <div class="tmpl-card ${selTmpl===t.id?'sel':''}" onclick="selTmpl=${t.id};nav('user-upload')">
+        <div class="tmpl-icon">${t.icon}</div>
+        <div class="tmpl-name">${t.name}</div>
+        <div class="tmpl-desc">${t.desc}</div>
+        <div style="display:flex;gap:6px;"><span class="badge badge-indigo">${t.cols} cols</span><span class="badge badge-gray">${t.cat}</span></div>
+        ${selTmpl===t.id?'<div class="tmpl-check">✓</div>':''}
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;">
+      <button class="btn" onclick="selTmpl&&notify('Downloading template XLSX...','ok')">↓ Download blank template</button>
+      <button class="btn btn-primary" onclick="if(selTmpl){uploadStep=2;nav('user-upload')}" ${!selTmpl?'disabled':''}>Next: Upload file →</button>
+    </div>`;
+  } else if (uploadStep===2) {
+    body = `
+    <div style="margin-bottom:6px;font-size:13px;font-weight:600;color:var(--text1);">Upload file for: <span style="color:var(--accent)">${templates.find(t=>t.id===selTmpl)?.name||'Product Catalog'}</span></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Your file must match the template format exactly. Download the blank template above to get started.</div>
+    <div class="drop-zone" id="dz" onclick="simulateUpload()">
+      <div class="drop-icon">⬆</div>
+      <div class="drop-title" id="dz-title">Drop your file here, or click to browse</div>
+      <div class="drop-sub" id="dz-sub">Supports .xlsx and .csv · Max 50MB</div>
+    </div>
+    <div id="val-panel" style="display:none;margin-top:20px;">
+      <div class="val-summary">
+        <div class="vs-card ok"><div class="vs-num">192</div><div class="vs-lbl">Valid rows</div></div>
+        <div class="vs-card er"><div class="vs-num">12</div><div class="vs-lbl">Errors</div></div>
+        <div class="vs-card tot"><div class="vs-num">204</div><div class="vs-lbl">Total rows</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Validation errors</div>
+          <span class="badge badge-red" style="margin-left:8px">12 issues</span>
+          <button class="btn btn-sm btn-ghost" style="margin-left:auto" onclick="notify('Error report downloaded','ok')">↓ Download report</button>
+        </div>
+        <div class="card-body" style="padding:14px 16px;">
+          <div class="err-row"><span class="err-row-num">Row 7</span><div><div class="err-col">SKU Code</div><div class="err-msg">Does not match format ^[A-Z]{2}-\\d{4}$ — got "abc123"</div></div></div>
+          <div class="err-row"><span class="err-row-num">Row 15</span><div><div class="err-col">Unit Price</div><div class="err-msg">Value must be greater than 0 — got "-5.00"</div></div></div>
+          <div class="err-row"><span class="err-row-num">Row 23</span><div><div class="err-col">Product Name</div><div class="err-msg">Required field is empty</div></div></div>
+          <div style="text-align:center;padding:8px;font-size:11px;color:var(--text3)">+ 9 more errors · <a href="#" onclick="notify('Opening inline editor...','ok');return false;" style="color:var(--accent)">Fix inline</a></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:20px;">
+      <button class="btn btn-ghost" onclick="uploadStep=1;nav('user-upload')">← Back</button>
+      <button class="btn btn-primary" id="next2-btn" style="display:none" onclick="uploadStep=3;nav('user-upload')">Review & submit →</button>
+    </div>`;
+  } else {
+    const tmpl = templates.find(t=>t.id===selTmpl)||templates[0];
+    body = `
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-header"><div class="card-title">Submission summary</div></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px;"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:4px">Template</div><div style="font-size:14px;font-weight:600">${tmpl.name}</div></div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px;"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:4px">File</div><div style="font-size:13px;font-weight:600;font-family:var(--mono)">products_q1_2026.xlsx</div></div>
+          <div style="background:var(--green-lt);border:1px solid #86efac;border-radius:var(--r);padding:12px;"><div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:4px">Rows to submit</div><div style="font-family:var(--serif);font-size:24px;font-weight:700;color:var(--green)">192</div></div>
+          <div style="background:var(--red-lt);border:1px solid #fca5a5;border-radius:var(--r);padding:12px;"><div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:4px">Rows skipped</div><div style="font-family:var(--serif);font-size:24px;font-weight:700;color:var(--red)">12</div></div>
+        </div>
+        <div class="form-group"><label class="form-lbl">Submission note (optional)</label><input class="form-input" placeholder="e.g. Q1 2026 product launch batch"/></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:10px">Preview — first 3 rows</div>
+          <table style="width:100%;border-collapse:collapse;">
+            <thead><tr>${['Product Name','SKU','Category','Price','Qty'].map(h=>`<th style="font-size:10px;letter-spacing:1px;color:var(--text3);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);font-family:var(--mono)">${h}</th>`).join('')}</tr></thead>
+            <tbody>${[['Apex Wireless Headphones','AP-2401','Audio','$129.00','50'],['Summit Laptop Stand','SM-1103','Accessories','$49.99','200'],['Flux USB-C Hub','FL-0892','Connectivity','$79.00','120']].map(r=>`<tr>${r.map(c=>`<td style="font-size:12px;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2)">${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;">
+      <button class="btn btn-ghost" onclick="uploadStep=2;nav('user-upload')">← Back</button>
+      <button class="btn btn-primary" style="padding:8px 24px" onclick="submitUpload()">Submit 192 records →</button>
+    </div>`;
+  }
+
+  return `<div class="usteps">${stepsHtml}</div><div>${body}</div>`;
+}
+
+function simulateUpload() {
+  const dz = document.getElementById('dz');
+  const t  = document.getElementById('dz-title');
+  const s  = document.getElementById('dz-sub');
+  if(!dz) return;
+  t.textContent = 'Validating products_q1_2026.xlsx...';
+  s.textContent = 'Checking 204 rows against template rules...';
+  dz.style.borderColor = 'var(--accent)';
+  setTimeout(()=>{
+    t.textContent = 'products_q1_2026.xlsx — 204 rows processed';
+    s.textContent = '192 valid rows · 12 errors found';
+    dz.style.borderColor = '';
+    const vp = document.getElementById('val-panel');
+    const nb = document.getElementById('next2-btn');
+    if(vp) vp.style.display = '';
+    if(nb) nb.style.display = '';
+  }, 1200);
+}
+
+function submitUpload() {
+  notify('192 records submitted successfully!','ok');
+  uploadStep=1; selTmpl=null;
+  setTimeout(()=>nav('user-history'),700);
+}
+
+// ═══════════════════════════
+// USER HISTORY
+// ═══════════════════════════
+function renderUserHistory() {
+  return `
+  <div class="card">
+    <div class="card-header"><div class="card-title">My submissions</div>
+      <div style="margin-left:auto;display:flex;gap:8px;"><input class="search-input" placeholder="Search..."/><button class="btn btn-sm" onclick="notify('Exported','ok')">↓ Export</button></div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>ID</th><th>Template</th><th>Total rows</th><th>Valid</th><th>Errors</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
+      <tbody>${[...submissions,
+        {id:'SUB-036',tmpl:'Product Catalog',user:'Priya S.',rows:145,errs:0,status:'success',date:'4 days ago'},
+        {id:'SUB-035',tmpl:'Asset Register',user:'Priya S.',rows:22,errs:2,status:'partial',date:'1 week ago'},
+      ].map(s=>`<tr>
+        <td><span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${s.id}</span></td>
+        <td>${s.tmpl}</td><td>${s.rows}</td>
+        <td style="color:var(--green);font-family:var(--mono)">${s.rows-s.errs}</td>
+        <td style="color:${s.errs>0?'var(--red)':'var(--text3)'};font-family:var(--mono)">${s.errs}</td>
+        <td>${sBadge(s.status)}</td><td style="color:var(--text3)">${s.date}</td>
+        <td><button class="btn btn-sm btn-ghost" onclick="notify('Viewing detail...','ok')">View</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ═══════════════════════════
+// WIZARD (Admin New Template)
+// ═══════════════════════════
+const wizardSteps = [
+  {label:'Upload file',desc:'Job name & template file'},
+  {label:'Data mapping',desc:'Table & field mapping'},
+  {label:'Duplicate handling',desc:'Deduplication strategy'},
+  {label:'Validation & options',desc:'Field rules & settings'},
+];
+
+function openWizard() {
+  wStep = 1; wData = {name:'',desc:'',file:null,table:'',mappings:[],dupMode:'generate-all',validations:[]};
+  selDupMode = 'generate-all';
+  renderWizard();
+  document.getElementById('wizard-modal').classList.remove('hidden');
+}
+
+function closeWizard() {
+  document.getElementById('wizard-modal').classList.add('hidden');
+}
+
+function renderWizard() {
+  // Steps sidebar
+  const sb = document.getElementById('wsteps-sidebar');
+  sb.innerHTML = wizardSteps.map((s,i)=>{
+    const n=i+1;
+    const cls = n<wStep?'done':n===wStep?'active':'';
+    const num = n<wStep?'✓':n;
+    return `${i>0?`<div class="wstep-connector ${n<=wStep?'done':''}"></div>`:''}
+    <div class="wstep ${cls}" onclick="if(${n}<=${wStep})wStep=${n},renderWizard()">
+      <div class="wstep-num">${num}</div>
+      <div class="wstep-lbl">${s.label}</div>
+    </div>`;
+  }).join('');
+
+  // Next / back buttons
+  document.getElementById('wbtn-back').style.visibility = wStep===1?'hidden':'visible';
+  const nextBtn = document.getElementById('wbtn-next');
+  if (wStep===4) { nextBtn.textContent='Publish template ↗'; nextBtn.className='btn btn-primary'; }
+  else { nextBtn.textContent='Next →'; nextBtn.className='btn btn-primary'; }
+
+  // Panel content
+  const panel = document.getElementById('wpanel');
+  if (wStep===1) panel.innerHTML = renderW1();
+  else if (wStep===2) panel.innerHTML = renderW2();
+  else if (wStep===3) panel.innerHTML = renderW3();
+  else panel.innerHTML = renderW4();
+
+  // Re-attach toggle listeners
+  setTimeout(()=>{
+    attachToggles();
+    // Dup options
+    document.querySelectorAll('.dup-option').forEach(el=>{
+      el.addEventListener('click',()=>{
+        document.querySelectorAll('.dup-option').forEach(e=>e.classList.remove('selected'));
+        el.classList.add('selected');
+        selDupMode = el.dataset.mode;
+      });
+    });
+    // Table list items
+    document.querySelectorAll('.table-list-item').forEach(el=>{
+      el.addEventListener('click',()=>{
+        document.querySelectorAll('.table-list-item').forEach(e=>e.classList.remove('sel'));
+        el.classList.add('sel');
+        const tname = el.dataset.table;
+        const sel = document.getElementById('sel-table-name');
+        if(sel) sel.textContent = tname;
+        notify(`Table "${tname}" selected`,'ok');
+      });
+    });
+    // Upload zone in wizard
+    const wdz = document.getElementById('wdz');
+    if(wdz) wdz.addEventListener('click',()=>simulateWizardUpload());
+  },50);
+}
+
+function wizardNext() {
+  if (wStep===4) {
+    closeWizard();
+    notify('Template published and now available to users!','ok');
+    render(curPage);
+  } else {
+    wStep++;
+    renderWizard();
+  }
+}
+
+function wizardBack() {
+  if(wStep>1){wStep--;renderWizard();}
+}
+
+// ── Wizard Step 1: Upload file ──
+function renderW1() {
+  return `
+  <div style="font-size:15px;font-weight:700;color:var(--text1);margin-bottom:4px">Upload template file</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:20px">Provide a name for this import job and upload the Excel template that defines the columns.</div>
+  <div class="form-group">
+    <label class="form-lbl">Import job name <span class="req">*</span></label>
+    <input class="form-input" id="wjob-name" placeholder="e.g. Product Catalog Import" value="${wData.name}"/>
+  </div>
+  <div class="form-group">
+    <label class="form-lbl">Import job description</label>
+    <input class="form-input" placeholder="Optional description of this template's purpose" value="${wData.desc}"/>
+  </div>
+  <div class="form-group">
+    <label class="form-lbl">Data file <span class="req">*</span></label>
+    <div class="drop-zone" id="wdz" style="padding:24px 20px;">
+      <div class="drop-icon" style="font-size:24px">📄</div>
+      <div class="drop-title" id="wdz-title" style="font-size:13px">${wData.file||'Click to upload or drag & drop'}</div>
+      <div class="drop-sub" id="wdz-sub">Supported file types: zip or xlsx</div>
+    </div>
+    ${wData.file?`<div class="file-chip"><span class="file-chip-name">${wData.file}</span><button class="file-chip-remove" onclick="wData.file=null;renderWizard()">×</button></div>`:''}
+  </div>
+  <div style="background:var(--amber-lt);border:1px solid #fcd34d;border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--amber);">
+    ⚠ The uploaded file's column headers will be used as source field names for mapping in the next step.
+  </div>`;
+}
+
+function simulateWizardUpload() {
+  const t=document.getElementById('wdz-title');
+  const s=document.getElementById('wdz-sub');
+  const dz=document.getElementById('wdz');
+  if(!t) return;
+  t.textContent='Uploading...';
+  dz.style.borderColor='var(--accent)';
+  setTimeout(()=>{
+    wData.file='Employee_Extension_Interface_Template.xlsx';
+    t.textContent=wData.file;
+    s.textContent='✓ File uploaded · 12 columns detected';
+    dz.style.borderColor='var(--green)';
+    notify('File uploaded — 12 columns detected','ok');
+  },900);
+}
+
+// ── Wizard Step 2: Data Mapping ──
+function renderW2() {
+  const tables = dbTables.filter(t=>t!=='Global');
+  return `
+  <div style="font-size:15px;font-weight:700;color:var(--text1);margin-bottom:4px">Data mapping</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:18px">Select the target record type and map each source column to its corresponding target field.</div>
+
+  <div class="tabs" style="margin-bottom:16px;">
+    <div class="tab active" id="tab-mapping" onclick="switchWTab('mapping')">Data mapping</div>
+    <div class="tab" id="tab-dup2" onclick="switchWTab('dup2')" style="color:var(--text3)">Duplicate han...</div>
+    <div class="tab" id="tab-opts2" onclick="switchWTab('opts2')" style="color:var(--text3)">Options</div>
+  </div>
+
+  <div id="wpanel-mapping">
+    <button class="auto-map-btn" onclick="autoMap()">⚡ Auto mapping</button>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Definition</div>
+      <div style="display:flex;gap:16px;align-items:center;margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text1)"><input type="radio" name="def-type" value="record" checked style="accent-color:var(--accent)"/> Record</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="radio" name="def-type" value="assoc" style="accent-color:var(--accent)"/> Association</label>
+      </div>
+      <div style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <select class="form-select" style="flex:1;" onchange="document.getElementById('sel-table-name').textContent=this.value">
+          <option value="">Select target record</option>
+          ${tables.map(t=>`<option>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-bottom:1px solid var(--border);">
+          <button class="btn btn-sm" style="background:var(--accent);color:#fff;border-color:var(--accent);font-size:10px">All records</button>
+          <input class="search-input" placeholder="Search tables..." style="flex:1;width:auto;"/>
+        </div>
+        <div class="table-list">
+          <div style="padding:6px 14px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:1px;background:var(--surface2);font-family:var(--mono);">▼ Global</div>
+          ${tables.map(t=>`<div class="table-list-item ${t==='Product'?'sel':''}" data-table="${t}">${t}</div>`).join('')}
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--accent);margin-top:6px;font-weight:600;">Selected: <span id="sel-table-name">Product</span></div>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">Mapping</div>
+      <button class="btn btn-sm" onclick="addMappingRow()">+ Add mapping</button>
+    </div>
+    <div class="map-header">
+      <span>Source fields</span><span></span><span>Target fields</span><span></span>
+    </div>
+    <div id="mapping-rows">
+      ${srcFields.slice(0,4).map((f,i)=>mappingRow(f,tgtFields[i],i)).join('')}
+    </div>
+  </div>`;
+}
+
+function mappingRow(src,tgt,i) {
+  return `<div class="map-row" id="mr-${i}">
+    <div class="map-src">${src||'—'}</div>
+    <div class="map-arrow">→</div>
+    <div class="map-tgt">
+      <select class="form-select" style="font-size:12px;padding:7px 10px;">
+        <option value="">${tgt||'Select target field'}</option>
+        ${tgtFields.map(f=>`<option ${f===tgt?'selected':''}>${f}</option>`).join('')}
+      </select>
+    </div>
+    <button class="map-del" onclick="document.getElementById('mr-${i}').remove()">×</button>
+  </div>`;
+}
+
+let mapCount = 4;
+function addMappingRow() {
+  const container = document.getElementById('mapping-rows');
+  if(!container) return;
+  const div = document.createElement('div');
+  div.innerHTML = mappingRow(srcFields[mapCount%srcFields.length],'',mapCount);
+  container.appendChild(div.firstElementChild);
+  mapCount++;
+}
+
+function autoMap() {
+  const container = document.getElementById('mapping-rows');
+  if(!container) return;
+  container.innerHTML = srcFields.slice(0,6).map((f,i)=>mappingRow(f,tgtFields[i],i+100)).join('');
+  notify('Auto-mapped 6 fields based on column names','ok');
+}
+
+function switchWTab(tab) {
+  ['mapping','dup2','opts2'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el) el.classList.toggle('active',t===tab);
+  });
+  const mp=document.getElementById('wpanel-mapping');
+  if(mp) mp.style.display = tab==='mapping'?'':'none';
+}
+
+// ── Wizard Step 3: Duplicate Handling ──
+function renderW3() {
+  const opts = [
+    {mode:'generate-all',lbl:'Generate new ID for all records',desc:'Every imported record gets a brand new ID, regardless of duplicates.'},
+    {mode:'generate-dup',lbl:'Generate new ID for duplicate records',desc:'New records get new IDs; duplicates also get new IDs (creating copies).'},
+    {mode:'reject',lbl:'Reject duplicate records',desc:'Duplicate records are skipped and logged in the error report.'},
+    {mode:'replace',lbl:'Replace existing records',desc:'Duplicates overwrite the existing record completely.'},
+    {mode:'update',lbl:'Update existing records with new data',desc:'Only the changed fields are updated; other fields remain intact.'},
+  ];
+  return `
+  <div style="font-size:15px;font-weight:700;color:var(--text1);margin-bottom:4px">Duplicate handling</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:20px">Define what the system should do when an imported record matches an existing one.</div>
+  <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Handle duplicates by</div>
+  ${opts.map(o=>`
+  <div class="dup-option ${selDupMode===o.mode?'selected':''}" data-mode="${o.mode}">
+    <div class="dup-radio">${selDupMode===o.mode?'':''}${selDupMode===o.mode?'<div style="width:6px;height:6px;border-radius:50%;background:#fff"></div>':''}</div>
+    <div><div class="dup-lbl">${o.lbl}</div><div class="dup-desc">${o.desc}</div></div>
+  </div>`).join('')}`;
+}
+
+// ── Wizard Step 4: Validation & Options ──
+function renderW4() {
+  return `
+  <div style="font-size:15px;font-weight:700;color:var(--text1);margin-bottom:4px">Validation & options</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:20px">Add field-level validation rules and configure ingestion behaviour.</div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header"><div class="card-title">Field validation rules</div>
+      <button class="btn btn-sm" style="margin-left:auto" onclick="addValRow()">+ Add rule</button>
+    </div>
+    <div class="card-body" style="padding:14px 16px;">
+      <div class="vr-header"><span>Field</span><span>Rule type</span><span>Value</span><span>On error</span><span></span></div>
+      <div id="vr-rows">
+        ${[
+          ['Product Name','required','','skip row'],
+          ['SKU Code','regex','^[A-Z]{2}-\\d{4}$','skip row'],
+          ['Unit Price','min value','0','skip row'],
+          ['Unit Price','decimal places','2','warn'],
+          ['Product Name','max length','120','warn'],
+        ].map((r,i)=>`<div class="vr-row" id="vr-${i}">
+          <select class="form-select" style="font-size:11px;padding:6px 8px"><option>${r[0]}</option>${srcFields.map(f=>`<option>${f}</option>`).join('')}</select>
+          <select class="form-select" style="font-size:11px;padding:6px 8px"><option>${r[1]}</option><option>required</option><option>regex</option><option>min value</option><option>max value</option><option>max length</option><option>decimal places</option><option>unique in file</option><option>allowed values</option></select>
+          <input class="form-input" value="${r[2]}" style="font-size:11px;padding:6px 8px;font-family:var(--mono)"/>
+          <select class="form-select" style="font-size:11px;padding:6px 8px"><option>${r[3]}</option><option>skip row</option><option>warn</option><option>reject all</option></select>
+          <button class="map-del" onclick="document.getElementById('vr-${i}').remove()">×</button>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header"><div class="card-title">Options</div></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px;">
+      ${[
+        ['Trim whitespace from all fields','Automatically strip leading and trailing spaces'],
+        ['Normalise date formats','Convert all dates to ISO 8601 (YYYY-MM-DD)'],
+        ['Standardise currency','Remove symbols and normalise decimal separators'],
+        ['Stop import on first critical error','Halt ingestion if a required field fails'],
+      ].map(([l,d])=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div><div style="font-size:13px;font-weight:600;color:var(--text1)">${l}</div><div style="font-size:11px;color:var(--text3)">${d}</div></div>
+        <button class="tog on" onclick="this.classList.toggle('on')"><div class="tog-thumb"></div></button>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div style="background:var(--green-lt);border:1px solid #86efac;border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:12px;">
+    <div style="font-size:20px">✓</div>
+    <div><div style="font-size:13px;font-weight:700;color:var(--green)">Ready to publish</div><div style="font-size:12px;color:var(--text2)">All steps complete. Click <strong>Publish template</strong> to make it available to users.</div></div>
+  </div>`;
+}
+
+let vrCount = 5;
+function addValRow() {
+  const container = document.getElementById('vr-rows');
+  if(!container) return;
+  const div = document.createElement('div');
+  div.innerHTML = `<div class="vr-row" id="vr-${vrCount}">
+    <select class="form-select" style="font-size:11px;padding:6px 8px"><option>Select field</option>${srcFields.map(f=>`<option>${f}</option>`).join('')}</select>
+    <select class="form-select" style="font-size:11px;padding:6px 8px"><option>required</option><option>regex</option><option>min value</option><option>max length</option><option>unique in file</option><option>allowed values</option></select>
+    <input class="form-input" placeholder="value" style="font-size:11px;padding:6px 8px;font-family:var(--mono)"/>
+    <select class="form-select" style="font-size:11px;padding:6px 8px"><option>skip row</option><option>warn</option><option>reject all</option></select>
+    <button class="map-del" onclick="this.parentElement.remove()">×</button>
+  </div>`;
+  container.appendChild(div.firstElementChild);
+  vrCount++;
+}
+
+// ═══════════════════════════
+// HELPERS
+// ═══════════════════════════
+function sBadge(s) {
+  if(s==='success') return '<span class="badge badge-green"><span class="dot"></span> Success</span>';
+  if(s==='partial') return '<span class="badge badge-amber"><span class="dot"></span> Partial</span>';
+  return '<span class="badge badge-red"><span class="dot"></span> Failed</span>';
+}
+
+function attachToggles() {
+  document.querySelectorAll('.tog').forEach(t=>{
+    if(!t._tog) {
+      t._tog = true;
+      t.addEventListener('click',()=>t.classList.toggle('on'));
+    }
+  });
+}
+
+let notifTimer;
+function notify(msg,type='ok') {
+  const el=document.getElementById('notif');
+  el.textContent=msg;
+  el.className=`notif ${type} show`;
+  clearTimeout(notifTimer);
+  notifTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+// ═══════════════════════════
+// INIT
+// ═══════════════════════════
+nav('admin-dash');
+</script>
+</body>
+</html>

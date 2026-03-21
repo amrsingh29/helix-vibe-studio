@@ -1,426 +1,464 @@
-/**
- * @generated
- * @context Theme-token layout for catalog (rail, toolbar, grid, table) — layout from sample, colors from ADAPT/CSS variables.
- * @decisions :host inline-size container queries so narrow Helix columns reflow rail (not only viewport @media); horizontal scroll strip + pill rail buttons; compact toolbar stack; @media fallback for older browsers.
- * @references .cursor/rules/bmc-ux-adapt-ui-components.md
- * @modified 2026-03-21
- */
-
-// @context Stack rail + horizontal category scroller when the component is narrow (split view / phone), even if the browser viewport is wide.
-@mixin catalog-narrow-layout {
-  .cv-root {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .cv-rail {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-    width: 100%;
-    max-width: 100%;
-    flex: 0 0 auto;
-    padding: 0 0 0.5rem;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-
-  .cv-rail__btn {
-    flex: 0 0 auto;
-    max-width: none;
-    padding: 0.5rem 0.75rem;
-    text-align: center;
-    border-radius: 999px;
-    border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
-    background: transparent;
-  }
-
-  .cv-rail__btn--active {
-    font-weight: 600;
-    border-color: var(--color-action, #0b5fff);
-    background: var(--color-background-selected, rgba(11, 95, 255, 0.12));
-  }
-}
-
-// @context Full-width search row then facets + toggle on very narrow hosts.
-@mixin catalog-compact-toolbar {
-  .cv-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .cv-toolbar__search {
-    flex: none;
-    width: 100%;
-    max-width: none;
-  }
-
-  .cv-facets {
-    flex: none;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .cv-view-toggle {
-    margin-left: 0;
-    align-self: flex-end;
-  }
-}
-
-:host {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  container-type: inline-size;
-  container-name: catalog-host;
-}
-
-.cv-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.cv-root {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  min-height: 12rem;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  color: var(--color-text, inherit);
-  background: var(--color-background, transparent);
-}
-
-.cv-root--hidden {
-  display: none;
-}
-
-.cv-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  flex: 0 0 auto;
-  min-width: 0;
-  max-width: 12rem;
-  padding: 0.25rem 0.5rem 0.25rem 0;
-  border-right: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-}
-
-.cv-rail__btn {
-  text-align: left;
-  padding: 0.35rem 0.5rem;
-  border-radius: 0.25rem;
-  border: 1px solid transparent;
-  background: transparent;
-  color: inherit;
-  font-size: 0.875rem;
-  cursor: pointer;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cv-rail__btn:hover,
-.cv-rail__btn:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
-  outline-offset: 2px;
-}
-
-.cv-rail__btn--active {
-  font-weight: 600;
-  background: var(--color-background-elevated, rgba(128, 128, 128, 0.12));
-  border-color: var(--color-border-strong, rgba(128, 128, 128, 0.45));
-}
-
-.cv-main {
-  flex: 1;
-  min-width: 0;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.cv-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1rem;
-  width: 100%;
-  min-width: 0;
-}
-
-.cv-toolbar__search {
-  flex: 1 1 12rem;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.cv-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.5rem 0.65rem;
-  border-radius: 0.25rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
-  background: var(--color-background-elevated, var(--color-background, #fff));
-  color: inherit;
-  font: inherit;
-}
-
-.cv-input:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
-  outline-offset: 2px;
-}
-
-.cv-facets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  flex: 2 1 14rem;
-  min-width: 0;
-  max-width: 100%;
-  justify-content: flex-start;
-}
-
-.cv-pill {
-  border-radius: 999px;
-  padding: 0.35rem 0.75rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
-  background: transparent;
-  color: inherit;
-  font-size: 0.8125rem;
-  cursor: pointer;
-}
-
-.cv-pill:hover,
-.cv-pill:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
-  outline-offset: 2px;
-}
-
-.cv-pill--active {
-  border-color: var(--color-action, #0b5fff);
-  background: var(--color-background-selected, rgba(11, 95, 255, 0.12));
-  font-weight: 600;
-}
-
-.cv-view-toggle {
-  display: inline-flex;
-  gap: 0.25rem;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.cv-toggle-btn--active {
-  box-shadow: inset 0 0 0 2px var(--color-action, #0b5fff);
-}
-
-.cv-empty {
-  margin: 2rem 0;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
-}
-
-// @context Columns follow container width (not just viewport), so split views and Helix shells get correct card count without horizontal overflow.
-.cv-grid {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17.5rem), 1fr));
-  gap: 1rem;
-}
-
-.cv-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  min-width: 0;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-  background: var(--color-background-elevated, var(--color-background, #fff));
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-  transition:
-    border-color 0.15s ease,
-    background-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.cv-card:hover,
-.cv-card:focus-within {
-  border-color: var(--color-border-strong, rgba(0, 0, 0, 0.45));
-  background: var(--color-background-hover, rgba(128, 128, 128, 0.08));
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.cv-card:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
-  outline-offset: 2px;
-}
-
-.cv-card__badge {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-}
-
-.cv-card__title {
-  margin: 0;
-  padding-right: 4.5rem;
-  font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-.cv-card__desc {
-  margin: 0.35rem 0 0;
-  padding-right: 0.5rem;
-  font-size: 0.875rem;
-  line-height: 1.4;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.cv-card__price {
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.cv-card__fields {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  flex: 1 1 auto;
-}
-
-.cv-card__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  font-size: 0.875rem;
-}
-
-.cv-card__field-label {
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
-  font-size: 0.75rem;
-}
-
-.cv-card__field-value {
-  word-break: break-word;
-}
-
-.cv-card__field--desc .cv-card__field-value {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.72));
-}
-
-.cv-card__field--price .cv-card__field-value {
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.cv-card__action {
-  width: 100%;
-  margin-top: auto;
-}
-
-.cv-table-wrap {
-  overflow: auto;
-  max-width: 100%;
-  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-  border-radius: 0.35rem;
-}
-
-.cv-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
-
-.cv-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--color-background-elevated, var(--color-background, #fff));
-  border-bottom: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
-  text-align: left;
-  padding: 0.5rem 0.65rem;
-}
-
-.cv-th-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  font-weight: 600;
-  color: inherit;
-  cursor: pointer;
-}
-
-.cv-th-btn:focus-visible {
-  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-.cv-sort {
-  font-size: 0.65rem;
-  opacity: 0.85;
-}
-
-.cv-table tbody td {
-  padding: 0.5rem 0.65rem;
-  border-bottom: 1px solid var(--color-border, rgba(128, 128, 128, 0.2));
-  vertical-align: middle;
-}
-
-.cv-table__actions {
-  white-space: nowrap;
-  width: 1%;
-}
-
-// @context Overrides base rail/toolbar rules — must load last so narrow layouts win over default sidebar styles.
-@container catalog-host (max-width: 991px) {
-  @include catalog-narrow-layout;
-}
-
-@container catalog-host (max-width: 600px) {
-  @include catalog-compact-toolbar;
-}
-
-@media (max-width: 991px) {
-  @include catalog-narrow-layout;
-}
-
-@media (max-width: 600px) {
-  @include catalog-compact-toolbar;
-}
+/**
+ * @generated
+ * @context Theme-token layout for catalog (rail, toolbar, grid, table) — layout from sample, colors from ADAPT/CSS variables.
+ * @decisions :host inline-size container queries; #fff main + category rail + table (explicit colors; no theme bg vars on table/rail so dark shell tokens cannot tint); cards #fff; toolbar separator.
+ * @references .cursor/rules/bmc-ux-adapt-ui-components.md
+ * @modified 2026-03-21
+ */
+
+// @context Stack rail + horizontal category scroller when the component is narrow (split view / phone), even if the browser viewport is wide.
+@mixin catalog-narrow-layout {
+  .cv-root {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-rail {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 auto;
+    padding: 0 0 0.5rem;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .cv-rail__btn {
+    flex: 0 0 auto;
+    max-width: none;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #ffffff;
+    color: #111827;
+  }
+
+  .cv-rail__btn--active {
+    font-weight: 600;
+    border-color: #0b5fff;
+    background: rgba(11, 95, 255, 0.1);
+    color: #111827;
+  }
+}
+
+// @context Full-width search row then facets + toggle on very narrow hosts.
+@mixin catalog-compact-toolbar {
+  .cv-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-toolbar__search {
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  .cv-facets {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .cv-view-toggle {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+}
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background: #ffffff;
+  container-type: inline-size;
+  container-name: catalog-host;
+}
+
+.cv-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cv-root {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  min-height: 12rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  color: var(--color-text, #1a1a1a);
+  // @context Full white canvas so no gray “page” shows behind rail + .cv-main (user request).
+  background: #ffffff;
+}
+
+.cv-root--hidden {
+  display: none;
+}
+
+.cv-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 12rem;
+  padding: 0.5rem 0.65rem 0.5rem 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: none;
+  color: #111827;
+}
+
+.cv-rail__btn {
+  text-align: left;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.35rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #111827;
+  font-size: 0.875rem;
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-rail__btn:hover {
+  background: #f7fafc;
+}
+
+.cv-rail__btn:hover,
+.cv-rail__btn:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline-offset: 2px;
+}
+
+.cv-rail__btn--active {
+  font-weight: 600;
+  background: #f1f5f9;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.cv-main {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #ffffff;
+  border-radius: 0.35rem;
+  padding: 0.75rem 0.85rem;
+  box-sizing: border-box;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.cv-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.15rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cv-toolbar__search {
+  flex: 1 1 12rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cv-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: #111827;
+  font: inherit;
+}
+
+.cv-input:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline-offset: 2px;
+}
+
+.cv-facets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  flex: 2 1 14rem;
+  min-width: 0;
+  max-width: 100%;
+  justify-content: flex-start;
+}
+
+.cv-pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: #111827;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.cv-pill:hover,
+.cv-pill:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline-offset: 2px;
+}
+
+.cv-pill--active {
+  border-color: var(--color-action, #0b5fff);
+  background: var(--color-background-selected, rgba(11, 95, 255, 0.12));
+  font-weight: 600;
+}
+
+.cv-view-toggle {
+  display: inline-flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.cv-toggle-btn--active {
+  box-shadow: inset 0 0 0 2px var(--color-action, #0b5fff);
+}
+
+.cv-empty {
+  margin: 2rem 0;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
+}
+
+// @context Columns follow container width (not just viewport), so split views and Helix shells get correct card count without horizontal overflow.
+.cv-grid {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17.5rem), 1fr));
+  gap: 1rem;
+}
+
+.cv-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.cv-card:hover,
+.cv-card:focus-within {
+  border-color: rgba(0, 0, 0, 0.14);
+  background: #f8f9fb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cv-card:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline-offset: 2px;
+}
+
+.cv-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.cv-card__title {
+  margin: 0;
+  padding-right: 4.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text, #1a1a1a);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.cv-card__desc {
+  margin: 0.35rem 0 0;
+  padding-right: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cv-card__price {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.cv-card__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1 1 auto;
+}
+
+.cv-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.875rem;
+}
+
+.cv-card__field-label {
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  font-size: 0.75rem;
+}
+
+.cv-card__field-value {
+  word-break: break-word;
+}
+
+.cv-card__field--desc .cv-card__field-value {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.72));
+}
+
+.cv-card__field--price .cv-card__field-value {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.cv-card__action {
+  width: 100%;
+  margin-top: auto;
+}
+
+// @context Explicit #fff / #111827 — Helix --color-background* on table can resolve to dark panels in some shells.
+.cv-table-wrap {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  background: #ffffff;
+}
+
+.cv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  background: #ffffff;
+  color: #111827;
+}
+
+.cv-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: left;
+  padding: 0.5rem 0.65rem;
+  color: #111827;
+}
+
+.cv-th-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+}
+
+.cv-th-btn:focus-visible {
+  outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.cv-sort {
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.cv-table tbody tr {
+  background: #ffffff;
+}
+
+.cv-table tbody tr:hover {
+  background: #f8f9fb;
+}
+
+.cv-table tbody td {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  vertical-align: middle;
+  color: #111827;
+  background: inherit;
+}
+
+.cv-table__actions {
+  white-space: nowrap;
+  width: 1%;
+}
+
+// @context Overrides base rail/toolbar rules — must load last so narrow layouts win over default sidebar styles.
+@container catalog-host (max-width: 991px) {
+  @include catalog-narrow-layout;
+}
+
+@container catalog-host (max-width: 600px) {
+  @include catalog-compact-toolbar;
+}
+
+@media (max-width: 991px) {
+  @include catalog-narrow-layout;
+}
+
+@media (max-width: 600px) {
+  @include catalog-compact-toolbar;
+}

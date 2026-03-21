@@ -13,13 +13,13 @@ Configurable catalog for **BMC Helix Innovation Studio** coded applications. **S
 | **Layout** | Category rail: **sidebar (max 12rem)** when the component is wide; when the **host is ≤991px** wide (container query + viewport fallback), a **horizontal scrollable pill strip** above the main area. **≤600px** host: stacked toolbar (full-width search, facets, Grid/Table). Root uses `width: 100%` / `min-width: 0` to avoid clipping in Helix shells. |
 | **Card view** | **Fluid CSS grid** (`auto-fill` + `minmax`) so column count follows **container** width, not only viewport breakpoints. Badge for facet field; title wraps; description fields line-clamped; price-like fields emphasized. |
 | **Table** | Same columns as `Fields` + action column; sortable headers (asc/desc); sort applies to the **filtered** set. |
-| **Action** | Primary button per card/row calls `notifyPropertyChanged('catalogActionRecord', row)` and `notifyPropertyChanged('catalogActionRecordJson', JSON.stringify(row))` for downstream wiring. |
-| **Styling** | Layout follows the provided reference; colors use **ADAPT / platform CSS variables** (`--color-*`), not screenshot colors. |
+| **Action** | Primary button per card/row calls `notifyPropertyChanged('catalogActionRecord', row)` and `notifyPropertyChanged('catalogActionRecordJson', JSON.stringify(row))`. Optionally set **Target view definition name** to also open another view via `RxOpenViewActionService` with **viewParams** from comma-separated row field keys (see bundle `README` in `workspace/.../catalog-view/` for full detail). |
+| **Styling** | Bright **white** main column and distinct rail/toolbar/card treatment (scoped SCSS); ADAPT `adapt-button` for actions; tokens where possible. |
 
 ## Integration
 
 1. Copy `my-components/catalog-view/` into your app library under `libs/<application-name>/src/lib/view-components/catalog-view/`.
-2. Adjust **selector**, **`@RxViewComponent({ name })`**, and **`register({ type })`** if your application prefix is not `com-example-sample-application` (keep all three identical).
+2. Adjust **selector**, **`@RxViewComponent({ name })`**, and **`register({ type })`** to match your bundle (this sample uses `com-amar-helix-vibe-studio` — keep all three identical).
 3. Import `CatalogViewRegistrationModule` in your main `*.module.ts` and export it from `src/index.ts` (see [cookbook/02-ui-view-components.md](../../cookbook/02-ui-view-components.md)).
 4. Add localized strings if you replace English placeholders (see [cookbook/09-best-practices.md](../../cookbook/09-best-practices.md)).
 

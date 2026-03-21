@@ -1,0 +1,28 @@
+/**
+ * @generated
+ * @context Scoped styles for design-time placeholder panel.
+ * @decisions Compact list + muted footer line.
+ * @references cookbook/02-ui-view-components.md
+ * @modified 2026-03-21
+ */
+.rad-design-hint {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  max-width: 36rem;
+
+  ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+  }
+
+  code {
+    font-size: 0.8125rem;
+  }
+}
+
+.rad-design-hint__muted {
+  margin: 0.5rem 0 0;
+  opacity: 0.85;
+  font-size: 0.8125rem;
+}

@@ -1,0 +1,55 @@
+<!-- @generated
+ @context Three Adapt buttons for open view, launch process, notifications.
+ @decisions @if for hidden root; translate pipe for labels.
+ @references cookbook/02-ui-view-components.md, AGENT-INSTRUCTIONS.md
+ @modified 2026-03-21 -->
+@if (!isHidden) {
+  <section class="rad-root" data-testid="runtime-actions-demo-root" aria-label="Runtime actions demo">
+    <h2 class="rad-root__title">
+      {{
+        'com.amar.helix-vibe-studio.view-components.runtime-actions-demo.title' | translate
+      }}
+    </h2>
+    @if (state?.name) {
+      <p class="rad-root__subtitle">{{ state.name }}</p>
+    }
+    <div class="rad-root__actions" role="group" aria-label="Runtime actions">
+      <button
+        adapt-button
+        type="button"
+        [btn-type]="'secondary'"
+        class="rad-root__btn"
+        (click)="onOpenView()"
+        data-testid="rad-open-view"
+      >
+        {{
+          'com.amar.helix-vibe-studio.view-components.runtime-actions-demo.btn-open-view' | translate
+        }}
+      </button>
+      <button
+        adapt-button
+        type="button"
+        [btn-type]="'secondary'"
+        class="rad-root__btn"
+        (click)="onLaunchProcess()"
+        data-testid="rad-launch-process"
+      >
+        {{
+          'com.amar.helix-vibe-studio.view-components.runtime-actions-demo.btn-launch-process' | translate
+        }}
+      </button>
+      <button
+        adapt-button
+        type="button"
+        [btn-type]="'primary'"
+        class="rad-root__btn"
+        (click)="onShowNotification()"
+        data-testid="rad-notification"
+      >
+        {{
+          'com.amar.helix-vibe-studio.view-components.runtime-actions-demo.btn-notification' | translate
+        }}
+      </button>
+    </div>
+  </section>
+}

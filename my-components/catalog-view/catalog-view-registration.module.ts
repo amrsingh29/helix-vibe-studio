@@ -1,37 +1,55 @@
 /**
  * @generated
- * @context Registers Catalog view with Innovation Studio; palette name states card grid and table layouts; neutral type id com-example-sample-application-catalog-view.
- * @decisions Expression evaluation on records/fields/buttonLabel; picker + static facet JSON without expression to avoid invalid JSON in eval.
- * @references cookbook/02-ui-view-components.md
+ * @context Registers Catalog view; palette name states card grid and table layouts; visible in View Designer for all bundles (no availableInBundles filter).
+ * @decisions OpenViewActionModule for RxOpenViewActionService; optional view-input + CSV fields for simple config; expressions remain for advanced binding.
+ * @references cookbook/02-ui-view-components.md, .cursor/_instructions/UI/Services/open-view.md
  * @modified 2026-03-21
  */
 import { NgModule } from '@angular/core';
 import { RX_STANDARD_PROPS_DESC, RxViewComponentRegistryService } from '@helix/platform/view/api';
+import { OpenViewActionModule } from '@helix/platform/view/actions';
 import { CatalogViewDesignComponent } from './design/catalog-view-design.component';
 import { CatalogViewDesignModel } from './design/catalog-view-design.model';
 import { CatalogViewComponent } from './runtime/catalog-view.component';
 
-@NgModule()
+@NgModule({
+  imports: [OpenViewActionModule]
+})
 export class CatalogViewRegistrationModule {
   constructor(rxViewComponentRegistryService: RxViewComponentRegistryService) {
     rxViewComponentRegistryService.register({
-      type: 'com-example-sample-application-catalog-view',
+      type: 'com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-catalog-view',
       name: 'Catalog view (cards & table)',
-      group: 'Reusable UI',
+      group: 'Helix Vibe Studio',
       icon: 'table',
       component: CatalogViewComponent,
       designComponent: CatalogViewDesignComponent,
       designComponentModel: CatalogViewDesignModel,
       properties: [
         { name: 'name', localizable: true, enableExpressionEvaluation: true },
+        { name: 'useBuiltInRecordQuery', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogPageSize', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogQueryExpression', localizable: false, enableExpressionEvaluation: false },
         { name: 'recordDefinitionName', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogSelectedFieldIds', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cardTitleFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cardDescriptionFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cardBadgeFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cardPriceFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cardCurrencyFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'recordsViewInputParamName', localizable: false, enableExpressionEvaluation: false },
         { name: 'records', localizable: false, enableExpressionEvaluation: true },
+        { name: 'fieldsCsv', localizable: false, enableExpressionEvaluation: false },
         { name: 'fields', localizable: false, enableExpressionEvaluation: true },
         { name: 'buttonLabel', localizable: true, enableExpressionEvaluation: true },
         { name: 'initialView', localizable: false, enableExpressionEvaluation: false },
         { name: 'categoryFieldKey', localizable: false, enableExpressionEvaluation: false },
         { name: 'facetFieldKey', localizable: false, enableExpressionEvaluation: false },
         { name: 'facetOptionsJson', localizable: false, enableExpressionEvaluation: false },
+        { name: 'targetViewDefinitionName', localizable: false, enableExpressionEvaluation: true },
+        { name: 'openViewPresentationType', localizable: false, enableExpressionEvaluation: false },
+        { name: 'openViewModalTitle', localizable: true, enableExpressionEvaluation: true },
+        { name: 'viewParamFieldKeysCsv', localizable: false, enableExpressionEvaluation: false },
         ...RX_STANDARD_PROPS_DESC
       ]
     });

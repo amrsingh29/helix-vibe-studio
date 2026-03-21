@@ -1,0 +1,18 @@
+<!-- @generated
+ @context Explains rx-action chains (Action list) + legacy fallbacks.
+ @decisions Matches Event Button / action-button mental model.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-21 -->
+<div class="rad-design-hint">
+  <p><strong>Runtime actions demo</strong> — three Adapt buttons at runtime.</p>
+  <p>
+    Use the <strong>action list</strong> pickers (same as palette <strong>Button → Edit actions</strong>) to add
+    <code>rxOpenViewAction</code>, <code>rxLaunchProcessAction</code>, and other platform rx-actions with full parameters.
+  </p>
+  <ul>
+    <li><strong>Open view button (actions)</strong> — chain runs on first button; if empty, legacy view name fields apply.</li>
+    <li><strong>Launch process button (actions)</strong> — chain runs on second button; if empty, legacy process name + <code>message</code> apply.</li>
+    <li><strong>Notification button (actions)</strong> — optional chain on third button; if empty, built-in notification demo runs.</li>
+  </ul>
+  <p class="rad-design-hint__muted">See <strong>Legacy</strong> sections only when you are not using action chains.</p>
+</div>
