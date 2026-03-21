@@ -1,0 +1,28 @@
+<!-- @generated
+ @context Simple list + status column; empty state when no matches.
+ @decisions @if/@for only; English labels — localize in real app per cookbook.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-20 -->
+<div class="efrl" [class.efrl--hidden]="isHidden">
+  <div class="efrl__meta">
+    @if (matchValueNormalized !== '') {
+      <span class="efrl__badge">Filtered by <strong>{{ statusKey }}</strong> (expression value)</span>
+    } @else {
+      <span class="efrl__badge efrl__badge--muted">No status filter (showing all)</span>
+    }
+    <span class="efrl__count">{{ filteredRows.length }} row(s)</span>
+  </div>
+
+  @if (filteredRows.length === 0) {
+    <p class="efrl__empty">No records match the current filter.</p>
+  } @else {
+    <ul class="efrl__list" role="list">
+      @for (row of filteredRows; track $index) {
+        <li class="efrl__item">
+          <span class="efrl__title">{{ labelFor(row) }}</span>
+          <span class="efrl__status">{{ statusFor(row) }}</span>
+        </li>
+      }
+    </ul>
+  }
+</div>

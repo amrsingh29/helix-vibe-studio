@@ -1,10 +1,15 @@
 <!-- @generated
- @context Active cart layout: billing groups, line cards, notes, submit — matches catalog-view tokens and container queries.
- @decisions @if/@for; native inputs for qty/notes with acv-* classes; data-testid hooks for automation.
+ @context Cart layout: Adapt cart icon + title; remove per line; billing; cart total bar; primary Submit + secondary Cancel (status updates).
+ @decisions @if/@for; acv-* BEM; adapt-icon cart; btn-type primary/secondary for Helix actions.
  @references my-components/catalog-view/runtime/catalog-view.component.scss
  @modified 2026-03-21 -->
 <div class="acv-root" [class.acv-root--hidden]="isHidden" data-testid="cart-root">
-  <h1 class="acv-title" data-testid="cart-title">{{ state?.pageTitle || 'Cart' }}</h1>
+  <div class="acv-title-row">
+    <span class="acv-title__icon-wrap" aria-hidden="true">
+      <adapt-icon name="cart" description="Cart"></adapt-icon>
+    </span>
+    <h1 class="acv-title" data-testid="cart-title">{{ state?.pageTitle || 'Cart' }}</h1>
+  </div>
 
   @if (loadError) {
     <div class="acv-banner acv-banner--error" role="alert">{{ loadError }}</div>
@@ -26,25 +31,43 @@
     <div class="acv-groups">
       @for (g of groups; track trackGroup($index, g)) {
         <section class="acv-group" [attr.aria-label]="g.cadenceKey">
-          <div class="acv-group__head">
-            <span [class]="cadencePillClass(g.cadenceKey)">{{ g.cadenceKey }}</span>
-            @if (showMoney()) {
-              <span class="acv-group__subtotal" [attr.data-testid]="'cart-group-' + cadenceTestIdSlug(g.cadenceKey) + '-subtotal'">
-                Subtotal {{ formatMoney(g.subtotal) }}
-              </span>
-            } @else {
-              <span class="acv-group__subtotal" [attr.data-testid]="'cart-group-' + cadenceTestIdSlug(g.cadenceKey) + '-subtotal'">
-                {{ g.lines.length }} {{ g.lines.length === 1 ? 'item' : 'items' }}
-              </span>
-            }
-          </div>
+          @if (groups.length > 1) {
+            <h2 class="acv-group__section-title">{{ g.cadenceKey }}</h2>
+          }
 
           <ul class="acv-lines">
             @for (line of g.lines; track trackLine($index, line)) {
               <li class="acv-line" [attr.data-testid]="'cart-item-' + line.id">
                 <div class="acv-line__main">
-                  <div class="acv-line__text">
-                    <div class="acv-line__name" [attr.data-testid]="'cart-item-' + line.id + '-name'">{{ line.displayName }}</div>
+                  <div class="acv-line__col">
+                    <div class="acv-line__header">
+                      <div class="acv-line__title-block">
+                        <div class="acv-line__name" [attr.data-testid]="'cart-item-' + line.id + '-name'">{{ line.displayName }}</div>
+                        @if (showBillingCadenceOnLine(line)) {
+                          <div
+                            [class]="cadenceLineClasses(line.cadenceKey)"
+                            [attr.data-testid]="'cart-item-' + line.id + '-cadence'"
+                            [attr.aria-label]="(state?.lineItemBillingLabel || 'Billing cycle') + ' ' + line.cadenceKey"
+                          >
+                            @if ((state?.lineItemBillingLabel ?? 'Billing cycle').trim()) {
+                              <span class="acv-line__cadence-label">{{ state?.lineItemBillingLabel || 'Billing cycle' }}</span>
+                            }
+                            <span class="acv-line__cadence-value">{{ line.cadenceKey }}</span>
+                          </div>
+                        }
+                      </div>
+                      <button
+                        type="button"
+                        class="acv-line__remove"
+                        [disabled]="line.busy"
+                        [attr.data-testid]="'cart-item-' + line.id + '-remove'"
+                        [attr.aria-label]="(state?.removeLineActionLabel || 'Remove') + ' ' + line.displayName"
+                        (click)="removeLine(line)"
+                      >
+                        {{ state?.removeLineActionLabel || 'Remove' }}
+                      </button>
+                    </div>
+
                     <div class="acv-line__price-row">
                       @if (showMoney() && line.unitPrice != null) {
                         <div class="acv-line__money" [attr.data-testid]="'cart-item-' + line.id + '-pricing'">
@@ -67,18 +90,9 @@
                       @if (showMoney() && line.unitPrice == null) {
                         <span class="acv-line__price acv-line__price--muted">—</span>
                       }
-                      <button
-                        type="button"
-                        class="acv-remove"
-                        [disabled]="line.busy"
-                        [attr.data-testid]="'cart-item-' + line.id + '-remove'"
-                        [attr.aria-label]="'Remove ' + line.displayName"
-                        (click)="removeLine(line)"
-                      >
-                        Remove
-                      </button>
                     </div>
                   </div>
+
                   <div class="acv-qty" [attr.data-testid]="'cart-item-' + line.id + '-quantity'">
                     <button
                       type="button"
@@ -118,6 +132,13 @@
       }
     </div>
 
+    @if (showCartTotalRow()) {
+      <div class="acv-cart-total" data-testid="cart-grand-total" role="region" [attr.aria-label]="state?.cartTotalAmountLabel || 'Total amount'">
+        <span class="acv-cart-total__label">{{ state?.cartTotalAmountLabel || 'Total amount' }}</span>
+        <span class="acv-cart-total__value">{{ formatMoney(cartGrandTotal()) }}</span>
+      </div>
+    }
+
     @if (showOrderNotes()) {
       <div class="acv-notes">
         <label class="acv-notes__label" for="acv-order-notes">{{ state?.orderNotesLabel }}</label>
@@ -126,7 +147,7 @@
           class="acv-textarea"
           rows="4"
           data-testid="order-notes"
-          [disabled]="savingNotes || submitting"
+          [disabled]="savingNotes || submitting || cancelling"
           [value]="orderNotesDraft"
           (input)="onNotesChange($any($event.target).value)"
           (blur)="onNotesBlur()"
@@ -139,10 +160,24 @@
 
     @if (showSubmitButtonFlag()) {
       <div class="acv-actions">
+        @if (showCancelOrderButtonFlag()) {
+          <button
+            adapt-button
+            type="button"
+            [btn-type]="'secondary'"
+            class="acv-action acv-action--cancel"
+            data-testid="cancel-order"
+            [disabled]="cancelOrderDisabled()"
+            (click)="cancelOrder()"
+          >
+            {{ state?.cancelOrderLabel || 'Cancel order' }}
+          </button>
+        }
         <button
           adapt-button
-          type="primary"
-          class="acv-submit"
+          type="button"
+          [btn-type]="'primary'"
+          class="acv-action acv-action--submit"
           data-testid="submit-order"
           [disabled]="submitDisabled()"
           (click)="submitOrder()"

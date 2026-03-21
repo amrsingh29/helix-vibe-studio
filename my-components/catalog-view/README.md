@@ -39,6 +39,12 @@ Configurable catalog for **BMC Helix Innovation Studio** coded applications. **S
 
 Deploy a bundle that registers this component to any Helix environment where other apps should see it in View Designer, **or** copy the folder into each application’s Angular library and register it there. The implementation avoids `com.amar.helix-vibe-studio`-specific IDs; replace the sample prefix with your own consistent type string.
 
+## AI agent instructions (open view + UI polish)
+
+To wire **Add to order** to **open another view** (with row context) and to **brighten** the catalog (white background, contrast), use:
+
+- **[AGENT-INSTRUCTIONS-open-view-and-polish-ui.md](./AGENT-INSTRUCTIONS-open-view-and-polish-ui.md)** — full checklist, `RxOpenViewActionService` pattern, SCSS targets (`.cv-root`, `.cv-main`, `.cv-card`, …), and copy-paste prompts for Cursor.
+
 ## Files
 
 - `runtime/` — runtime UI

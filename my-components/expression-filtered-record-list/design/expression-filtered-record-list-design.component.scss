@@ -1,0 +1,16 @@
+/**
+ * @generated
+ * @context Design-time hint styling.
+ * @decisions Compact readable block.
+ * @references cookbook/02-ui-view-components.md
+ * @modified 2026-03-20
+ */
+.efrl-design-hint {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  border: 1px dashed var(--color-border-subtle, #ccc);
+  border-radius: 4px;
+  background: var(--color-background-secondary, #f5f5f5);
+}

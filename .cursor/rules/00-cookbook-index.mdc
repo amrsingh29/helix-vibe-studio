@@ -13,6 +13,8 @@ This project uses a comprehensive cookbook for AI-assisted coded application dev
 | Task | Read First |
 |------|-----------|
 | **Understand the project** | [Getting Started](../../cookbook/01-getting-started.md) |
+| **Tutorials, Cursor prompts, composite examples** | [How to build coded components](../../docs/how-to-build-coded-component-examples/README.md) |
+| **Custom VC + View Designer action wiring** | [Patterns + SDK check](../../docs/how-to-build-coded-component-examples/custom-view-component-with-designer-configured-actions.md) |
 | **Create a view component** | [UI View Components](../../cookbook/02-ui-view-components.md) |
 | **Create a view action** | [UI View Actions](../../cookbook/03-ui-view-actions.md) |
 | **Use platform services or REST APIs** | [UI Services & APIs](../../cookbook/04-ui-services-and-apis.md) |

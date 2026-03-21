@@ -3,7 +3,7 @@
  * @context Inspector for cart view: dual record definition pickers, field id strings, billing order JSON, submit options.
  * @decisions Warnings for missing RDs; field ids as text for portability across bundles; Switch for submit visibility.
  * @references cookbook/02-ui-view-components.md, docs/request-view-component-with-record-definition.md
- * @modified 2026-03-20
+ * @modified 2026-03-21
  */
 import { Injector } from '@angular/core';
 import { Tooltip } from '@helix/platform/shared/api';
@@ -41,6 +41,9 @@ const initialComponentProperties: ICartViewProperties = {
   submitOrderLabel: 'Submit order',
   removeConfirmTitle: 'Remove item',
   removeConfirmMessage: 'Remove this item from your cart?',
+  removeLineActionLabel: 'Remove',
+  cartTotalAmountLabel: 'Total amount',
+  lineItemBillingLabel: 'Billing cycle',
   cartRecordDefinitionName: '',
   cartItemRecordDefinitionName: '',
   custodianFieldId: '536870913',
@@ -62,7 +65,12 @@ const initialComponentProperties: ICartViewProperties = {
   cartItemBillingCadenceFieldId: '0',
   billingCadenceOrderJson: '["Monthly","Quarterly","Yearly"]',
   showSubmitButton: true,
-  submittedCartStatusValue: '',
+  submittedCartStatusValue: 'Submitted',
+  showCancelOrderButton: true,
+  cancelOrderLabel: 'Cancel order',
+  cancelOrderConfirmTitle: 'Cancel order',
+  cancelOrderConfirmMessage: 'Set this cart to cancelled status? You can configure the status value in the inspector.',
+  cancelledCartStatusValue: 'Cancelled',
   maxQuantityPerLine: '9999'
 };
 
@@ -170,6 +178,30 @@ export class CartViewDesignModel extends ViewDesignerComponentModel<
               name: 'removeConfirmMessage',
               component: TextFormControlComponent,
               options: { label: 'Remove confirm message', tooltip: new Tooltip('Modal body when removing a line.') }
+            },
+            {
+              name: 'removeLineActionLabel',
+              component: TextFormControlComponent,
+              options: {
+                label: 'Remove line button label',
+                tooltip: new Tooltip('Short label on each row (top-right). Keeps remove away from price block.')
+              }
+            },
+            {
+              name: 'cartTotalAmountLabel',
+              component: TextFormControlComponent,
+              options: {
+                label: 'Cart total label',
+                tooltip: new Tooltip('Label for the sum of all line totals, shown once below the item list.')
+              }
+            },
+            {
+              name: 'lineItemBillingLabel',
+              component: TextFormControlComponent,
+              options: {
+                label: 'Per-line billing label',
+                tooltip: new Tooltip('Muted label before the billing cadence value on each card (e.g. Billing cycle).')
+              }
             }
           ]
         },
@@ -383,8 +415,39 @@ export class CartViewDesignModel extends ViewDesignerComponentModel<
               options: {
                 label: 'Submitted cart status value',
                 tooltip: new Tooltip(
-                  'When non-empty, Submit saves notes then sets Cart status field to this value. Leave empty to only fire the Cart submit output for a view action.'
+                  'Default **Submitted**. Submit saves notes then sets Cart status field to this value. Leave empty to skip the status write but still fire **cartSubmit**.'
                 )
+              }
+            },
+            {
+              name: 'showCancelOrderButton',
+              component: SwitchFormControlComponent,
+              options: {
+                label: 'Show cancel order button',
+                tooltip: new Tooltip('Secondary action beside Submit; sets cart status to Cancelled value after confirmation.')
+              } as ISwitcherFormControlOptions
+            },
+            {
+              name: 'cancelOrderLabel',
+              component: TextFormControlComponent,
+              options: { label: 'Cancel order button label', tooltip: new Tooltip('Label on the secondary cancel button.') }
+            },
+            {
+              name: 'cancelOrderConfirmTitle',
+              component: TextFormControlComponent,
+              options: { label: 'Cancel confirm title', tooltip: new Tooltip('Modal title before cancelling the cart.') }
+            },
+            {
+              name: 'cancelOrderConfirmMessage',
+              component: TextFormControlComponent,
+              options: { label: 'Cancel confirm message', tooltip: new Tooltip('Modal body before cancelling the cart.') }
+            },
+            {
+              name: 'cancelledCartStatusValue',
+              component: TextFormControlComponent,
+              options: {
+                label: 'Cancelled cart status value',
+                tooltip: new Tooltip('Written to Cart status field when Cancel order is confirmed (e.g. **Cancelled** or selection internal value).')
               }
             },
             ...getStandardPropsInspectorConfigs()

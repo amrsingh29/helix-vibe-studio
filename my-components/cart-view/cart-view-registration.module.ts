@@ -3,7 +3,7 @@
  * @context Registers active cart standalone view with Innovation Studio palette.
  * @decisions No expression evaluation on pickers and field id strings; localizable titles/messages only where needed.
  * @references cookbook/02-ui-view-components.md
- * @modified 2026-03-20
+ * @modified 2026-03-21
  */
 import { NgModule } from '@angular/core';
 import { RX_STANDARD_PROPS_DESC, RxViewComponentRegistryService } from '@helix/platform/view/api';
@@ -31,6 +31,9 @@ export class CartViewRegistrationModule {
         { name: 'submitOrderLabel', localizable: true, enableExpressionEvaluation: true },
         { name: 'removeConfirmTitle', localizable: true, enableExpressionEvaluation: true },
         { name: 'removeConfirmMessage', localizable: true, enableExpressionEvaluation: true },
+        { name: 'removeLineActionLabel', localizable: true, enableExpressionEvaluation: true },
+        { name: 'cartTotalAmountLabel', localizable: true, enableExpressionEvaluation: true },
+        { name: 'lineItemBillingLabel', localizable: true, enableExpressionEvaluation: true },
         { name: 'cartRecordDefinitionName', localizable: false, enableExpressionEvaluation: false },
         { name: 'cartItemRecordDefinitionName', localizable: false, enableExpressionEvaluation: false },
         { name: 'custodianFieldId', localizable: false, enableExpressionEvaluation: false },
@@ -53,6 +56,11 @@ export class CartViewRegistrationModule {
         { name: 'billingCadenceOrderJson', localizable: false, enableExpressionEvaluation: false },
         { name: 'showSubmitButton', localizable: false, enableExpressionEvaluation: false },
         { name: 'submittedCartStatusValue', localizable: false, enableExpressionEvaluation: false },
+        { name: 'showCancelOrderButton', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cancelOrderLabel', localizable: true, enableExpressionEvaluation: true },
+        { name: 'cancelOrderConfirmTitle', localizable: true, enableExpressionEvaluation: true },
+        { name: 'cancelOrderConfirmMessage', localizable: true, enableExpressionEvaluation: true },
+        { name: 'cancelledCartStatusValue', localizable: false, enableExpressionEvaluation: false },
         { name: 'maxQuantityPerLine', localizable: false, enableExpressionEvaluation: false },
         ...RX_STANDARD_PROPS_DESC
       ]

@@ -3,7 +3,7 @@
  * @context Active shopping cart standalone view: CART + CART_ITEM via DataPage, billing groups, quantity/remove/notes/submit.
  * @decisions Field ids stored as strings for inspector TextFormControl; custodian match loginName vs fullName; optional unit price + billing cadence ids.
  * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md
- * @modified 2026-03-20
+ * @modified 2026-03-21
  */
 import { IRxStandardProps } from '@helix/platform/view/api';
 
@@ -16,6 +16,12 @@ export interface ICartViewProperties extends IRxStandardProps {
   submitOrderLabel: string;
   removeConfirmTitle: string;
   removeConfirmMessage: string;
+  /** Label on the line-item remove control (header row, not beside prices). */
+  removeLineActionLabel: string;
+  /** Shown before the cart total row (sum of all line totals). */
+  cartTotalAmountLabel: string;
+  /** Muted label above cadence value on each line (e.g. Billing cycle). */
+  lineItemBillingLabel: string;
   /** Fully qualified CART record definition */
   cartRecordDefinitionName: string;
   /** Fully qualified CART_ITEM record definition */
@@ -66,7 +72,14 @@ export interface ICartViewProperties extends IRxStandardProps {
   /** JSON array of cadence labels for sort order, e.g. ["Monthly","Quarterly","Yearly"] */
   billingCadenceOrderJson: string;
   showSubmitButton: boolean;
-  /** When set, Submit updates cart status field to this value after saving notes */
+  /** When set, Submit updates cart status field to this value after saving notes (default Submitted). Empty skips the status write but still fires cartSubmit. */
   submittedCartStatusValue: string;
+  /** When true, shows Cancel order next to Submit (secondary). */
+  showCancelOrderButton: boolean;
+  cancelOrderLabel: string;
+  cancelOrderConfirmTitle: string;
+  cancelOrderConfirmMessage: string;
+  /** Value written to cart status field when Cancel order is confirmed */
+  cancelledCartStatusValue: string;
   maxQuantityPerLine: string;
 }

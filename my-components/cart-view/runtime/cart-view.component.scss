@@ -1,7 +1,7 @@
 /**
  * @generated
- * @context Active cart styling — same token variables as catalog-view; container queries for narrow hosts.
- * @decisions Billing pills with semantic hue vars; line cards use elevated background; qty column stacks below on narrow containers.
+ * @context Active cart styling — Helix tokens; title + DPL cart icon; elevated line cards; accent total bar; primary/secondary action row.
+ * @decisions Container queries; cadence left-border accent; action row flex with gap (cancel secondary, submit primary).
  * @references my-components/catalog-view/runtime/catalog-view.component.scss
  * @modified 2026-03-21
  */
@@ -32,7 +32,7 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  padding: 0.25rem 0 1rem;
+  padding: 0.5rem 0 1.5rem;
   color: var(--color-text, inherit);
   background: var(--color-background, transparent);
 }
@@ -41,12 +41,34 @@
   display: none;
 }
 
+.acv-title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.acv-title__icon-wrap {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--color-action, #0b5fff);
+  line-height: 0;
+
+  /* DPL icon sizing inside adapt-icon host */
+  ::ng-deep svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
+
 .acv-title {
-  margin: 0 0 1.25rem;
+  margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  color: var(--color-text, inherit);
 }
 
 .acv-banner {
@@ -71,54 +93,17 @@
 .acv-groups {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.5rem;
+  padding: 0.5rem 0 0;
 }
 
-.acv-group__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.65rem 1rem;
-  margin-bottom: 0.65rem;
-}
-
-.acv-group__subtotal {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text-secondary, rgba(0, 0, 0, 0.72));
-}
-
-.acv-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
+.acv-group__section-title {
+  margin: 0 0 0.5rem;
   font-size: 0.8125rem;
-  font-weight: 600;
-  border: 1px solid transparent;
-}
-
-.acv-pill--monthly {
-  background: var(--acv-pill-monthly-bg, rgba(11, 95, 255, 0.18));
-  border-color: var(--acv-pill-monthly-border, rgba(11, 95, 255, 0.45));
-  color: var(--acv-pill-monthly-text, var(--color-action, #0b5fff));
-}
-
-.acv-pill--yearly {
-  background: var(--acv-pill-yearly-bg, rgba(46, 125, 50, 0.18));
-  border-color: var(--acv-pill-yearly-border, rgba(46, 125, 50, 0.45));
-  color: var(--acv-pill-yearly-text, #2e7d32);
-}
-
-.acv-pill--quarterly {
-  background: var(--acv-pill-quarterly-bg, rgba(123, 31, 162, 0.16));
-  border-color: var(--acv-pill-quarterly-border, rgba(123, 31, 162, 0.4));
-  color: var(--acv-pill-quarterly-text, #7b1fa2);
-}
-
-.acv-pill--default {
-  background: var(--color-background-selected, rgba(128, 128, 128, 0.14));
-  border-color: var(--color-border-strong, rgba(128, 128, 128, 0.45));
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.55));
 }
 
 .acv-lines {
@@ -140,14 +125,29 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem 1rem;
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.1rem;
   border-radius: 0.5rem;
   border: 1px solid var(--color-border, rgba(128, 128, 128, 0.35));
   background: var(--color-background-elevated, rgba(128, 128, 128, 0.08));
+  box-shadow: 0 1px 2px var(--color-shadow, rgba(0, 0, 0, 0.06));
   min-width: 0;
 }
 
-.acv-line__text {
+.acv-line__col {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.acv-line__header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.acv-line__title-block {
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -159,12 +159,49 @@
   overflow-wrap: anywhere;
 }
 
+.acv-line__cadence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  margin-top: 0.35rem;
+  padding: 0.2rem 0 0.2rem 0.5rem;
+  border-left: 3px solid var(--color-border-strong, rgba(128, 128, 128, 0.45));
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.62));
+}
+
+.acv-line__cadence-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  opacity: 0.9;
+}
+
+.acv-line__cadence-value {
+  font-weight: 600;
+  color: var(--color-text, inherit);
+}
+
+.acv-line__cadence--monthly {
+  border-left-color: var(--acv-pill-monthly-text, #0b5fff);
+}
+
+.acv-line__cadence--yearly {
+  border-left-color: var(--acv-pill-yearly-text, #2e7d32);
+}
+
+.acv-line__cadence--quarterly {
+  border-left-color: var(--acv-pill-quarterly-text, #7b1fa2);
+}
+
 .acv-line__price-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.35rem 0.5rem;
-  margin-top: 0.35rem;
+  margin-top: 0.15rem;
 }
 
 .acv-line__price {
@@ -208,32 +245,64 @@
   font-variant-numeric: tabular-nums;
 }
 
-.acv-remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2rem;
-  min-height: 2rem;
-  padding: 0;
-  border: none;
-  border-radius: 0.25rem;
+/* Remove: top-right of card, text button — avoids competing with price block */
+.acv-line__remove {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.35rem;
   background: transparent;
   color: var(--color-text-secondary, rgba(0, 0, 0, 0.55));
-  font-size: 1.25rem;
-  line-height: 1;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.acv-remove:hover:not(:disabled),
-.acv-remove:focus-visible:not(:disabled) {
+.acv-line__remove:hover:not(:disabled),
+.acv-line__remove:focus-visible:not(:disabled) {
   color: var(--color-danger-text, #c62828);
+  background: var(--color-danger-background, rgba(220, 53, 69, 0.06));
   outline: 2px solid var(--color-focus, var(--color-action, #0b5fff));
   outline-offset: 2px;
 }
 
-.acv-remove:disabled {
+.acv-line__remove:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+  text-decoration: none;
+}
+
+.acv-cart-total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.5rem 1rem;
+  margin-top: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border, rgba(128, 128, 128, 0.4));
+  border-left: 4px solid var(--color-action, #0b5fff);
+  background: var(--color-background-selected, rgba(128, 128, 128, 0.1));
+  box-shadow: 0 1px 3px var(--color-shadow, rgba(0, 0, 0, 0.08));
+}
+
+.acv-cart-total__label {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text, inherit);
+}
+
+.acv-cart-total__value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-action-text, var(--color-action, #0b5fff));
 }
 
 .acv-qty {
@@ -241,10 +310,11 @@
   align-items: center;
   gap: 0;
   flex: 0 0 auto;
-  border-radius: 0.35rem;
+  border-radius: 0.4rem;
   border: 1px solid var(--color-border, rgba(128, 128, 128, 0.45));
   overflow: hidden;
   background: var(--color-background-elevated, var(--color-background, #fff));
+  box-shadow: 0 1px 1px var(--color-shadow, rgba(0, 0, 0, 0.04));
 }
 
 .acv-qty__btn {
@@ -334,11 +404,21 @@
 }
 
 .acv-actions {
-  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem 0.75rem;
+  margin-top: 1.35rem;
 }
 
-.acv-submit {
+.acv-action {
   min-height: 2.5rem;
+}
+
+.acv-action--submit {
+  min-width: 9rem;
 }
 
 @container cart-host (max-width: 520px) {

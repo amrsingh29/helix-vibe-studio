@@ -1,0 +1,83 @@
+/**
+ * @generated
+ * @context Compact list layout using platform-friendly tokens.
+ * @decisions Minimal chrome; list semantics for accessibility.
+ * @references cookbook/02-ui-view-components.md
+ * @modified 2026-03-20
+ */
+.efrl {
+  width: 100%;
+  min-width: 0;
+  font-size: 0.875rem;
+
+  &--hidden {
+    display: none;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    background: var(--color-background-info-subtle, #e8f4fc);
+    color: var(--color-text-primary, #333);
+    font-size: 0.8125rem;
+
+    &--muted {
+      background: var(--color-background-secondary, #f0f0f0);
+    }
+  }
+
+  &__count {
+    color: var(--color-text-secondary, #666);
+    font-size: 0.8125rem;
+  }
+
+  &__empty {
+    margin: 0;
+    padding: 1rem;
+    color: var(--color-text-secondary, #666);
+    border: 1px dashed var(--color-border-subtle, #ccc);
+    border-radius: 4px;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--color-border-subtle, #ddd);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-border-subtle, #eee);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__status {
+    flex-shrink: 0;
+    color: var(--color-text-secondary, #555);
+  }
+}

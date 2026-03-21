@@ -1,13 +1,13 @@
 /**
  * @generated
- * @context Runtime active cart: DataPage CART + CART_ITEM, billing groups, quantity/remove, notes + submit; base price × qty line totals + persist total-cost field; patch rawItemRows after qty save so UI does not revert.
+ * @context Runtime active cart: line cards with billing + prices; remove in header row; cart total row; no group pills (section title only when multiple groups).
  * @decisions OnPush; RxModalService for remove confirm; partial record saves; outputs cartSubmit for view actions when status transition disabled.
  * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, .cursor/_instructions/UI/Services/records.md
  * @modified 2026-03-21
  */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { AdaptButtonModule } from '@bmc-ux/adapt-angular';
+import { AdaptButtonModule, AdaptIconModule } from '@bmc-ux/adapt-angular';
 import {
   IDataPageParams,
   IDataPageResult,
@@ -49,7 +49,7 @@ export interface ICartGroupViewModel {
   styleUrls: ['./cart-view.component.scss'],
   templateUrl: './cart-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AdaptButtonModule]
+  imports: [CommonModule, AdaptButtonModule, AdaptIconModule]
 })
 @RxViewComponent({
   name: 'com-example-sample-application-cart-view'
@@ -68,6 +68,7 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
   loading = false;
   savingNotes = false;
   submitting = false;
+  cancelling = false;
   loadError: string | null = null;
 
   cartId: string | null = null;
@@ -213,40 +214,75 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
     }
   }
 
-  cadenceTestIdSlug(cadence: string): string {
-    const s = cadence
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '');
-    return s || 'other';
+  /** Whole-cart sum of line totals (not a per-group subtotal). */
+  cartGrandTotal(): number {
+    let t = 0;
+    for (const g of this.groups) {
+      for (const ln of g.lines) {
+        if (ln.lineTotal != null && Number.isFinite(ln.lineTotal)) {
+          t += ln.lineTotal;
+        }
+      }
+    }
+    return roundCurrency(t);
   }
 
-  cadencePillClass(cadence: string): string {
+  showCartTotalRow(): boolean {
+    return this.showMoney() && this.groups.length > 0;
+  }
+
+  /** Per-line cadence when not the fallback single-bucket label from an unset cadence field. */
+  showBillingCadenceOnLine(line: ICartLineViewModel): boolean {
+    const k = (line.cadenceKey ?? '').trim();
+    return k !== '' && k !== 'Items';
+  }
+
+  /** Optional accent class for inline cadence text (subtle, not a header pill). */
+  cadenceLineClasses(cadence: string): string {
     const key = cadence.trim().toLowerCase();
+    let mod = '';
     if (key.includes('month')) {
-      return 'acv-pill acv-pill--monthly';
+      mod = 'acv-line__cadence--monthly';
+    } else if (key.includes('year')) {
+      mod = 'acv-line__cadence--yearly';
+    } else if (key.includes('quarter')) {
+      mod = 'acv-line__cadence--quarterly';
     }
-    if (key.includes('year')) {
-      return 'acv-pill acv-pill--yearly';
-    }
-    if (key.includes('quarter')) {
-      return 'acv-pill acv-pill--quarterly';
-    }
-    return 'acv-pill acv-pill--default';
+    return mod ? `acv-line__cadence ${mod}` : 'acv-line__cadence';
   }
 
   showSubmitButtonFlag(): boolean {
     return this.coerceBool(this.state?.showSubmitButton, true);
   }
 
+  showCancelOrderButtonFlag(): boolean {
+    return this.coerceBool(this.state?.showCancelOrderButton, true);
+  }
+
   submitDisabled(): boolean {
     return (
       this.submitting ||
+      this.cancelling ||
       this.loading ||
       !this.cartId ||
       this.groups.length === 0 ||
       !this.showSubmitButtonFlag()
+    );
+  }
+
+  cancelOrderDisabled(): boolean {
+    const statusField = this.fid(this.state?.cartStatusFieldId);
+    const cancelledVal = (this.state?.cancelledCartStatusValue ?? '').trim();
+    return (
+      this.cancelling ||
+      this.submitting ||
+      this.loading ||
+      !this.cartId ||
+      this.groups.length === 0 ||
+      !this.showSubmitButtonFlag() ||
+      !this.showCancelOrderButtonFlag() ||
+      statusField <= 0 ||
+      !cancelledVal
     );
   }
 
@@ -325,6 +361,59 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
     }
   }
 
+  async cancelOrder(): Promise<void> {
+    if (this.cancelOrderDisabled()) {
+      return;
+    }
+    const cfg: IModalConfig = {
+      title: this.state.cancelOrderConfirmTitle || 'Cancel order',
+      modalStyle: RX_MODAL.modalStyles.warning,
+      message:
+        this.state.cancelOrderConfirmMessage ||
+        'Set this cart to cancelled status? You can configure the status value in the inspector.'
+    };
+    const ok = await this.rxModalService.confirm(cfg);
+    if (!ok) {
+      return;
+    }
+
+    const cartRd = this.state.cartRecordDefinitionName.trim();
+    const statusField = this.fid(this.state.cartStatusFieldId);
+    const cancelledVal = (this.state.cancelledCartStatusValue ?? '').trim();
+    if (!cartRd || statusField <= 0 || !cancelledVal) {
+      return;
+    }
+
+    this.cancelling = true;
+    this.cdr.markForCheck();
+
+    this.rxRecordInstanceService.get(cartRd, this.cartId!).subscribe({
+      next: (rec) => {
+        rec.setFieldValue(statusField, cancelledVal);
+        this.rxRecordInstanceService.save(rec).subscribe({
+          next: () => {
+            this.rxNotificationService.addSuccessMessage('Cart cancelled.');
+            this.emitCancelOutput();
+            this.cancelling = false;
+            this.reload();
+          },
+          error: (err: unknown) => {
+            this.rxLogService.error(`CartView: cancel save cart failed: ${String(err)}`);
+            this.rxNotificationService.addErrorMessage('Could not update cart status.');
+            this.cancelling = false;
+            this.cdr.markForCheck();
+          }
+        });
+      },
+      error: (err: unknown) => {
+        this.rxLogService.error(`CartView: cancel get cart failed: ${String(err)}`);
+        this.rxNotificationService.addErrorMessage('Could not load cart for cancel.');
+        this.cancelling = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   showMoney(): boolean {
     return (
       this.fid(this.state.cartItemBasePriceFieldId) > 0 || this.fid(this.state.cartItemUnitPriceFieldId) > 0
@@ -345,6 +434,14 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
 
   private emitSubmitOutput(): void {
     this.notifyPropertyChanged('cartSubmit', {
+      cartId: this.cartId,
+      displayId: this.cartDisplayId,
+      lineCount: this.rawItemRows.length
+    });
+  }
+
+  private emitCancelOutput(): void {
+    this.notifyPropertyChanged('cartCancel', {
       cartId: this.cartId,
       displayId: this.cartDisplayId,
       lineCount: this.rawItemRows.length
@@ -830,6 +927,17 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
       case 'submitOrderLabel':
       case 'removeConfirmTitle':
       case 'removeConfirmMessage':
+      case 'removeLineActionLabel':
+      case 'cartTotalAmountLabel':
+      case 'lineItemBillingLabel':
+      case 'cancelOrderLabel':
+      case 'cancelOrderConfirmTitle':
+      case 'cancelOrderConfirmMessage':
+        next[propertyPath] = propertyValue;
+        this.state = next as unknown as ICartViewProperties;
+        this.notifyPropertyChanged(propertyPath, propertyValue);
+        this.cdr.markForCheck();
+        break;
       case 'cartRecordDefinitionName':
       case 'cartItemRecordDefinitionName':
       case 'custodianFieldId':
@@ -852,6 +960,8 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
       case 'billingCadenceOrderJson':
       case 'showSubmitButton':
       case 'submittedCartStatusValue':
+      case 'showCancelOrderButton':
+      case 'cancelledCartStatusValue':
       case 'maxQuantityPerLine':
         next[propertyPath] = propertyValue;
         this.state = next as unknown as ICartViewProperties;
