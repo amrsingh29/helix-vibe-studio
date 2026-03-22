@@ -25,7 +25,7 @@ export class CartViewRegistrationModule {
       name: 'Active cart (grouped)',
       group: 'Helix Vibe Studio',
       icon: 'shopping_cart',
-      availableInBundles: ['com.amar.helix-vibe-studio'],
+      availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
       component: CartViewComponent,
       designComponent: CartViewDesignComponent,
       designComponentModel: CartViewDesignModel,

@@ -22,7 +22,7 @@ export class RuntimeActionsDemoRegistrationModule {
       name: 'Runtime actions demo',
       group: 'Helix Vibe Studio',
       icon: 'flash_on',
-      availableInBundles: ['com.amar.helix-vibe-studio'],
+      availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
       component: RuntimeActionsDemoComponent,
       designComponent: RuntimeActionsDemoDesignComponent,
       designComponentModel: RuntimeActionsDemoDesignModel,

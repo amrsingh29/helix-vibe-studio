@@ -91,7 +91,7 @@ rxViewComponentRegistryService.register({
   name: 'Display Name',
   group: 'Helix Vibe Studio',
   icon: 'qrcode',  // must be from Adapt icon set
-  availableInBundles: ['com.amar.helix-vibe-studio'],  // important
+  availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],  // bundle ids where palette lists this VC
   component: RuntimeComponent,
   designComponent: DesignComponent,
   designComponentModel: DesignModel,
@@ -203,13 +203,13 @@ docker exec bmc-helix-innovation-studio bash -c \
 **Symptom:** Palette showed groups like "Basic components", "Record editor inputs", etc., but not "Helix Vibe Studio". Pizza Ordering and QR Code Generator were missing.
 
 **Causes:**
-1. **Missing `availableInBundles`** — Without it, the platform may not know when to show your components. Add:
+1. **Missing `availableInBundles`** — Without it, the platform may not know when to show your components. Add one or more bundle ids (deployed coded application ids), for example:
    ```typescript
-   availableInBundles: ['com.amar.helix-vibe-studio'],
+   availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
    ```
 2. **Wrong application context** — Components load only when editing a view that belongs to your application. Enter via **Workspace → Helix Vibe Studio → Visit deployed application**, then open views.
 
-**Fix:** Add `availableInBundles` to registration; always enter View Designer through Workspace → your app.
+**Fix:** Add `availableInBundles` to registration (include every app whose views should list the component); always enter View Designer through Workspace → your app.
 
 ---
 

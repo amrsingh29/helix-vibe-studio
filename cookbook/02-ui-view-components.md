@@ -9,6 +9,40 @@ View components are Angular standalone components registered with the platform v
 - **Registration module** — registers all parts with the platform
 - **Types file** — TypeScript interfaces for properties
 
+## Platform OOB: Record Grid
+
+The platform provides a built-in **Record Grid** view component. Add it from the View Designer palette when creating view definitions — no code required. It:
+
+- Displays record instances in a tabular grid for a chosen record definition
+- Loads data via Record Instance DataPage (field pickers use field IDs)
+- Supports sorting, row actions, multi-record edit, runtime filters, per-field/cell styling
+- Switches to card layout when container width is below a configured threshold
+- Exposes `selectedRow` / `firstSelectedRow` with field IDs for expression builder (e.g. `=RecordGrid.selectedRow.536870913`)
+
+Use Record Grid when a simple tabular list of records is sufficient. Build a **custom** view component when you need cards, facets, custom actions, or different UX (see [Catalog view](../../my-components/catalog-view/README.md) for a Record grid–style custom alternative).
+
+### Modifying Record Grid with CSS
+
+| Approach | What you can do |
+|----------|------------------|
+| **CSS classes property** | In View Designer, select the Record Grid → Inspector → **CSS classes**. Add one or more class names (space-separated). Your app stylesheet can then target `.your-class` and descendant selectors to change layout, spacing, colors, etc. |
+| **Built-in BMC classes** | Add these to **CSS classes** without writing custom CSS: `rx-no-margin`, `rx-default-border`, `rx-white-background`, `rx-auto-fill`, `rx-auto-scroll`. |
+| **Bootstrap 4** | The platform supports Bootstrap 4 utility classes — use them in **CSS classes** (e.g. `mt-3`, `p-2`, `border`, `shadow-sm`). |
+| **Per-field / per-cell styling** | Record Grid has built-in inspector options for each column: font size, bold, italic, text color, background color. Configure these in the Record Grid component’s field configuration — no external CSS needed. |
+| **Custom stylesheet** | Add CSS to `libs/<application-name>/src/lib/styles/<application-name>.scss` (or equivalent). Use the `cssClass` you assigned to scope selectors, e.g. `.my-record-grid .adapt-table { ... }`. Inspect the DOM at runtime to find internal class names if you need finer control. |
+
+### Ready-made modern styles
+
+Pre-built styles for a cleaner Record Grid: [record-grid-modern-styles.scss](../../docs/record-grid-modern-styles.scss). Import it in your app stylesheet, then add the class `record-grid-modern` to the Record Grid's **CSS classes** property in View Designer.
+
+**Included:**
+- Rounded panel (14px), light border, warm header (#fbfaf8)
+- Comfortable row padding (16px 20px)
+- Links in cells styled blue (#1b6fb1), bold
+- **Status pill:** For a Status column, add `status-pill` to that column's **CSS classes** in the Record Grid field config → green pill badge (uppercase, rounded)
+
+**BMC Docs:** [Creating a tabular view of record instances by using a record grid](https://docs.bmc.com/xwiki/bin/view/Service-Management/Innovation-Suite/BMC-Helix-Innovation-Studio/is221/Tailoring-applications-and-automating-processes/Creating-the-definitions-for-a-tailorable-application/Defining-the-user-interface-through-view-definitions/Creating-a-tabular-view-of-record-instances-by-using-a-record-grid/) | [CSS classes used in View designer components](https://docs.bmc.com/docs/innovationsuite/233/css-classes-used-in-view-designer-components-1365873916.html)
+
 ## Two Types
 
 | Type | When to Use |

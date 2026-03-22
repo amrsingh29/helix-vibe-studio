@@ -153,6 +153,7 @@ Here are the registration properties:
   * `availableInBundles`: An array of bundle IDs where the View Component should be available in the View Designer palette.
     * This should be set if you want to restrict the availability of the View Component to specific bundles only,
     * This is rarely used for Standalone View Components, as they are usually used withing multiple applications,
+    * To show the same component in more than one coded application’s palette, list every bundle id (e.g. `['com.example.pizza', 'com.other.app']`).
 
 Here is an example of a registration Module for a Standalone View Component where:
 * The bundleId would be `com.example`,

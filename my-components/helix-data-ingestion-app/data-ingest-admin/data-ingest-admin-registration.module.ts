@@ -22,7 +22,7 @@ export class DataIngestAdminRegistrationModule {
       name: 'DataIngest — Admin',
       group: 'Helix Vibe Studio',
       icon: 'import_export',
-      availableInBundles: ['com.amar.helix-vibe-studio'],
+      availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
       component: DataIngestAdminComponent,
       designComponent: DataIngestAdminDesignComponent,
       designComponentModel: DataIngestAdminDesignModel,

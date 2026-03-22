@@ -19,7 +19,7 @@ export class DataIngestUserRegistrationModule {
       name: 'DataIngest — User',
       group: 'Helix Vibe Studio',
       icon: 'cloud_upload',
-      availableInBundles: ['com.amar.helix-vibe-studio'],
+      availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
       component: DataIngestUserComponent,
       designComponent: DataIngestUserDesignComponent,
       designComponentModel: DataIngestUserDesignModel,

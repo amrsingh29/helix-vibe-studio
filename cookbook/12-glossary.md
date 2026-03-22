@@ -36,6 +36,9 @@ Data schema in Innovation Studio (like a database table). Stored as `.def` files
 ## Record Instance
 Individual data entry (row) within a Record Definition. Each has a unique GUID and field values.
 
+## Record Grid
+Built-in (out-of-the-box) view component in View Designer. Displays record instances in a tabular grid for a chosen record definition. Features: DataPage-based loading, field pickers (field IDs), sorting, row actions, multi-record edit, runtime filters, predefined filter options, card layout fallback when width is below a threshold, per-field/cell styling, attachment column downloads. Exposes `selectedRow` / `firstSelectedRow` with field IDs (e.g. `RecordGrid.selectedRow.536870913`) for expression builder — use when wiring Set Property or Launch process inputs to the selected row.
+
 ## Registration Module
 An `@NgModule` class that registers a view component or action with the platform via `RxViewComponentRegistryService` or `RxViewActionRegistryService`.
 

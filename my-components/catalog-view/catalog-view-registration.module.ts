@@ -22,7 +22,7 @@ export class CatalogViewRegistrationModule {
       name: 'Catalog view (cards & table)',
       group: 'Helix Vibe Studio',
       icon: 'table',
-      availableInBundles: ['com.amar.helix-vibe-studio'],
+      availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
       component: CatalogViewComponent,
       designComponent: CatalogViewDesignComponent,
       designComponentModel: CatalogViewDesignModel,
