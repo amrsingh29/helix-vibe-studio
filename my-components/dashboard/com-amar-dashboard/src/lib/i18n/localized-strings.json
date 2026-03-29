@@ -1,0 +1,13 @@
+{
+  "default": {
+    "com.amar.dashboard.view-components.configurable-chart.loading": "Loading chart…",
+    "com.amar.dashboard.view-components.configurable-chart.empty": "No data to display for the current query.",
+    "com.amar.dashboard.view-components.configurable-chart.err.missing-fields": "Configure record definition, category field id, and value field id.",
+    "com.amar.dashboard.view-components.configurable-chart.err.field-ids": "Category and value field ids must be numeric field ids.",
+    "com.amar.dashboard.view-components.configurable-chart.err.load": "Could not load records for the chart.",
+    "com.amar.dashboard.view-components.configurable-chart.axis.category": "Category",
+    "com.amar.dashboard.view-components.configurable-chart.axis.value": "Value",
+    "com.amar.dashboard.view-components.configurable-chart.series.values": "Values",
+    "com.amar.dashboard.view-components.configurable-chart.rows": "{{count}} rows loaded"
+  }
+}

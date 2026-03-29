@@ -1,0 +1,16 @@
+/**
+ * @generated
+ * @context Runtime styles for Date/Time Formatter (plain text and badge).
+ * @decisions Minimal; badge uses pill shape.
+ * @references cookbook/02-ui-view-components.md
+ * @modified 2026-03-22
+ */
+.dtf-text,
+.dtf-badge {
+  display: inline-block;
+}
+
+.dtf-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+}

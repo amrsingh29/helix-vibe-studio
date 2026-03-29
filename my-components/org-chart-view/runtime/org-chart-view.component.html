@@ -1,0 +1,164 @@
+<!-- @generated
+ @context Org chart shell: toolbar, viewport+SVG edges, node cards, minimap, detail drawer, context menu.
+ @decisions @if for empty/error; translate keys; stop pan when interacting with cards.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-27 -->
+@if (!isHidden) {
+  <section
+    class="oc-host"
+    [class]="themeClass()"
+    data-testid="org-chart-root"
+    (click)="closeContext()"
+  >
+    <header class="oc-toolbar">
+      <label class="oc-toolbar__search">
+        <span class="oc-toolbar__sr-only">{{
+          'com.amar.helix-vibe-studio.view-components.org-chart.search-label' | translate
+        }}</span>
+        <input
+          type="search"
+          class="oc-toolbar__input"
+          [value]="searchQuery"
+          (input)="onSearchInput($any($event.target).value)"
+          [attr.placeholder]="
+            'com.amar.helix-vibe-studio.view-components.org-chart.search-placeholder' | translate
+          "
+          autocomplete="off"
+        />
+      </label>
+      <button
+        adapt-button
+        type="button"
+        [btn-type]="'secondary'"
+        (click)="exportPng()"
+        data-testid="org-chart-export"
+      >
+        {{ 'com.amar.helix-vibe-studio.view-components.org-chart.export-png' | translate }}
+      </button>
+    </header>
+
+    @if (parseError) {
+      <div class="oc-error" role="alert">
+        {{ 'com.amar.helix-vibe-studio.view-components.org-chart.parse-error' | translate }}: {{ parseError }}
+      </div>
+    } @else if (!chart?.nodes?.length) {
+      <div class="oc-empty">
+        {{ 'com.amar.helix-vibe-studio.view-components.org-chart.empty' | translate }}
+      </div>
+    } @else {
+      <div class="oc-body">
+        <div
+          #viewport
+          class="oc-viewport"
+          (mousedown)="onViewportMouseDown($event)"
+          (wheel)="onWheel($event)"
+        >
+          <div
+            class="oc-transform"
+            [style.transform]="'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')'"
+            [style.width.px]="contentW"
+            [style.height.px]="contentH"
+          >
+            <svg
+              class="oc-edges"
+              [attr.width]="contentW"
+              [attr.height]="contentH"
+              [attr.viewBox]="'0 0 ' + contentW + ' ' + contentH"
+              aria-hidden="true"
+            >
+              @for (e of primaryEdgePaths; track $index) {
+                <path [attr.d]="e.d" class="oc-edges__primary" fill="none" />
+              }
+              @for (e of dottedEdgePaths; track $index) {
+                <path [attr.d]="e.d" class="oc-edges__dotted" fill="none" />
+              }
+            </svg>
+            @for (id of renderIds; track id) {
+              @if (layoutBoxes.get(id); as box) {
+                <div
+                  class="oc-node-slot"
+                  [style.left.px]="box.x - originMinX + (dragOffsets.get(id)?.dx ?? 0)"
+                  [style.top.px]="box.y - originMinY + (dragOffsets.get(id)?.dy ?? 0)"
+                  [style.width.px]="box.width"
+                  [style.height.px]="box.height"
+                  (mousedown)="startNodeDrag($event, id)"
+                >
+                  <com-amar-helix-vibe-studio-org-chart-node-card
+                    [node]="getNode(id)"
+                    [selected]="selectedId === id"
+                    [pathHighlight]="nodePathHighlight(id)"
+                    [searchDim]="searchDim(id)"
+                    [reportCount]="reportCountFor(id)"
+                    [expandable]="expandableFor(id)"
+                    [expanded]="expandedFor(id)"
+                    [vacant]="isVacant(id)"
+                    [compact]="isCompact()"
+                    [dragDx]="0"
+                    [dragDy]="0"
+                    (toggleExpand)="toggleExpand(id)"
+                    (selectCard)="selectNode(id)"
+                    (context)="openContext($event, getNode(id))"
+                  />
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <aside class="oc-detail" aria-label="Detail">
+          <h3 class="oc-detail__title">
+            {{ 'com.amar.helix-vibe-studio.view-components.org-chart.detail-title' | translate }}
+          </h3>
+          @if (selectedNode(); as sn) {
+            <div class="oc-detail__name">{{ sn.name }}</div>
+            @for (row of detailRows(); track row.label) {
+              <div class="oc-detail__row">
+                <span class="oc-detail__label">{{ row.label }}</span>
+                <span class="oc-detail__value">{{ row.value }}</span>
+              </div>
+            }
+          } @else {
+            <p class="oc-detail__hint">
+              {{ 'com.amar.helix-vibe-studio.view-components.org-chart.detail-hint' | translate }}
+            </p>
+          }
+        </aside>
+      </div>
+
+      <div class="oc-minimap" (click)="onMinimapClick($event)" role="presentation">
+        <svg
+          class="oc-minimap__svg"
+          [attr.viewBox]="minimapViewBox()"
+          preserveAspectRatio="none"
+        >
+          <rect x="0" y="0" [attr.width]="contentW" [attr.height]="contentH" fill="#e2e8f0" opacity="0.5" />
+          <rect
+            [attr.x]="minimapVp().x"
+            [attr.y]="minimapVp().y"
+            [attr.width]="minimapVp().w"
+            [attr.height]="minimapVp().h"
+            fill="none"
+            stroke="#185fa5"
+            stroke-width="4"
+          />
+        </svg>
+      </div>
+    }
+
+    @if (contextMenu && actionsList().length) {
+      <div
+        class="oc-ctx"
+        [style.left.px]="contextMenu.x"
+        [style.top.px]="contextMenu.y"
+        (click)="$event.stopPropagation()"
+        role="menu"
+      >
+        @for (act of actionsList(); track act.id) {
+          <button type="button" class="oc-ctx__item" (click)="runAction(act, contextMenu.node)">
+            {{ act.label }}
+          </button>
+        }
+      </div>
+    }
+  </section>
+}

@@ -1,6 +1,6 @@
 /**
  * @generated
- * @context Registers DataIngest User standalone VC.
+ * @context Registers DataIngest User standalone VC; palette group "Data Ingestion".
  * @modified 2026-03-21
  */
 import { NgModule } from '@angular/core';
@@ -16,9 +16,9 @@ export class DataIngestUserRegistrationModule {
   constructor(rxViewComponentRegistryService: RxViewComponentRegistryService) {
     rxViewComponentRegistryService.register({
       type: 'com-amar-helix-vibe-studio-data-ingest-user',
-      name: 'DataIngest — User',
-      group: 'Helix Vibe Studio',
-      icon: 'cloud_upload',
+      name: 'DataIngest - User',
+      group: 'Data Ingestion',
+      icon: 'cloud_arrow_up',
       availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],
       component: DataIngestUserComponent,
       designComponent: DataIngestUserDesignComponent,

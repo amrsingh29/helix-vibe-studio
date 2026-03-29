@@ -1,0 +1,83 @@
+<!-- @generated
+ @context Runtime template for configurable-chart — @switch chart kind to Adapt charts.
+ @decisions Single aggregation path; escape literal @ in text via &#64; if needed (none here).
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-24 -->
+<div class="dashboard-configurable-chart" [hidden]="isHidden">
+  @if (isLoading) {
+    <p class="dashboard-configurable-chart__status">
+      {{ 'com.amar.dashboard.view-components.configurable-chart.loading' | translate }}
+    </p>
+  } @else if (errorMessage) {
+    <p class="dashboard-configurable-chart__error" role="alert">{{ errorMessage }}</p>
+  } @else if (!hasRenderableChart) {
+    <p class="dashboard-configurable-chart__empty">
+      {{ 'com.amar.dashboard.view-components.configurable-chart.empty' | translate }}
+    </p>
+  } @else {
+    @switch (chartKind) {
+      @case ('line') {
+        <adapt-line-graph
+          [series]="lineSeries"
+          [xAxis]="xAxis"
+          [yAxis]="yAxis"
+          [header]="chartHeader"
+          [suppressHeader]="!chartHeader"
+          [height]="chartHeight"
+          [description]="'configurable-chart-line'"
+        />
+      }
+      @case ('bar') {
+        <adapt-stacked-chart
+          [series]="stackedChartSeries"
+          [xAxis]="xAxis"
+          [yAxis]="yAxis"
+          [type]="stackedType"
+          [header]="chartHeader"
+          [suppressHeader]="!chartHeader"
+          [height]="chartHeight"
+          [description]="'configurable-chart-bar'"
+        />
+      }
+      @case ('column') {
+        <adapt-stacked-chart
+          [series]="stackedChartSeries"
+          [xAxis]="xAxis"
+          [yAxis]="yAxis"
+          [type]="stackedType"
+          [header]="chartHeader"
+          [suppressHeader]="!chartHeader"
+          [height]="chartHeight"
+          [description]="'configurable-chart-column'"
+        />
+      }
+      @case ('pie') {
+        <adapt-pie-chart
+          [series]="pieSeries"
+          [innerRadius]="pieInnerRadius"
+          [header]="chartHeader"
+          [suppressHeader]="!chartHeader"
+          [height]="chartHeight"
+          [description]="'configurable-chart-pie'"
+        />
+      }
+      @case ('donut') {
+        <adapt-pie-chart
+          [series]="pieSeries"
+          [innerRadius]="pieInnerRadius"
+          [header]="chartHeader"
+          [suppressHeader]="!chartHeader"
+          [height]="chartHeight"
+          [description]="'configurable-chart-donut'"
+        />
+      }
+    }
+  }
+  @if (!isLoading && !errorMessage && hasRenderableChart) {
+    <p class="dashboard-configurable-chart__meta">
+      {{
+        'com.amar.dashboard.view-components.configurable-chart.rows' | translate: { count: rawRowCount }
+      }}
+    </p>
+  }
+</div>

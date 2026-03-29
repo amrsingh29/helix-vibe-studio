@@ -1,0 +1,100 @@
+/**
+ * @generated
+ * @context Reference design: rounded panel, warm header, comfortable row padding, link and status-pill styles.
+ * @decisions 14px radius, #fbfaf8 header, 16px/20px row padding; status-pill for Status column; links #1b6fb1.
+ * @references docs/record-grid-modern-preview.html, cookbook/02-ui-view-components.md
+ * @modified 2026-03-21
+ */
+
+.record-grid-modern {
+  // Wrapper: rounded panel with light border
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+
+  .adapt-table,
+  .p-datatable {
+    border-radius: 14px;
+  }
+
+  // Header: pale warm gray, smaller muted text
+  .p-datatable-thead > tr > th,
+  thead th {
+    background: #fbfaf8 !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+    padding: 12px 20px !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.03em;
+    color: #7a7a7a !important;
+  }
+
+  // Body cells: comfortable padding
+  .p-datatable-tbody > tr > td,
+  tbody td {
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+    font-size: 14px;
+    color: #333333;
+    vertical-align: middle;
+  }
+
+  // Row hover
+  .p-datatable-tbody > tr:hover,
+  tbody tr:hover {
+    background: #fafaf9 !important;
+  }
+
+  // Selected row
+  .p-datatable-tbody > tr.p-highlight {
+    background: #eff6ff !important;
+  }
+
+  .p-datatable-tbody > tr:nth-child(even),
+  tbody tr:nth-child(even) {
+    background: #ffffff;
+  }
+
+  .p-datatable-tbody > tr:nth-child(even):hover,
+  tbody tr:nth-child(even):hover {
+    background: #fafaf9 !important;
+  }
+
+  // Links in cells (e.g. Order ID, record links)
+  a {
+    color: #1b6fb1 !important;
+    font-weight: 600;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // Status pill — add class "status-pill" to the Status column's CSS classes in View Designer
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    background: #eaf7e9;
+    color: #2a8b44;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  // Paginator / footer
+  .p-paginator,
+  .p-datatable-footer {
+    background: #fbfaf8 !important;
+    border-top: 1px solid #e8e8e8 !important;
+    padding: 12px 20px !important;
+  }
+
+  table {
+    border-collapse: collapse;
+    border-radius: 14px;
+  }
+}

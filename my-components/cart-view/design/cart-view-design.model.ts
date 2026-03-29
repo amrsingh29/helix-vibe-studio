@@ -54,6 +54,8 @@ const initialComponentProperties: ICartViewProperties = {
   custodianMatchSource: 'fullName',
   restrictCartToCurrentUser: true,
   cartNotesFieldId: '8',
+  cartOrderTotalFieldId: '0',
+  cartTotalItemCountFieldId: '0',
   cartCurrencyFieldId: '0',
   defaultCurrencyCode: 'USD',
   cartItemCartFkFieldId: '536870913',
@@ -311,6 +313,26 @@ export class CartViewDesignModel extends ViewDesignerComponentModel<
               name: 'cartNotesFieldId',
               component: TextFormControlComponent,
               options: { label: 'Order notes field id', tooltip: new Tooltip('CART field id for notes (often 8 Description).') }
+            },
+            {
+              name: 'cartOrderTotalFieldId',
+              component: TextFormControlComponent,
+              options: {
+                label: 'Order total field id (0=skip)',
+                tooltip: new Tooltip(
+                  'CART **decimal** field for the order total (sum of line totals). Written on **Submit**. **0** = do not write.'
+                )
+              }
+            },
+            {
+              name: 'cartTotalItemCountFieldId',
+              component: TextFormControlComponent,
+              options: {
+                label: 'Total item qty field id (0=skip)',
+                tooltip: new Tooltip(
+                  'CART **integer** field for sum of **line quantities**. Written on **Submit**. **0** = do not write.'
+                )
+              }
             },
             {
               name: 'cartCurrencyFieldId',

@@ -19,8 +19,8 @@ import { IModalConfig, RX_MODAL, RxModalService } from '@helix/platform/ui-kit';
 import { RX_RECORD_DEFINITION, RxRecordInstanceDataPageService, RxRecordInstanceService } from '@helix/platform/record/api';
 import { RxViewComponent } from '@helix/platform/view/api';
 import { BaseViewComponent, IViewComponent } from '@helix/platform/view/runtime';
-import { Observable, throwError } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { ICartViewProperties } from '../cart-view.types';
 
 type DataRow = Record<string, unknown>;
@@ -102,7 +102,12 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
     this.notifyPropertyChanged('api', this.api);
 
     this.config.pipe(takeUntil(this.destroyed$)).subscribe((c) => {
-      this.state = { ...c };
+      // @context Saved views may omit newer inspector keys; undefined would make fid() skip rollup writes.
+      this.state = {
+        ...c,
+        cartOrderTotalFieldId: c.cartOrderTotalFieldId ?? '0',
+        cartTotalItemCountFieldId: c.cartTotalItemCountFieldId ?? '0'
+      } as ICartViewProperties;
       this.isHidden = Boolean(c.hidden);
       this.reload();
       this.cdr.markForCheck();
@@ -295,41 +300,31 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
 
     const cartRd = this.state.cartRecordDefinitionName.trim();
     const notesField = this.fid(this.state.cartNotesFieldId);
-    const statusField = this.fid(this.state.cartStatusFieldId);
-    const submittedVal = (this.state.submittedCartStatusValue ?? '').trim();
 
     const afterNotes = (): void => {
-      if (!submittedVal) {
+      const { needsLine, needsCart } = this.submitPersistWorkload();
+      if (!needsLine && !needsCart) {
         this.emitSubmitOutput();
         this.submitting = false;
         this.cdr.markForCheck();
         return;
       }
-      this.rxRecordInstanceService.get(cartRd, this.cartId!).subscribe({
-        next: (rec) => {
-          rec.setFieldValue(statusField, submittedVal);
-          this.rxRecordInstanceService.save(rec).subscribe({
-            next: () => {
-              this.rxNotificationService.addSuccessMessage('Order submitted.');
-              this.emitSubmitOutput();
-              this.submitting = false;
-              this.reload();
-            },
-            error: (err: unknown) => {
-              this.rxLogService.error(`CartView: submit save cart failed: ${String(err)}`);
-              this.rxNotificationService.addErrorMessage('Could not update cart status.');
-              this.submitting = false;
-              this.cdr.markForCheck();
-            }
-          });
-        },
-        error: (err: unknown) => {
-          this.rxLogService.error(`CartView: submit get cart failed: ${String(err)}`);
-          this.rxNotificationService.addErrorMessage('Could not load cart for submit.');
-          this.submitting = false;
-          this.cdr.markForCheck();
-        }
-      });
+      this.persistItemLinesOnSubmit()
+        .pipe(switchMap(() => this.persistCartRollupAndStatus()), takeUntil(this.destroyed$))
+        .subscribe({
+          next: () => {
+            this.rxNotificationService.addSuccessMessage('Order submitted.');
+            this.emitSubmitOutput();
+            this.submitting = false;
+            this.reload();
+          },
+          error: (err: unknown) => {
+            this.rxLogService.error(`CartView: submit failed: ${String(err)}`);
+            this.rxNotificationService.addErrorMessage('Could not complete submit.');
+            this.submitting = false;
+            this.cdr.markForCheck();
+          }
+        });
     };
 
     if (notesField > 0 && this.orderNotesDraft !== this.orderNotesSaved) {
@@ -359,6 +354,98 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
     } else {
       afterNotes();
     }
+  }
+
+  /** Whether Submit should run line and/or cart record writes (inspector field ids + data). */
+  private submitPersistWorkload(): { needsLine: boolean; needsCart: boolean } {
+    const qtyF = this.fid(this.state.cartItemQuantityFieldId);
+    const totalF = this.fid(this.state.cartItemTotalCostFieldId);
+    const lines = this.flattenLines();
+    const needsLine = lines.length > 0 && (qtyF > 0 || totalF > 0);
+    const totalField = this.fid(this.state.cartOrderTotalFieldId);
+    const countField = this.fid(this.state.cartTotalItemCountFieldId);
+    const statusField = this.fid(this.state.cartStatusFieldId);
+    const submittedVal = (this.state.submittedCartStatusValue ?? '').trim();
+    const needsCart =
+      totalField > 0 || countField > 0 || (submittedVal.length > 0 && statusField > 0);
+    return { needsLine, needsCart };
+  }
+
+  private flattenLines(): ICartLineViewModel[] {
+    const out: ICartLineViewModel[] = [];
+    for (const g of this.groups) {
+      out.push(...g.lines);
+    }
+    return out;
+  }
+
+  /** Sum of line quantities (e.g. 1+3+4 = 8). */
+  totalItemQuantitySum(): number {
+    let n = 0;
+    for (const g of this.groups) {
+      for (const ln of g.lines) {
+        n += ln.quantity;
+      }
+    }
+    return n;
+  }
+
+  /** Persist each CART_ITEM quantity + line total using inspector field ids. */
+  private persistItemLinesOnSubmit(): Observable<void> {
+    const itemRd = this.state.cartItemRecordDefinitionName.trim();
+    const qtyF = this.fid(this.state.cartItemQuantityFieldId);
+    const totalF = this.fid(this.state.cartItemTotalCostFieldId);
+    const lines = this.flattenLines();
+    if (!itemRd || lines.length === 0 || (qtyF <= 0 && totalF <= 0)) {
+      return of(void 0);
+    }
+    return forkJoin(
+      lines.map((line) =>
+        this.rxRecordInstanceService.get(itemRd, line.id).pipe(
+          switchMap((rec) => {
+            if (qtyF > 0) {
+              rec.setFieldValue(qtyF, line.quantity);
+            }
+            if (totalF > 0) {
+              const v = line.lineTotal != null && Number.isFinite(line.lineTotal) ? line.lineTotal : 0;
+              rec.setFieldValue(totalF, v);
+            }
+            return this.rxRecordInstanceService.save(rec);
+          })
+        )
+      )
+    ).pipe(map(() => void 0));
+  }
+
+  /** Persist CART order total, total item qty, and/or submitted status. */
+  private persistCartRollupAndStatus(): Observable<void> {
+    const cartRd = this.state.cartRecordDefinitionName.trim();
+    const totalField = this.fid(this.state.cartOrderTotalFieldId);
+    const countField = this.fid(this.state.cartTotalItemCountFieldId);
+    const statusField = this.fid(this.state.cartStatusFieldId);
+    const submittedVal = (this.state.submittedCartStatusValue ?? '').trim();
+    const hasStatus = submittedVal.length > 0 && statusField > 0;
+    const hasRollup = totalField > 0 || countField > 0;
+    if (!hasRollup && !hasStatus) {
+      return of(void 0);
+    }
+    const grand = this.cartGrandTotal();
+    const qtySum = this.totalItemQuantitySum();
+    return this.rxRecordInstanceService.get(cartRd, this.cartId!).pipe(
+      switchMap((rec) => {
+        if (totalField > 0) {
+          rec.setFieldValue(totalField, grand);
+        }
+        if (countField > 0) {
+          rec.setFieldValue(countField, qtySum);
+        }
+        if (hasStatus) {
+          rec.setFieldValue(statusField, submittedVal);
+        }
+        return this.rxRecordInstanceService.save(rec);
+      }),
+      map(() => void 0)
+    );
   }
 
   async cancelOrder(): Promise<void> {
@@ -436,7 +523,9 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
     this.notifyPropertyChanged('cartSubmit', {
       cartId: this.cartId,
       displayId: this.cartDisplayId,
-      lineCount: this.rawItemRows.length
+      lineCount: this.rawItemRows.length,
+      totalItemQuantity: this.totalItemQuantitySum(),
+      cartGrandTotal: this.cartGrandTotal()
     });
   }
 
@@ -870,6 +959,8 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
       this.fid(this.state.custodianFieldId),
       this.fid(this.state.cartStatusFieldId),
       this.fid(this.state.cartNotesFieldId),
+      this.fid(this.state.cartOrderTotalFieldId),
+      this.fid(this.state.cartTotalItemCountFieldId),
       this.fid(this.state.cartCurrencyFieldId)
     ];
     return uniqueNums([...coreFieldIds(), ...extra.filter((n) => n > 0)]);
@@ -948,6 +1039,8 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
       case 'custodianMatchSource':
       case 'restrictCartToCurrentUser':
       case 'cartNotesFieldId':
+      case 'cartOrderTotalFieldId':
+      case 'cartTotalItemCountFieldId':
       case 'cartCurrencyFieldId':
       case 'defaultCurrencyCode':
       case 'cartItemCartFkFieldId':

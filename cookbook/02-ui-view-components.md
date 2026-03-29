@@ -41,6 +41,35 @@ Pre-built styles for a cleaner Record Grid: [record-grid-modern-styles.scss](../
 - Links in cells styled blue (#1b6fb1), bold
 - **Status pill:** For a Status column, add `status-pill` to that column's **CSS classes** in the Record Grid field config → green pill badge (uppercase, rounded)
 
+### `modern-grid` + `grid-rounded` (alternative theme)
+
+Styles ship in [modern-grid-styles.scss](../../docs/modern-grid-styles.scss) (bundled in `com-amar-helix-vibe-studio`). In View Designer → Record Grid → **CSS classes**, add:
+
+`modern-grid grid-rounded`
+
+| Class | Purpose |
+|-------|---------|
+| `modern-grid` | Clean header (#f8f8f6, muted #6b6b67, 12px uppercase), body cells 12×16px padding, hover #f0f6ff with 0.12s transition, links #185FA5 bold (underline on hover) |
+| `grid-rounded` | Host: 12px radius, `overflow: hidden`, border #e8e8e4, subtle shadow |
+
+**Order Status column — `status-badge` variants (pick one modifier per cell):** render HTML such as `<span class="status-badge pill">Draft</span>` when the column supports rich/HTML content. All five styles are defined; choose the modifier that matches your UX:
+
+| Modifier | Style |
+|----------|--------|
+| `status-badge pill` | Amber pill with dot (#FAEEDA / #633806) |
+| `status-badge flat` | Flat chip (#FFF3DC / #8a6000) |
+| `status-badge outlined` | Border only, transparent fill (#BA7517) |
+| `status-badge text` | Colored text only (#BA7517) |
+| `status-badge left` | Left accent bar (#BA7517) |
+
+Add the **Record Grid modern styles** injector component on the same view if your app shell does not load the bundle stylesheet (e.g. ITSM).
+
+### Using these styles in **com.amar.hssb**
+
+The **hssb** coded app is a separate bundle — its CSS is built from that project’s Angular lib, not from helix-vibe-studio. Copy the portable style pack into your hssb repo and import once:
+
+- Pack: [portable/com.amar.hssb/record-grid-styles/](../../portable/com.amar.hssb/record-grid-styles/) (see **README.md** inside for paths and `@import`).
+
 **BMC Docs:** [Creating a tabular view of record instances by using a record grid](https://docs.bmc.com/xwiki/bin/view/Service-Management/Innovation-Suite/BMC-Helix-Innovation-Studio/is221/Tailoring-applications-and-automating-processes/Creating-the-definitions-for-a-tailorable-application/Defining-the-user-interface-through-view-definitions/Creating-a-tabular-view-of-record-instances-by-using-a-record-grid/) | [CSS classes used in View designer components](https://docs.bmc.com/docs/innovationsuite/233/css-classes-used-in-view-designer-components-1365873916.html)
 
 ## Two Types

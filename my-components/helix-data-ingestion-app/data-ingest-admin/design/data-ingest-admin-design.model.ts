@@ -44,11 +44,15 @@ export class DataIngestAdminDesignModel extends ViewDesignerComponentModel<
         this.sandbox.setValidationIssues(this.validate(this.sandbox, properties));
       });
 
-    this.sandbox.getComponentPropertyValue('name').subscribe((name) => {
-      const componentName = name ? `${this.sandbox.descriptor.name} (${name})` : this.sandbox.descriptor.name;
-      this.sandbox.setSettablePropertiesDataDictionary(componentName, this.getSettablePropertiesDataDictionaryBranch());
-      this.sandbox.setCommonDataDictionary(this.prepareDataDictionary(componentName));
-    });
+    this.sandbox
+      .getComponentPropertyValue('name')
+      .pipe(takeUntil(this.sandbox.destroyed$))
+      .subscribe((name) => {
+        const descriptorName = this.sandbox.descriptor?.name ?? '';
+        const componentName = name ? `${descriptorName} (${name})` : descriptorName;
+        this.sandbox.setSettablePropertiesDataDictionary(componentName, this.getSettablePropertiesDataDictionaryBranch());
+        this.sandbox.setCommonDataDictionary(this.prepareDataDictionary(componentName));
+      });
   }
 
   static getInitialProperties(currentProperties?: IDataIngestAdminProperties): IDataIngestAdminDesignProperties {

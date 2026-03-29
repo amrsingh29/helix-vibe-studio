@@ -2,7 +2,7 @@
 
 This folder lives under **`my-components/`** as a **source template**. This **Sample-IS-Vibe-Coded-App** repo does **not** include `bundle/` or `libs/<application-name>/`, so **nothing here is deployed or bundled** until you copy it into your real coded application.
 
-If **DataIngest — Admin** / **DataIngest — User** do not appear under **Helix Vibe Studio** in View Designer, work through this checklist in **your** project (the one you `mvn deploy`).
+If **DataIngest — Admin** / **DataIngest — User** do not appear under **Data Ingestion** in View Designer, work through this checklist in **your** project (the one you `mvn deploy`).
 
 ---
 

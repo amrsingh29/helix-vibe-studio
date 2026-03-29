@@ -1,0 +1,59 @@
+/**
+ * @generated
+ * @context Design component styles for Date/Time Formatter split layout.
+ * @decisions Clean, minimal; badge pill style matches runtime.
+ * @references cookbook/02-ui-view-components.md
+ * @modified 2026-03-22
+ */
+.dtf-design {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  min-height: 80px;
+  align-items: stretch;
+}
+
+.dtf-design__config {
+  flex: 0 0 200px;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  padding-right: 1rem;
+}
+
+.dtf-design__hint {
+  margin: 0 0 0.5rem 0;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.dtf-design__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 12px;
+  color: #718096;
+  line-height: 1.5;
+}
+
+.dtf-design__preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.dtf-design__preview-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a0aec0;
+}
+
+.dtf-design__text,
+.dtf-design__badge {
+  display: inline-block;
+}
+
+.dtf-design__badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+}

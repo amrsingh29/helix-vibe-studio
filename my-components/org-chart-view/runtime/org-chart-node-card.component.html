@@ -1,0 +1,62 @@
+<!-- @generated
+ @context Node card template: vacancy label, badge, status dot, expand control.
+ @decisions @if/@for only; translate keys for open role label.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-27 -->
+<div
+  class="oc-card"
+  [class.oc-card--selected]="selected"
+  [class.oc-card--path]="pathHighlight"
+  [class.oc-card--dim]="searchDim"
+  [class.oc-card--vacant]="vacant"
+  [class.oc-card--compact]="compact"
+  [style.transform]="'translate(' + dragDx + 'px,' + dragDy + 'px)'"
+  (click)="onCardClick($event)"
+  (contextmenu)="onCtx($event)"
+  role="button"
+  tabindex="0"
+  [attr.aria-expanded]="expandable ? expanded : null"
+>
+  @if (expandable) {
+    <button
+      type="button"
+      class="oc-card__expand"
+      (click)="onExpandClick($event)"
+      [attr.aria-label]="'com.amar.helix-vibe-studio.view-components.org-chart.expand-toggle' | translate"
+    >
+      <span class="oc-card__chev" [class.oc-card__chev--open]="expanded">&#x25BC;</span>
+    </button>
+  }
+  <div class="oc-card__avatarCol">
+    @if (node.avatar?.trim()) {
+      <img class="oc-card__avatar" [src]="node.avatar" alt="" loading="lazy" />
+    } @else {
+      <div class="oc-card__initials">{{ initials() }}</div>
+    }
+    <span
+      class="oc-card__status"
+      [class.oc-card__status--vacant]="vacant"
+      [attr.title]="node.status"
+    ></span>
+  </div>
+  <div class="oc-card__body">
+    @if (vacant) {
+      <div class="oc-card__vacant-label">
+        {{ 'com.amar.helix-vibe-studio.view-components.org-chart.open-role' | translate }}
+      </div>
+    }
+    <div class="oc-card__name">{{ node.name || '—' }}</div>
+    <div class="oc-card__title">{{ node.title }}</div>
+    @if (node.department) {
+      <div class="oc-card__dept">{{ node.department }}</div>
+    }
+    <div class="oc-card__meta">
+      @if (node.badge) {
+        <span class="oc-card__badge">{{ node.badge }}</span>
+      }
+      <span class="oc-card__count">{{
+        'com.amar.helix-vibe-studio.view-components.org-chart.direct-reports' | translate: { count: reportCount }
+      }}</span>
+    </div>
+  </div>
+</div>

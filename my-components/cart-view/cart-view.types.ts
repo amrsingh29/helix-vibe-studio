@@ -49,6 +49,10 @@ export interface ICartViewProperties extends IRxStandardProps {
   restrictCartToCurrentUser: boolean;
   /** Cart field for order notes (often Description) */
   cartNotesFieldId: string;
+  /** CART decimal field for order total on Submit; 0 = skip */
+  cartOrderTotalFieldId: string;
+  /** CART integer field for sum of line quantities on Submit; 0 = skip */
+  cartTotalItemCountFieldId: string;
   /** Optional; 0 = use defaultCurrencyCode only */
   cartCurrencyFieldId: string;
   defaultCurrencyCode: string;

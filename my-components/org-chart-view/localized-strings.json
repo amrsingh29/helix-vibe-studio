@@ -1,0 +1,14 @@
+{
+  "com.amar.helix-vibe-studio.view-components.org-chart.search-label": "Search org chart",
+  "com.amar.helix-vibe-studio.view-components.org-chart.search-placeholder": "Search by name, title, department",
+  "com.amar.helix-vibe-studio.view-components.org-chart.export-png": "Export PNG",
+  "com.amar.helix-vibe-studio.view-components.org-chart.parse-error": "Invalid chart JSON",
+  "com.amar.helix-vibe-studio.view-components.org-chart.empty": "No chart data. Bind Chart data (JSON) to an expression that returns nodes and config.",
+  "com.amar.helix-vibe-studio.view-components.org-chart.detail-title": "Details",
+  "com.amar.helix-vibe-studio.view-components.org-chart.detail-hint": "Select a node to view metadata fields configured in detailFields.",
+  "com.amar.helix-vibe-studio.view-components.org-chart.open-role": "Open role",
+  "com.amar.helix-vibe-studio.view-components.org-chart.expand-toggle": "Expand or collapse subtree",
+  "com.amar.helix-vibe-studio.view-components.org-chart.direct-reports": "{{count}} direct reports",
+  "com.amar.helix-vibe-studio.view-components.org-chart.design-title": "Org chart",
+  "com.amar.helix-vibe-studio.view-components.org-chart.design-hint": "Use Chart data from record (pick Record definition + JSON field) or Chart data (JSON) expression. Outputs: onNodeClick, onExpand, onCollapse, onSearch, onContextAction."
+}

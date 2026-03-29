@@ -51,6 +51,8 @@ export class CartViewRegistrationModule {
         { name: 'custodianMatchSource', localizable: false, enableExpressionEvaluation: false },
         { name: 'restrictCartToCurrentUser', localizable: false, enableExpressionEvaluation: false },
         { name: 'cartNotesFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cartOrderTotalFieldId', localizable: false, enableExpressionEvaluation: false },
+        { name: 'cartTotalItemCountFieldId', localizable: false, enableExpressionEvaluation: false },
         { name: 'cartCurrencyFieldId', localizable: false, enableExpressionEvaluation: false },
         { name: 'defaultCurrencyCode', localizable: false, enableExpressionEvaluation: false },
         { name: 'cartItemCartFkFieldId', localizable: false, enableExpressionEvaluation: false },

@@ -1,0 +1,166 @@
+{
+  "info": {
+    "_postman_id": "e266e56a-9aa5-466d-bfdc-0101738f3f09",
+    "name": "DWP Service Request Creation Flow (cleaned)",
+    "description": "Flow: JWT login → search service by title → create draft request → GET questionnaire (copy question UUIDs) → POST request with answers → POST order to submit.\n\nSet collection variables (baseUrl, credentials, serviceTitle). Paste AR-JWT from login into {{token}} or run Test script on step 1 if response body is raw JWT.\n\nService 2705 (Raise Billing Dispute) example bodies use question IDs from your current questionnaire (5532).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://helixone-demo-restapi.onbmc.com" },
+    { "key": "token", "value": "" },
+    { "key": "loginId", "value": "apiuser" },
+    { "key": "loginPassword", "value": "apiuser" },
+    { "key": "serviceTitle", "value": "Raise Billing Dispute" },
+    { "key": "serviceId", "value": "2705" },
+    { "key": "requestForUserId", "value": "Liam" },
+    { "key": "draftRequestId", "value": "" },
+    { "key": "finalRequestId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Get Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// If server returns raw JWT in body, save it:",
+              "const t = pm.response.text().trim();",
+              "if (t && !t.startsWith('<') && t.split('.').length === 3) {",
+              "  pm.collectionVariables.set('token', t);",
+              "  console.log('Saved token from body');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "default-bundle-scope", "value": "myit-sb" },
+          { "key": "X-Requested-By", "value": "XMLHttpRequest" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{loginId}}\",\n  \"password\": \"{{loginPassword}}\"\n}"
+        },
+        "url": "{{baseUrl}}/api/jwt/login"
+      }
+    },
+    {
+      "name": "2. Search a service by Title (get serviceId)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "default-bundle-scope", "value": "myit-sb" },
+          { "key": "X-Requested-By", "value": "XMLHttpRequest" },
+          { "key": "Authorization", "value": "AR-JWT {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"{{serviceTitle}}\"\n}"
+        },
+        "url": "{{baseUrl}}/api/myit-sb/services/search"
+      }
+    },
+    {
+      "name": "3. Create draft request (serviceId only)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "try {",
+              "  const j = pm.response.json();",
+              "  const id = j.requests && j.requests[0] && j.requests[0].requestId;",
+              "  if (id) pm.collectionVariables.set('draftRequestId', id);",
+              "} catch (e) {}",
+              "  "
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "default-bundle-scope", "value": "myit-sb" },
+          { "key": "X-Requested-By", "value": "XMLHttpRequest" },
+          { "key": "Authorization", "value": "AR-JWT {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"requestForUserIds\": [\"{{requestForUserId}}\"]\n}"
+        },
+        "url": "{{baseUrl}}/api/myit-sb/requests"
+      }
+    },
+    {
+      "name": "4. Get Questionnaire (use draftRequestId)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "default-bundle-scope", "value": "myit-sb" },
+          { "key": "X-Requested-By", "value": "XMLHttpRequest" },
+          { "key": "Authorization", "value": "AR-JWT {{token}}" }
+        ],
+        "url": "{{baseUrl}}/api/myit-sb/requests/{{draftRequestId}}/questionnaire"
+      }
+    },
+    {
+      "name": "5. Create Request WITH answers (replace questionIds from step 4)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "try {",
+              "  const j = pm.response.json();",
+              "  const id = j.requests && j.requests[0] && j.requests[0].requestId;",
+              "  if (id) pm.collectionVariables.set('finalRequestId', id);",
+              "} catch (e) {}",
+              "  "
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "default-bundle-scope", "value": "myit-sb" },
+          { "key": "X-Requested-By", "value": "XMLHttpRequest" },
+          { "key": "Authorization", "value": "AR-JWT {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"requestForUserIds\": [\"{{requestForUserId}}\"],\n  \"quantity\": 1,\n  \"questions\": [\n    {\n      \"questionId\": \"aef5916c-31c8-1c78-f8b3-c45f64e2aa23\",\n      \"answers\": [\"Price Mismatch\"]\n    },\n    {\n      \"questionId\": \"afa88dc6-184e-0c36-fb57-8f2307ed8bc9\",\n      \"answers\": [\"INV-LINE-001\"]\n    },\n    {\n      \"questionId\": \"633162aa-df4b-59b7-2975-4cd1206f4b81\",\n      \"answers\": [\"REC-12345\"]\n    },\n    {\n      \"questionId\": \"f572f592-6a7d-5fb1-7545-22e9a0b45602\",\n      \"answers\": [\"500\"]\n    },\n    {\n      \"questionId\": \"f669abaa-4884-741f-221d-59c06eeb2d2c\",\n      \"answers\": [\"100\"]\n    },\n    {\n      \"questionId\": \"32f44461-ca6d-5485-b747-47b6e7ef1269\",\n      \"answers\": [\"Example Product\"]\n    },\n    {\n      \"questionId\": \"a1d00fa5-f5bd-b3d0-4118-1c162a36cd1c\",\n      \"answers\": [\"2\"]\n    },\n    {\n      \"questionId\": \"b6b2a655-f856-6cea-5584-f7a8d1d2df76\",\n      \"answers\": [\"API test: billing dispute description.\"]\n    }\n  ]\n}"
+        },
+        "url": "{{baseUrl}}/api/myit-sb/requests"
+      }
+    },
+    {
+      "name": "6. Submit order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "default-bundle-scope", "value": "myit-sb" },
+          { "key": "X-Requested-By", "value": "XMLHttpRequest" },
+          { "key": "Authorization", "value": "AR-JWT {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requests\": [{ \"id\": \"{{finalRequestId}}\" }]\n}"
+        },
+        "url": "{{baseUrl}}/api/myit-sb/orders"
+      }
+    }
+  ]
+}

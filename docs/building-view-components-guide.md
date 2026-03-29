@@ -90,7 +90,7 @@ rxViewComponentRegistryService.register({
   type: 'com-amar-helix-vibe-studio-<component-name>',
   name: 'Display Name',
   group: 'Helix Vibe Studio',
-  icon: 'qrcode',  // must be from Adapt icon set
+  icon: 'qrcode',  // must be an AdaptSvgIconName (@bmc-ux/dpl-iconfont); invalid names can break View Designer palette for the whole bundle
   availableInBundles: ['com.amar.helix-vibe-studio', 'com.amar.hssb'],  // bundle ids where palette lists this VC
   component: RuntimeComponent,
   designComponent: DesignComponent,

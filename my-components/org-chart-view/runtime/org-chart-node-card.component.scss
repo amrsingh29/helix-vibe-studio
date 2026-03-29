@@ -1,0 +1,182 @@
+/**
+ * @generated
+ * @context Node card styles: vacant dashed border, selection/path/search states.
+ * @decisions CSS variables for theme hook; compact mode tighter padding.
+ * @modified 2026-03-27
+ */
+
+.oc-card {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid var(--oc-border, #cbd5e1);
+  background: var(--oc-card-bg, #fff);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px #185fa5;
+  }
+
+  &--selected {
+    border-color: #185fa5;
+    box-shadow: 0 0 0 2px rgba(24, 95, 165, 0.25);
+  }
+
+  &--path {
+    border-color: #38bdf8;
+    background: #f0f9ff;
+  }
+
+  &--dim {
+    opacity: 0.35;
+  }
+
+  &--vacant {
+    border-style: dashed;
+    border-width: 2px;
+    border-color: #ca8a04;
+    background: #fefce8;
+  }
+
+  &--compact {
+    padding: 6px 8px;
+    .oc-card__name {
+      font-size: 12px;
+    }
+    .oc-card__title {
+      font-size: 10px;
+    }
+  }
+}
+
+.oc-card__expand {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+  font-size: 10px;
+}
+
+.oc-card__chev {
+  display: inline-block;
+  transition: transform 0.15s ease;
+  &--open {
+    transform: rotate(-180deg);
+  }
+}
+
+.oc-card__avatarCol {
+  position: relative;
+  flex: 0 0 40px;
+}
+
+.oc-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.oc-card__initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oc-card__status {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 1px solid #fff;
+
+  &--vacant {
+    background: #eab308;
+  }
+}
+
+.oc-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.oc-card__vacant-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #a16207;
+}
+
+.oc-card__name {
+  font-weight: 600;
+  font-size: 13px;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-card__title {
+  font-size: 11px;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-card__dept {
+  font-size: 10px;
+  color: #64748b;
+  border-left: 3px solid #185fa5;
+  padding-left: 6px;
+}
+
+.oc-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.oc-card__badge {
+  font-size: 10px;
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.oc-card__count {
+  font-size: 10px;
+  color: #64748b;
+}

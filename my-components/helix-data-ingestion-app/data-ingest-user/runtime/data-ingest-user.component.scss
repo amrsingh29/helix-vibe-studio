@@ -1,7 +1,7 @@
 /**
  * @generated
  * @context Host tokens for DataIngest User VC; shared rules in data-ingest-shared.scss.
- * @modified 2026-03-21
+ * @modified 2026-03-26
  */
 :host {
   --dia-bg: #f5f5f3;
@@ -37,3 +37,12 @@
 }
 
 @import '../../data-ingest-shared.scss';
+
+/* @context Avoid single quotes in inline HTML style attrs — Angular ICU/template parser can mis-parse font-family: 'DM Mono'. */
+.dia-mono {
+  font-family: 'DM Mono', monospace;
+}
+
+.dia-td-valid {
+  color: var(--dia-green);
+}

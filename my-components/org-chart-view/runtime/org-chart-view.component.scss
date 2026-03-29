@@ -1,0 +1,207 @@
+/**
+ * @generated
+ * @context Org chart layout: toolbar, pan/zoom viewport, minimap, detail panel, context menu.
+ * @decisions Flex body; minimap fixed bottom-right; theme host class hook.
+ * @modified 2026-03-27
+ */
+
+.oc-host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 420px;
+  position: relative;
+  font-family: inherit;
+}
+
+.oc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.oc-toolbar__search {
+  flex: 1;
+  min-width: 200px;
+}
+
+.oc-toolbar__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.oc-toolbar__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.oc-error {
+  padding: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #991b1b;
+}
+
+.oc-empty {
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
+}
+
+.oc-body {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 360px;
+}
+
+.oc-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: grab;
+  min-width: 0;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.oc-transform {
+  position: relative;
+  transform-origin: 0 0;
+}
+
+.oc-edges {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  &__primary {
+    stroke: #94a3b8;
+    stroke-width: 2;
+  }
+
+  &__dotted {
+    stroke: #64748b;
+    stroke-width: 1.5;
+    stroke-dasharray: 6 4;
+  }
+}
+
+.oc-node-slot {
+  position: absolute;
+  z-index: 1;
+}
+
+.oc-detail {
+  flex: 0 0 260px;
+  max-width: 320px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  overflow: auto;
+}
+
+.oc-detail__title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.oc-detail__name {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.oc-detail__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 8px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.oc-detail__label {
+  color: #64748b;
+}
+
+.oc-detail__value {
+  color: #0f172a;
+  word-break: break-word;
+}
+
+.oc-detail__hint {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.oc-minimap {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 140px;
+  height: 100px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.oc-minimap__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.oc-ctx {
+  position: fixed;
+  z-index: 1000;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  padding: 4px 0;
+}
+
+.oc-ctx__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+}
+
+.oc-host--theme-dark {
+  --oc-border: #334155;
+  --oc-card-bg: #1e293b;
+}

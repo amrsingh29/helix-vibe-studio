@@ -1,4 +1,4 @@
-<!-- @generated @context User shell + pages per dataingest-v2.html. @modified 2026-03-21 -->
+<!-- @generated @context User shell + pages per dataingest-v2.html; DM Mono in SCSS; regex sample line uses &#123;/&#125; so {n} is not parsed as ICU. @modified 2026-03-26 -->
 <div class="dia-root" [class.dia-root--hidden]="isHidden">
   <div class="dia-app">
     <aside class="dia-sidebar">
@@ -216,7 +216,8 @@
                       <span class="dia-err-row-num">Row 7</span>
                       <div>
                         <div class="dia-err-col">SKU Code</div>
-                        <div class="dia-err-msg">Does not match format ^[A-Z]{2}-\d{4}$ — got "abc123"</div>
+                        <!-- @context Regex shown as text — raw {2}/{4} in HTML body starts ICU parse and breaks the whole template. -->
+                        <div class="dia-err-msg">Does not match format ^[A-Z]&#123;2&#125;-\d&#123;4&#125;$ — got "abc123"</div>
                       </div>
                     </div>
                     <div class="dia-err-row">
@@ -260,7 +261,7 @@
                   </div>
                   <div class="dia-summary-box">
                     <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.file' | translate }}</div>
-                    <div class="dia-summary-box-val" style="font-family: 'DM Mono', monospace; font-size: 13px">products_q1_2026.xlsx</div>
+                    <div class="dia-summary-box-val dia-mono" style="font-size: 13px">products_q1_2026.xlsx</div>
                   </div>
                   <div class="dia-summary-box dia-summary-box--green">
                     <div class="dia-summary-box-lbl">{{ 'com.amar.helix-vibe-studio.view-components.data-ingest-user.upload.rows-submit' | translate }}</div>
@@ -338,8 +339,8 @@
                       <td><span class="dia-mono-muted">{{ s.id }}</span></td>
                       <td>{{ s.tmpl }}</td>
                       <td>{{ s.rows }}</td>
-                      <td style="color: var(--dia-green); font-family: 'DM Mono', monospace">{{ s.rows - s.errs }}</td>
-                      <td [style.color]="s.errs > 0 ? 'var(--dia-red)' : 'var(--dia-text3)'" style="font-family: 'DM Mono', monospace">{{ s.errs }}</td>
+                      <td class="dia-mono dia-td-valid">{{ s.rows - s.errs }}</td>
+                      <td class="dia-mono" [style.color]="s.errs > 0 ? 'var(--dia-red)' : 'var(--dia-text3)'">{{ s.errs }}</td>
                       <td>
                         <span [class]="statusBadgeClass(s.status)"><span class="dia-dot"></span> {{ statusLabelKey(s.status) | translate }}</span>
                       </td>

@@ -1,0 +1,566 @@
+<!-- @generated
+ @context Static clickable dashboard layout mockup for Helix Innovation Studio chart/dashboard discussion demos (placeholder blocks, not live Adapt charts).
+ @decisions Self-contained HTML+CSS only; no framework; BMC-adjacent neutrals and primary blue; responsive grid.
+ @references docs discussion on configurable dashboard VCs and Adapt charts.
+ @modified 2026-03-24 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard layout mockup (sample)</title>
+  <style>
+    :root {
+      --bg-page: #f4f4f2;
+      --bg-panel: #ffffff;
+      --border: #e8e8e4;
+      --text: #2a2a27;
+      --muted: #6b6b67;
+      --primary: #185fa5;
+      --primary-soft: #e8f0fa;
+      --danger: #c62828;
+      --warn: #b8860b;
+      --ok: #2e7d32;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-page);
+      color: var(--text);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .top-bar h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .top-bar .subtitle {
+      margin: 4px 0 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button.fake {
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    button.fake.primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    button.fake:hover {
+      filter: brightness(0.97);
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .kpi .value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .kpi.spark .sparkline {
+      margin-top: 8px;
+      height: 28px;
+      background: linear-gradient(
+        180deg,
+        var(--primary-soft) 0%,
+        transparent 100%
+      );
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi.spark .sparkline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 4px;
+      height: 2px;
+      background: var(--primary);
+      opacity: 0.85;
+      clip-path: polygon(
+        0% 80%,
+        8% 70%,
+        18% 75%,
+        28% 45%,
+        38% 55%,
+        48% 30%,
+        58% 40%,
+        68% 20%,
+        78% 35%,
+        88% 15%,
+        100% 25%,
+        100% 100%,
+        0% 100%
+      );
+    }
+
+    .kpi.bad .value {
+      color: var(--danger);
+    }
+
+    .kpi.warn .value {
+      color: var(--warn);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fbfaf8;
+    }
+
+    .panel header .badge {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .panel .body {
+      padding: 16px;
+      min-height: 200px;
+    }
+
+    .donut-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .donut {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--primary) 0deg 120deg,
+        #5c9fd6 120deg 220deg,
+        #9ec5e8 220deg 300deg,
+        #d0d0cc 300deg 360deg
+      );
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .donut.hole {
+      -webkit-mask: radial-gradient(circle closest-side at center, transparent 45%, black 46%);
+      mask: radial-gradient(circle closest-side at center, transparent 45%, black 46%);
+    }
+
+    .legend {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.8rem;
+    }
+
+    .legend li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+
+    .legend .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 160px;
+      padding-top: 8px;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(180deg, var(--primary) 0%, #3d7eb8 100%);
+      border-radius: 4px 4px 2px 2px;
+      min-height: 8px;
+      position: relative;
+    }
+
+    .bar:nth-child(2) {
+      opacity: 0.85;
+    }
+
+    .bar:nth-child(3) {
+      opacity: 0.7;
+    }
+
+    .bar:nth-child(4) {
+      opacity: 0.55;
+    }
+
+    .bar:nth-child(5) {
+      opacity: 0.4;
+    }
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .heatmap .cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: var(--primary);
+      opacity: 0.25;
+    }
+
+    .heatmap .cell:nth-child(3n) {
+      opacity: 0.55;
+    }
+
+    .heatmap .cell:nth-child(5n) {
+      opacity: 0.85;
+    }
+
+    .heatmap .cell:nth-child(7n) {
+      opacity: 0.4;
+    }
+
+    .line-area {
+      height: 180px;
+      position: relative;
+      background: linear-gradient(
+        180deg,
+        var(--primary-soft) 0%,
+        transparent 55%
+      );
+      border-radius: 8px;
+      border: 1px dashed #c5d6eb;
+    }
+
+    .line-area::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 32px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      opacity: 0.9;
+      clip-path: polygon(
+        0% 85%,
+        5% 78%,
+        12% 82%,
+        20% 60%,
+        28% 65%,
+        36% 45%,
+        44% 50%,
+        52% 35%,
+        60% 40%,
+        68% 22%,
+        76% 30%,
+        84% 18%,
+        92% 25%,
+        100% 12%,
+        100% 100%,
+        0% 100%
+      );
+    }
+
+    .axis-fake {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 10px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .footnote {
+      margin-top: 24px;
+      padding: 12px 16px;
+      background: #fff;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .footnote strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top-bar">
+      <div>
+        <h1>Operational dashboard <span style="color: var(--muted); font-weight: 400;">(sample layout)</span></h1>
+        <p class="subtitle">Static mockup — placeholders only. Real coded views use Adapt charts + record data.</p>
+      </div>
+      <div class="actions">
+        <button type="button" class="fake" title="Demo only">Last 30 days ▾</button>
+        <button type="button" class="fake primary">Refresh</button>
+      </div>
+    </div>
+
+    <section class="kpi-row" aria-label="KPI strip">
+      <div class="kpi">
+        <div class="label">Open</div>
+        <div class="value">142</div>
+        <div class="hint">vs. 128 prior period</div>
+      </div>
+      <div class="kpi bad">
+        <div class="label">SLA at risk</div>
+        <div class="value">23</div>
+        <div class="hint">Close to target + missed</div>
+      </div>
+      <div class="kpi warn">
+        <div class="label">Unassigned</div>
+        <div class="value">7</div>
+        <div class="hint">Needs routing</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Avg age</div>
+        <div class="value">4.2d</div>
+        <div class="hint">Open tickets</div>
+      </div>
+      <div class="kpi spark">
+        <div class="label">Created (trend)</div>
+        <div class="value" style="color: var(--ok);">▼ 12%</div>
+        <div class="sparkline" role="img" aria-label="Sparkline placeholder"></div>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <section class="panel">
+        <header>
+          Status
+          <span class="badge">Donut</span>
+        </header>
+        <div class="body">
+          <div class="donut-wrap">
+            <div class="donut hole" role="img" aria-label="Donut chart placeholder"></div>
+            <ul class="legend">
+              <li><span class="swatch" style="background: var(--primary);"></span> In progress</li>
+              <li><span class="swatch" style="background: #5c9fd6;"></span> Pending</li>
+              <li><span class="swatch" style="background: #9ec5e8;"></span> On hold</li>
+              <li><span class="swatch" style="background: #d0d0cc;"></span> Resolved</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header>
+          Priority
+          <span class="badge">Donut</span>
+        </header>
+        <div class="body">
+          <div class="donut-wrap">
+            <div
+              class="donut hole"
+              style="background: conic-gradient(#c62828 0deg 55deg, #e57373 55deg 130deg, #ffb74d 130deg 220deg, #81c784 220deg 360deg);"
+              role="img"
+              aria-label="Second donut placeholder"
+            ></div>
+            <ul class="legend">
+              <li><span class="swatch" style="background: #c62828;"></span> Critical</li>
+              <li><span class="swatch" style="background: #e57373;"></span> High</li>
+              <li><span class="swatch" style="background: #ffb74d;"></span> Medium</li>
+              <li><span class="swatch" style="background: #81c784;"></span> Low</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid-2">
+      <section class="panel">
+        <header>
+          By assigned group
+          <span class="badge">Bar</span>
+        </header>
+        <div class="body">
+          <div class="bar-chart" role="img" aria-label="Bar chart placeholder">
+            <div class="bar" style="height: 45%;"></div>
+            <div class="bar" style="height: 72%;"></div>
+            <div class="bar" style="height: 55%;"></div>
+            <div class="bar" style="height: 90%;"></div>
+            <div class="bar" style="height: 38%;"></div>
+            <div class="bar" style="height: 62%;"></div>
+          </div>
+          <div class="bar-labels">
+            <span>Grp A</span>
+            <span>Grp B</span>
+            <span>Grp C</span>
+            <span>Grp D</span>
+            <span>Grp E</span>
+            <span>Grp F</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <header>
+          Priority × status
+          <span class="badge">Heatmap</span>
+        </header>
+        <div class="body" style="min-height: auto;">
+          <div class="heatmap" role="img" aria-label="Heatmap placeholder">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+          </div>
+          <p style="text-align: center; font-size: 0.75rem; color: var(--muted); margin: 12px 0 0;">
+            Rows / columns = dimensions · intensity = count
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top: 12px;">
+      <header>
+        Created vs resolved
+        <span class="badge">Line / area</span>
+      </header>
+      <div class="body">
+        <div class="line-area" role="img" aria-label="Trend chart placeholder">
+          <div class="axis-fake"></div>
+        </div>
+        <p style="font-size: 0.75rem; color: var(--muted); margin: 12px 0 0;">
+          Full-width trend — typical “hero” chart for time series from record data.
+        </p>
+      </div>
+    </section>
+
+    <p class="footnote">
+      <strong>Open this file in a browser</strong> (double-click or File → Open).
+      This is a visual aid for layout and density; production dashboards use
+      <code>@bmc-ux/adapt-charts</code> and configurable view components bound to record definitions or APIs.
+    </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!-- @generated
+ @context Split layout: config hint left, live preview right.
+ @decisions AsyncPipe for preview$; badge vs plain text from preview.badgeMode.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-22 -->
+<div class="dtf-design">
+  <div class="dtf-design__config">
+    <p class="dtf-design__hint">
+      <strong>Date/Time Formatter</strong> — Configure in the Inspector:
+    </p>
+    <ul class="dtf-design__list">
+      <li>Bind <em>Date/time value</em> to an expression (ISO string or epoch ms)</li>
+      <li>Pick format, font size, text color</li>
+      <li>Toggle badge mode and set badge background color</li>
+    </ul>
+  </div>
+  <div class="dtf-design__preview">
+    <span class="dtf-design__preview-label">Preview</span>
+    @if (model?.preview$ | async; as preview) {
+      @if (preview.badgeMode) {
+        <span
+          class="dtf-design__badge"
+          [style.font-size.px]="preview.fontSize"
+          [style.color]="preview.textColor"
+          [style.background-color]="preview.badgeBackgroundColor"
+        >
+          {{ preview.formatted }}
+        </span>
+      } @else {
+        <span
+          class="dtf-design__text"
+          [style.font-size.px]="preview.fontSize"
+          [style.color]="preview.textColor"
+        >
+          {{ preview.formatted }}
+        </span>
+      }
+    }
+  </div>
+</div>

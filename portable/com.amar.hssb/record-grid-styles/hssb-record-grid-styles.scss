@@ -1,0 +1,10 @@
+/**
+ * @generated
+ * @context Single import for com.amar.hssb — pulls in record-grid-modern + modern-grid themes.
+ * @decisions Barrel file; copy portable folder into hssb lib styles and @import this once from com-amar-hssb.scss
+ * @references portable/com.amar.hssb/record-grid-styles/README.md
+ * @modified 2026-03-22
+ */
+
+@import './record-grid-modern-styles';
+@import './modern-grid-styles';

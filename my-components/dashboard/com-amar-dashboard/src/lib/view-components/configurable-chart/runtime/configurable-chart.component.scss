@@ -1,0 +1,35 @@
+/**
+ * @generated
+ * @context Scoped styles for configurable-chart runtime.
+ * @decisions Panel-like container matching dashboard mockup neutrals.
+ * @references docs/dashboard-visual-mockup.html palette
+ * @modified 2026-03-24
+ */
+.dashboard-configurable-chart {
+  display: block;
+  padding: 8px;
+  border: 1px solid #e8e8e4;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.dashboard-configurable-chart__status,
+.dashboard-configurable-chart__empty {
+  margin: 0;
+  padding: 16px;
+  color: #6b6b67;
+  font-size: 0.875rem;
+}
+
+.dashboard-configurable-chart__error {
+  margin: 0;
+  padding: 16px;
+  color: #c62828;
+  font-size: 0.875rem;
+}
+
+.dashboard-configurable-chart__meta {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: #6b6b67;
+}

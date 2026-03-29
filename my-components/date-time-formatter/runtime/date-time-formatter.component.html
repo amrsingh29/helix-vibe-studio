@@ -1,0 +1,22 @@
+<!-- @generated
+ @context Runtime template: formatted date with optional badge styling.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-03-22 -->
+@if (badgeMode) {
+  <span
+    class="dtf-badge"
+    [style.font-size.px]="fontSize"
+    [style.color]="textColor"
+    [style.background-color]="badgeBackgroundColor"
+  >
+    {{ formatted }}
+  </span>
+} @else {
+  <span
+    class="dtf-text"
+    [style.font-size.px]="fontSize"
+    [style.color]="textColor"
+  >
+    {{ formatted }}
+  </span>
+}
