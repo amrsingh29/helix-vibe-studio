@@ -265,13 +265,50 @@ Template: `<img [src]="qrImageUrl" alt="QR Code" />`
 
 ---
 
-### Learning 4: Helix One vs Innovation Studio
+### Learning 4: CLIE — `@RxViewComponent` Validation and Legacy Alias Types
+
+**Symptom (browser console, CLIE-style):**
+
+`The following view components do not have a @RxViewComponent decorator applied to the component class and therefore cannot be registered...`
+
+The list contains **pairs** such as:
+
+- `com-amar-helix-vibe-studio-ai-analysis-display`
+- `com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-ai-analysis-display`
+
+**Cause:**
+
+Some registration helpers merge a **doubled-bundle-prefix** legacy id (`com-amar-helix-vibe-studio-com-amar-helix-vibe-studio-*`) into **`IViewComponentDescriptor.aliases`** so old saved views resolve. Recent Helix / shell behavior validates **every** registered descriptor id—including **each alias**—against `@RxViewComponent({ name })` on the **single** Angular runtime class. No class declares the doubled-prefix `name`, so registration validation fails **for both** the canonical entry and for the phantom alias ids.
+
+This can block loading **any** view in the app—not only the affected components.
+
+**Fix (code bundle):**
+
+In `libs/com-amar-helix-vibe-studio/src/lib/register-view-component-with-legacy-alias.ts`, register **`config` only**:
+
+- `rx.register(config);`
+- Do **not** merge legacy doubled-prefix strings into `aliases`.
+
+Redeploy the bundle. Rebuild UI on host if you use `./build-ui-on-host.sh`.
+
+**Fix (data / views saved long ago):**
+
+If a **view definition** still references a component **type string** that uses the doubled prefix (see [Learning 2](#learning-2-unknown-component-error)), reopen the view in View Designer from **Workspace → your app → Visit deployed application**, replace or re-drag the component so the saved type uses the **single-prefix** canonical id (e.g. `com-amar-helix-vibe-studio-cart-view`), and **save**.
+
+**Diagnostics:**
+
+- Confirm `com-amar-helix-vibe-studio-remote-entry.js` returns 200 after deploy.
+- After the code fix, the CLIE list should shrink to zero on next full load.
+
+---
+
+### Learning 5: Helix One vs Innovation Studio
 
 **Note:** `helixone-demo-is.onbmc.com` is a Helix One–style demo. Some BMC cloud instances may handle custom coded applications differently. If components or assets consistently fail to load, confirm with your BMC admin that your target instance supports custom Angular applications.
 
 ---
 
-### Learning 5: Input Text Shows "No text to encode" at Runtime/Preview
+### Learning 6: Input Text Shows "No text to encode" at Runtime/Preview
 
 **Symptom:** The QR Code Generator (or similar component) shows a placeholder like "No text to encode" in preview/runtime even though Input Text is set to e.g. "Amrendra" in the designer.
 
@@ -281,7 +318,7 @@ Template: `<img [src]="qrImageUrl" alt="QR Code" />`
 
 ---
 
-### Learning 6: Build Failures (Exit 137 / Killed)
+### Learning 7: Build Failures (Exit 137 / Killed)
 
 **Symptom:** Angular build fails with "Killed" and exit code 137.
 

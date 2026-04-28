@@ -1,9 +1,9 @@
 /**
  * @generated
- * @context Runtime active cart: line cards with billing + prices; remove in header row; cart total row; no group pills (section title only when multiple groups).
+ * @context Runtime active cart: line cards with billing + prices; remove in header row; cart total row; no group pills (section title only when multiple groups); debug logs for cart-item Data Page qualification vs empty UI.
  * @decisions OnPush; RxModalService for remove confirm; partial record saves; outputs cartSubmit for view actions when status transition disabled.
  * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, .cursor/_instructions/UI/Services/records.md
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
@@ -805,6 +805,8 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
 
     const fk = this.fid(this.state.cartItemCartFkFieldId);
     const q = `'${fk}' = "${qualEscape(parentCartId)}"`;
+    this.rxLogService.debug(`CartView: items queryExpression: ${q} (parentCartId from CART row field 379 / Request ID)`);
+
     const params: IDataPageParams = {
       recorddefinition: itemRd,
       propertySelection: this.buildItemPropertySelection(),
@@ -828,6 +830,7 @@ export class CartViewComponent extends BaseViewComponent implements OnInit, OnDe
       .subscribe({
         next: (res: IDataPageResult) => {
           this.rawItemRows = (res.data ?? []) as DataRow[];
+          this.rxLogService.debug(`CartView: items data page returned ${this.rawItemRows.length} row(s) for RD ${itemRd}`);
           this.rebuildGroups();
         },
         error: (err: unknown) => {
