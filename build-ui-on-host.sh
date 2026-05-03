@@ -1,7 +1,10 @@
 #!/bin/bash
 #
 # Build the Angular UI on the host machine (avoids OOM in low-memory Docker/Podman).
-# Requires: Node.js 20+, Yarn
+# Requires: Node.js 20+, Yarn, rsync
+#
+# Before yarn build, copies my-components/insight-rail and my-components/priority-matrix-view → workspace bundle lib.
+# Set SKIP_INSIGHT_RAIL_SYNC=1 or SKIP_PRIORITY_MATRIX_SYNC=1 to skip a step.
 #
 # After this succeeds, run the full Maven build in the container with -PusePrebuiltUI:
 #   docker exec bmc-helix-innovation-studio bash -c \
@@ -50,6 +53,22 @@ fi
 # webapp is .../bundle/src/main/webapp → project root is 3 levels up from .../main
 MAVEN_PROJECT_DIR="$(cd "$(dirname "$WEBAPP_DIR")/../../.." && pwd)"
 export MAVEN_PROJECT_DIR
+
+# ng build compiles from bundle/.../libs/<bundle-id>/... — not my-components/.
+# Sync canonical sources so edits under my-components/<vc>/ ship in the UI build.
+INSIGHT_SYNC_SRC="${SCRIPT_DIR}/my-components/insight-rail"
+INSIGHT_SYNC_DST="${HELIX_PROJECT_DIR}/bundle/src/main/webapp/libs/com-amar-helix-vibe-studio/src/lib/view-components/insight-rail"
+if [ "${SKIP_INSIGHT_RAIL_SYNC:-0}" != "1" ] && [ -d "$INSIGHT_SYNC_SRC" ] && [ -d "$(dirname "$INSIGHT_SYNC_DST")" ]; then
+  echo "Syncing my-components/insight-rail → bundle lib..."
+  rsync -a --delete "$INSIGHT_SYNC_SRC/" "$INSIGHT_SYNC_DST/"
+fi
+
+PRIORITY_MATRIX_SYNC_SRC="${SCRIPT_DIR}/my-components/priority-matrix-view"
+PRIORITY_MATRIX_SYNC_DST="${HELIX_PROJECT_DIR}/bundle/src/main/webapp/libs/com-amar-helix-vibe-studio/src/lib/view-components/priority-matrix-view"
+if [ "${SKIP_PRIORITY_MATRIX_SYNC:-0}" != "1" ] && [ -d "$PRIORITY_MATRIX_SYNC_SRC" ] && [ -d "$(dirname "$PRIORITY_MATRIX_SYNC_DST")" ]; then
+  echo "Syncing my-components/priority-matrix-view → bundle lib..."
+  rsync -a --delete "$PRIORITY_MATRIX_SYNC_SRC/" "$PRIORITY_MATRIX_SYNC_DST/"
+fi
 
 echo "Building Angular UI on host..."
 cd "$WEBAPP_DIR"

@@ -1,0 +1,7 @@
+{
+  "com.amar.helix-vibe-studio.view-components.priority-matrix.error.invalid-json": "Matrix configuration is not valid JSON.",
+  "com.amar.helix-vibe-studio.view-components.priority-matrix.error.invalid-structure": "Matrix configuration must include row_axis, col_axis (each with label and field), and matrix (array).",
+  "com.amar.helix-vibe-studio.view-components.priority-matrix.design-title": "Priority matrix",
+  "com.amar.helix-vibe-studio.view-components.priority-matrix.design-hint": "Loads JSON with row_axis, col_axis, and matrix array from a record field or expression.",
+  "com.amar.helix-vibe-studio.view-components.priority-matrix.detail-title": "Selected cell details"
+}

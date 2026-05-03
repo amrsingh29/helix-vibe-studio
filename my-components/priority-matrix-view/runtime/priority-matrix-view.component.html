@@ -1,0 +1,65 @@
+<!-- @generated
+ @context Priority matrix grid: axis labels from JSON, dynamic columns/rows, priority cells, detail strip.
+ @decisions caption for col_axis.label; thead row_axis.label in corner th; @for only.
+ @references cookbook/02-ui-view-components.md
+ @modified 2026-05-03 -->
+@if (displayError()) {
+  <div class="pm-error" role="alert">
+    {{ displayError() }}
+  </div>
+} @else if (parseErrorKey) {
+  <div class="pm-error" role="alert">
+    {{ parseErrorKey | translate }}
+  </div>
+} @else if (model) {
+  <div class="pm-root">
+    <table class="pm-table" role="grid">
+      <caption class="pm-caption">{{ model.colAxisLabel }}</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="pm-corner">{{ model.rowAxisLabel }}</th>
+          @for (col of model.colValues; track col) {
+            <th scope="col" class="pm-col-head">{{ col }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of model.rowValues; track row) {
+          <tr>
+            <th scope="row" class="pm-row-head">{{ row }}</th>
+            @for (col of model.colValues; track col) {
+              @let entry = cellEntry(row, col);
+              <td
+                [class]="cellClass(entry)"
+                role="gridcell"
+                [attr.tabindex]="entry ? 0 : null"
+                (click)="onCellClick(row, col)"
+              >
+                @if (entry) {
+                  <span class="pm-cell__priority">{{ cellPriorityText(entry) }}</span>
+                  <span class="pm-cell__label">{{ cellPriorityLabelText(entry) }}</span>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (selectedDetail?.length) {
+      <section class="pm-detail" aria-live="polite">
+        <h3 class="pm-detail__title">
+          {{ 'com.amar.helix-vibe-studio.view-components.priority-matrix.detail-title' | translate }}
+        </h3>
+        <dl class="pm-detail__list">
+          @for (pair of selectedDetail; track $index) {
+            <div class="pm-detail__row">
+              <dt class="pm-detail__term">{{ pair.label }}</dt>
+              <dd class="pm-detail__val">{{ pair.value }}</dd>
+            </div>
+          }
+        </dl>
+      </section>
+    }
+  </div>
+}
