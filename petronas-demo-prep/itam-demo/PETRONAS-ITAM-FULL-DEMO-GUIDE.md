@@ -2,10 +2,10 @@
 
 <!--
   @generated
-  @context Comprehensive ITAM demo guide: Discovery-first sequence; all customer use cases; service request workflows with diagrams.
-  @decisions Start with Building CMDB via Discovery; map catalog products to workflows; Mermaid diagrams for each process.
-  @references petronas-itam-demo-blueprint.md; tenant service catalog screenshot; customer use cases.
-  @modified 2025-03-21
+  @context Comprehensive ITAM demo guide: Discovery-first sequence; all customer use cases; service request workflows with diagrams; Phase 5 extended with inter-site relocation + fulfillment WO path (see linked doc).
+  @decisions Start with Building CMDB via Discovery; map catalog products to workflows; Mermaid diagrams for each process; administrative transfer flow retained; fulfillment variant documented as extension for physical moves.
+  @references petronas-itam-demo-blueprint.md; tenant service catalog screenshot; customer use cases; PETRONAS-ITAM-ASSET-RELOCATION-FULFILLMENT-USE-CASE.md.
+  @modified 2026-04-30
 -->
 
 This document is the **single consolidated guide** for running the Petronas ITAM demo. It covers:
@@ -332,6 +332,50 @@ flowchart TB
 | 2 | Approval workflow | Governed movement |
 | 3 | Update asset; record movement | Audit trail |
 | 4 | Notify; close | Both parties informed |
+
+#### Phase 5 extension — Inter-site relocation (same user, physical move + fulfillment)
+
+**When to use:** An employee **relocates** from one **site/location** to another and keeps the **same** assigned laptop or desktop (e.g. heavy workstation + peripherals). A **CMDB-only** update is insufficient—you need **logistics / field execution** and a **closed loop** so every system agrees.
+
+**Full specification:** [PETRONAS-ITAM-ASSET-RELOCATION-FULFILLMENT-USE-CASE.md](./PETRONAS-ITAM-ASSET-RELOCATION-FULFILLMENT-USE-CASE.md) (research-backed steps, systems checklist, Helix build plan, demo script).
+
+**Workflow (SR + approval + WO + asset update + verify):**
+
+```mermaid
+flowchart TB
+    subgraph Intake [Step 1: Intake]
+        I1[User submits IT Asset Transfer or Relocation SR]
+        I2[From / To site location room; move date; asset serial]
+        I3[Optional: peripherals dock monitors; heavy-item flag]
+    end
+
+    subgraph Approve [Step 2: Approval]
+        A1[Manager and or ITAM approves]
+    end
+
+    subgraph Fulfill [Step 3: Fulfillment WO]
+        F1[WO created assigned to Logistics or Field IT]
+        F2[Pickup scan chain-of-custody handoff]
+        F3[In transit status optional carrier ID]
+        F4[Delivery scan at destination desk]
+        F5[Reconnect smoke test task]
+    end
+
+    subgraph Record [Step 4: System of record]
+        R1[On WO complete update Asset CI location site room]
+        R2[Write movement audit linked SR WO]
+        R3[Notify user and stakeholders]
+    end
+
+    subgraph Verify [Step 5: Verify and close]
+        V1[Discovery or MDM check device at new site]
+        V2[Close SR movement visible on dashboard]
+    end
+
+    Intake --> Approve --> Fulfill --> Record --> Verify
+```
+
+**Catalog note:** Implement as **extended IT Asset Transfer** workflow (post-approval **creates WO**) or a **dedicated** catalog item (e.g. *Inter-site equipment relocation*) if you want a clear split from quick administrative transfers.
 
 ---
 

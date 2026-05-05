@@ -1,0 +1,6 @@
+{
+  "com.amar.helix-vibe-studio.view-components.insight-rail.empty": "No rows to show. Check record definition, display fields, and Records / query settings.",
+  "com.amar.helix-vibe-studio.view-components.insight-rail.default-section-header": "Inventory",
+  "com.amar.helix-vibe-studio.view-components.insight-rail.default-metric-label": "Stockroom count",
+  "com.amar.helix-vibe-studio.view-components.insight-rail.default-action-label": "View records"
+}

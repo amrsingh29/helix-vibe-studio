@@ -16,6 +16,21 @@ Configurable catalog for **BMC Helix Innovation Studio** coded applications. **S
 | **Action** | Per card/row button: emits **`catalogFieldValuesByFieldId`**, **`catalogActionRecord`**, **`catalogActionRecordJson`**, then runs **Edit actions** if configured (**Action button (actions)** — same as palette **Action button**). Use the component’s **data dictionary** when binding **Launch process** inputs: pick a field under *Selected row (object)* or *Field values by field id* so each process input expression resolves to the clicked row’s value. If no enabled action chain, falls back to **Legacy — Open view**. Same rx-action pattern as **[Runtime actions demo](../runtime-actions-demo/)** — see [COMPARISON-RUNTIME-ACTIONS-DEMO.md](./COMPARISON-RUNTIME-ACTIONS-DEMO.md) and [RUNTIME-ACTIONS-DEMO-ARCHITECTURE.md](../runtime-actions-demo/RUNTIME-ACTIONS-DEMO-ARCHITECTURE.md). |
 | **Styling** | Bright **white** main column and distinct rail/toolbar/card treatment (scoped SCSS); ADAPT `adapt-button` for actions; tokens where possible. |
 
+### Table multi-select (bulk)
+
+| Inspector | Behavior |
+|-----------|----------|
+| **Multi-select in Table view** | Off (default): Card and Table behave as before — per-card / per-row **Add to order** (or your label). |
+| | On: **Table view only** shows a **checkbox column** + **Select all visible rows** in the header and a **toolbar** with count + one primary button. **Per-row action buttons are hidden.** |
+| **Outputs** | **`catalogSelectedRowsJson`**: JSON **array** string of row snapshots (`[{...},{...}]`), each object keyed like `catalogActionRecordJson` / field ids. **`catalogSelectedRows`**: same content as an array (for expressions when supported). Updates when selection changes while multi-select mode is on and the view is Table. |
+| **Toolbar click** | Runs the same sequence as a single-row click: updates **`catalogActionRecord`** / **`catalogActionRecordJson`** / **`catalogFieldValuesByFieldId`** using the **first selected row** for legacy compatibility, refreshes multi outputs, then **Action button (actions)** — or **Legacy — Open view** with the **first row** only. |
+
+Row keys use **Request ID (379)** when present in the Data Page row, else **Display ID (1)**; the built-in Data Page query always requests fields **1** and **379** in addition to display fields.
+
+Merge keys from `localized-strings.json` in this folder into your bundle **`localized-strings.json`** (see [cookbook/09-best-practices.md](../../cookbook/09-best-practices.md)).
+
+---
+
 ### Edit actions vs Legacy — Open view (no conflict at runtime)
 
 | Topic | Behavior |

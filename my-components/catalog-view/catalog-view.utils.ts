@@ -3,7 +3,7 @@
  * @context Shared normalization for catalog field ID lists (picker, CSV, expression); flatten pickers + open-view presentation for view definition save (AR 1588).
  * @decisions Coerce {id,name} pickers to strings; flatten openViewPresentationType and initialView objects; strip quotes from modal title; buildCatalogFieldValuesByFieldId for Launch process inputs.
  * @references catalog-view-design.model.ts
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 import { OpenViewActionType } from '@helix/platform/view/api';
 import type { CatalogViewMode, ICatalogViewProperties } from './catalog-view.types';
@@ -77,7 +77,9 @@ export function buildCatalogPropertySelection(c: ICatalogViewProperties): number
       nums.push(n);
     }
   }
-  return [...new Set(nums)];
+  // @context Stable row keys for table multi-select: Request ID (379) / Display ID (1).
+  nums.push(1, 379);
+  return [...new Set(nums.filter((n) => n > 0))];
 }
 
 /**

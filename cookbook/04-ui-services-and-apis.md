@@ -40,7 +40,7 @@ Never use `console.log/warn/error`. Always use `RxLogService`:
 import { RxLogService } from '@helix/platform/shared/api';
 
 this.rxLogService.log('Info message');
-this.rxLogService.warn('Warning message');
+this.rxLogService.warning('Warning message');
 this.rxLogService.error('Error occurred:', error);
 this.rxLogService.debug('Debug info');
 ```
@@ -112,6 +112,14 @@ this.http.post<any>('/api/rx/application/datapage', payload, { headers })
 ```
 
 See `.cursor/_instructions/UI/Services/Qualification.md` for full qualification building guide.
+
+#### Record grid–style filters vs custom view components
+
+Platform **Record grid** “Initial filters → Expression” builds AR qualifications consumed by the same Data Page API. Custom coded components should:
+
+1. Send qualifications as `queryExpression` on **Record Instance Data Page** (`RxRecordInstanceDataPageService`), using **`'<fieldId>'`** on the LHS and the RHS rules from Qualification.md.
+2. Treat **selection / drop-down / enum** fields carefully: the RHS is usually the option’s **numeric** internal id, **not** the localized display text (`'536870919' = 2` rather than `'536870919' = "Cloud"`). If the UI shows matches with a label but Data Page returns zero rows, compare with a grid on the same record type using the same filter.
+3. For properties with **`enableExpressionEvaluation`**, the runtime value may be wrapped (for example `{ value: "..." }`). Coerce with an unwrap helper before testing for JSON row arrays vs qualification strings.
 
 ### Record Instance API (CRUD)
 

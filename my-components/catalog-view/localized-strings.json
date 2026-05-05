@@ -1,0 +1,5 @@
+{
+  "com.amar.helix-vibe-studio.view-components.catalog.selected-rows-count": "{{count}} selected",
+  "com.amar.helix-vibe-studio.view-components.catalog.select-all-visible": "Select all visible rows",
+  "com.amar.helix-vibe-studio.view-components.catalog.bulk-select-required": "Select at least one row in the table."
+}

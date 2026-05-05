@@ -1,9 +1,9 @@
 /**
  * @generated
- * @context Inspector: ActionSinkWidget; data dictionary lists catalogActionRecord + per-RD-field expressions for Launch process inputs; patch invalid selection values (AR 1588).
+ * @context Inspector: ActionSinkWidget; enableTableMultiSelect; outputs catalogSelectedRowsJson + per-RD-field expressions; patch invalid selection values (AR 1588).
  * @decisions prepareDataDictionary(fieldOptions) refreshes with combineLatest; per-field paths use dot notation like record grid firstSelectedRow.<id>.
  * @references cookbook/02-ui-view-components.md, my-components/runtime-actions-demo/design/runtime-actions-demo-design.model.ts
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 
 const OPEN_VIEW_PRESENTATION_OPTIONS: { id: string; name: string }[] = [
@@ -74,6 +74,7 @@ const initialComponentProperties: ICatalogViewProperties = {
   facetFieldKey: '',
   facetOptionsJson: '[]',
   categoryFieldKey: '',
+  enableTableMultiSelect: false,
   targetViewDefinitionName: '',
   openViewPresentationType: OpenViewActionType.DockedRightModal,
   openViewModalTitle: '',
@@ -218,9 +219,9 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
         expression: this.getExpressionForProperty('catalogFieldValuesByFieldId')
       },
       {
-        label: 'Selected row JSON (catalogActionRecordJson)',
-        expression: this.getExpressionForProperty('catalogActionRecordJson')
-      }
+        label: 'Selected rows JSON (catalogSelectedRowsJson)',
+        expression: this.getExpressionForProperty('catalogSelectedRowsJson')
+      },
     ];
   }
 
@@ -246,6 +247,10 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
         {
           label: 'Selected row (JSON string)',
           expression: this.getExpressionForProperty('catalogActionRecordJson')
+        },
+        {
+          label: 'Selected rows (JSON array string)',
+          expression: this.getExpressionForProperty('catalogSelectedRowsJson')
         },
         { label: 'Records', expression: this.getExpressionForProperty('records') },
         { label: 'Fields', expression: this.getExpressionForProperty('fields') },
@@ -460,6 +465,16 @@ export class CatalogViewDesignModel extends ViewDesignerComponentModel<
                   { id: 'table', name: 'Table' }
                 ]
               } as ISelectFormControlOptions
+            },
+            {
+              name: 'enableTableMultiSelect',
+              component: SwitchFormControlComponent,
+              options: {
+                label: 'Multi-select in Table view',
+                tooltip: new Tooltip(
+                  'When on, Table view uses checkboxes + one toolbar action; per-row buttons are hidden. Outputs include catalogSelectedRowsJson (array). Card view is unchanged.'
+                )
+              } as ISwitcherFormControlOptions
             }
           ]
         },

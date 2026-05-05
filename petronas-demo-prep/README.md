@@ -2,10 +2,10 @@
 
 <!--
   @generated
-  @context Petronas customer demo: end-to-end incident story across personas with BMC Helix DWP, ITSM, AIOps; exec summary, speaker notes, data ingestion checklist, REST API handoff template.
-  @decisions Single anchor service (Production Operations visibility platform); Mermaid for both diagrams; benefits tied to measurable outcomes.
+  @context Petronas customer demo: end-to-end incident story across personas with BMC Helix DWP, ITSM, AIOps; exec summary, speaker notes, data ingestion checklist, REST API handoff template; ITAM index links to advanced agentic use cases and HAM relocation fulfillment doc.
+  @decisions Single anchor service (Production Operations visibility platform); Mermaid for both diagrams; benefits tied to measurable outcomes; ITAM table indexes PETRONAS-ITAM-ADVANCED-AGENTIC-USE-CASES.md and PETRONAS-ITAM-ASSET-RELOCATION-FULFILLMENT-USE-CASE.md.
   @references User request; BMC Helix portfolio positioning (DWP, ITSM, AIOps).
-  @modified 2025-03-21
+  @modified 2026-04-30
 -->
 
 This folder contains **demo preparation** material for a **wow-factor**, **story-driven** incident management journey aimed at **Petronas**, emphasizing **BMC Helix Digital Workplace (DWP)**, **BMC Helix ITSM**, **BMC Helix AIOps**, and **AI Agents** across the full lifecycle.
@@ -41,6 +41,8 @@ Use this document with your SE team to align **record names**, **catalog items**
 |----------|---------|
 | [itam-demo/PETRONAS-ITAM-FULL-DEMO-GUIDE.md](./itam-demo/PETRONAS-ITAM-FULL-DEMO-GUIDE.md) | **Full demo guide** — Discovery-first sequence; all use cases; workflows + diagrams |
 | [itam-demo/PETRONAS-ITAM-AGENTIC-AI-USE-CASES.md](./itam-demo/PETRONAS-ITAM-AGENTIC-AI-USE-CASES.md) | **Agentic AI use cases** — where and how to inject AI into the ITAM demo |
+| [itam-demo/PETRONAS-ITAM-ADVANCED-AGENTIC-USE-CASES.md](./itam-demo/PETRONAS-ITAM-ADVANCED-AGENTIC-USE-CASES.md) | **Advanced agentic AI** — flagship CIO/CTO scenarios: autonomous, human-in-the-loop, multi-agent, architecture & KPIs |
+| [itam-demo/PETRONAS-ITAM-ASSET-RELOCATION-FULFILLMENT-USE-CASE.md](./itam-demo/PETRONAS-ITAM-ASSET-RELOCATION-FULFILLMENT-USE-CASE.md) | **HAM — inter-site relocation** — SR + WO + CMDB/Dashboard verify; research-backed steps |
 | [itam-demo/petronas-itam-demo-blueprint.md](./itam-demo/petronas-itam-demo-blueprint.md) | Full ITAM narrative, personas, diagrams, benefits, prep checklist |
 | [itam-demo/petronas-itam-demo-speaker-notes.md](./itam-demo/petronas-itam-demo-speaker-notes.md) | **Speaker notes** — minute-by-minute tell-show-tell + recovery lines |
 | [itam-demo/petronas-itam-demo-data-prep-checklist.md](./itam-demo/petronas-itam-demo-data-prep-checklist.md) | **Data prep** — CMDB, ITSM, ITAM, Discovery, SAM readiness |

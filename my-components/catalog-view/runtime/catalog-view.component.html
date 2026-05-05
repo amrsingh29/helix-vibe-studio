@@ -1,8 +1,8 @@
 <!-- @generated
- @context Card grid / table with rail, search, facet pills, view toggle, ADAPT-friendly tokens.
- @decisions @if/@for control flow; native table for sortable columns; focusable cards for keyboard parity with hover.
- @references cookbook/02-ui-view-components.md, .cursor/rules/bmc-ux-adapt-ui-components.md
- @modified 2026-03-20 -->
+ @context Card grid / table with rail, search, facet pills, view toggle, optional table multi-select + bulk toolbar.
+ @decisions @if/@for control flow; Adapt buttons use [btn-type] + typeAttr="button" per cookbook/05-adapt-components.md (plain type="primary" does not apply primary styling).
+ @references cookbook/02-ui-view-components.md, cookbook/05-adapt-components.md
+ @modified 2026-04-28 -->
 <div class="cv-root" [class.cv-root--hidden]="isHidden" [attr.data-view]="viewMode">
   @if (showCategoryRail) {
     <nav class="cv-rail" [attr.aria-label]="humanizeField(categoryFieldEffective)">
@@ -69,10 +69,38 @@
         </div>
       }
 
+      @if (showTableMultiUx()) {
+        <div
+          class="cv-toolbar__bulk"
+          role="group"
+          [attr.aria-label]="(state?.buttonLabel || 'Action') + ' bulk'"
+        >
+          <span class="cv-toolbar__bulk-count" aria-live="polite">
+            {{
+              'com.amar.helix-vibe-studio.view-components.catalog.selected-rows-count'
+                | translate: { count: tableSelectedCount() }
+            }}
+          </span>
+          <button
+            adapt-button
+            [btn-type]="'primary'"
+            typeAttr="button"
+            size="small"
+            data-testid="catalog-bulk-add"
+            [disabled]="tableSelectedCount() === 0"
+            [attr.aria-label]="(state?.buttonLabel || 'Action') + ' (' + tableSelectedCount() + ')'"
+            (click)="onToolbarBulkRowAction()"
+          >
+            {{ state?.buttonLabel || 'Action' }}
+          </button>
+        </div>
+      }
+
       <div class="cv-view-toggle" role="group" aria-label="View layout">
         <button
           adapt-button
-          type="tertiary"
+          [btn-type]="'tertiary'"
+          typeAttr="button"
           icon-only
           size="small"
           class="cv-toggle-btn"
@@ -86,7 +114,8 @@
         </button>
         <button
           adapt-button
-          type="tertiary"
+          [btn-type]="'tertiary'"
+          typeAttr="button"
           icon-only
           size="small"
           class="cv-toggle-btn"
@@ -140,7 +169,8 @@
 
             <button
               adapt-button
-              type="primary"
+              [btn-type]="'primary'"
+              typeAttr="button"
               class="cv-card__action"
               [attr.aria-label]="actionAriaLabel(row)"
               (click)="onRowAction(row)"
@@ -149,6 +179,59 @@
             </button>
           </article>
         }
+      </div>
+    } @else if (showTableMultiUx()) {
+      <div class="cv-table-wrap">
+        <table class="cv-table cv-table--multiselect">
+          <thead>
+            <tr>
+              <th scope="col" class="cv-table__checkbox">
+                <label class="cv-table__check-label">
+                  <span class="cv-sr-only">{{ 'com.amar.helix-vibe-studio.view-components.catalog.select-all-visible' | translate }}</span>
+                  <input
+                    type="checkbox"
+                    class="cv-table__checkbox-input"
+                    [checked]="allVisibleRowsSelected()"
+                    (change)="toggleSelectAllVisible()"
+                  />
+                </label>
+              </th>
+              @for (col of fields; track col) {
+                <th scope="col" [attr.aria-sort]="ariaSortFor(col)">
+                  <button type="button" class="cv-th-btn" (click)="toggleSort(col)">
+                    {{ humanizeField(col) }}
+                    @if (sortIndicator(col) === 'asc') {
+                      <span class="cv-sort" aria-hidden="true">▲</span>
+                    }
+                    @if (sortIndicator(col) === 'desc') {
+                      <span class="cv-sort" aria-hidden="true">▼</span>
+                    }
+                  </button>
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of displayRows; track trackRowKey($index, row)) {
+              <tr [class.cv-tr--selected]="isRowSelected(row)">
+                <td class="cv-table__checkbox">
+                  <label class="cv-table__check-label">
+                    <span class="cv-sr-only">{{ actionAriaLabel(row) }}</span>
+                    <input
+                      type="checkbox"
+                      class="cv-table__checkbox-input"
+                      [checked]="isRowSelected(row)"
+                      (change)="toggleRowSelected(row)"
+                    />
+                  </label>
+                </td>
+                @for (col of fields; track col) {
+                  <td>{{ displayValue(row, col) }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     } @else {
       <div class="cv-table-wrap">
@@ -172,7 +255,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (row of displayRows; track $index) {
+            @for (row of displayRows; track trackRowKey($index, row)) {
               <tr>
                 @for (col of fields; track col) {
                   <td>{{ displayValue(row, col) }}</td>
@@ -180,7 +263,8 @@
                 <td class="cv-table__actions">
                   <button
                     adapt-button
-                    type="secondary"
+                    [btn-type]="'secondary'"
+                    typeAttr="button"
                     size="small"
                     [attr.aria-label]="actionAriaLabel(row)"
                     (click)="onRowAction(row)"

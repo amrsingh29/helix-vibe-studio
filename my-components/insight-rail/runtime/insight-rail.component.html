@@ -1,0 +1,47 @@
+<!-- @generated
+ @context Horizontal scrollable insight cards; ADAPT CTA; empty state.
+ @decisions Native horizontal scroll; left accent bar; @for/@if control flow.
+ @references cookbook/05-adapt-components.md
+ @modified 2026-04-30; bind list to rawRecords (no client-side row filter). -->
+<div class="ir-host" [class.ir-host--hidden]="isHidden">
+  @if (rawRecords.length === 0) {
+    <p class="ir-empty" role="status">
+      {{ 'com.amar.helix-vibe-studio.view-components.insight-rail.empty' | translate }}
+    </p>
+  } @else {
+    <div class="ir-scroll" role="region" [attr.aria-label]="buttonText()">
+      <div class="ir-track">
+        @for (row of rawRecords; track trackRow($index, row)) {
+          <article class="ir-card" [attr.aria-labelledby]="'ir-title-' + $index">
+            <div class="ir-card__accent" aria-hidden="true"></div>
+            <div class="ir-card__body">
+              <div class="ir-card__header">
+                <span class="ir-card__header-icon" aria-hidden="true"></span>
+                <span class="ir-card__header-text">{{ cardHeader(row) }}</span>
+              </div>
+              <h3 class="ir-card__title" [id]="'ir-title-' + $index">{{ cardTitle(row) }}</h3>
+              <p class="ir-card__desc">{{ cardDescription(row) }}</p>
+              <div class="ir-card__metric">
+                <span class="ir-card__metric-label">{{ metricLabelText() }}</span>
+                <span class="ir-card__metric-value">{{ cardMetric(row) }}</span>
+              </div>
+              <div class="ir-card__actions">
+                <button
+                  adapt-button
+                  [btn-type]="'secondary'"
+                  typeAttr="button"
+                  size="small"
+                  class="ir-card__btn"
+                  [attr.aria-label]="actionAriaLabel(row)"
+                  (click)="onCardAction(row)"
+                >
+                  {{ buttonText() }}
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  }
+</div>

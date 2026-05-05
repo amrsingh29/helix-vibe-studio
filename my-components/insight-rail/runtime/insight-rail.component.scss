@@ -1,0 +1,140 @@
+/**
+ * @generated
+ * @context Insight rail layout: horizontal scroll, card accent, typography scale.
+ * @decisions Scoped under .ir-host; scroll-snap optional-friendly gap layout.
+ * @references my-components/catalog-view/runtime/catalog-view.component.scss (spacing cues)
+ * @modified 2026-04-30
+ */
+
+.ir-host {
+  width: 100%;
+  box-sizing: border-box;
+
+  &--hidden {
+    display: none;
+  }
+}
+
+.ir-empty {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  color: var(--color-text-secondary, #6b6b67);
+  font-size: 0.875rem;
+}
+
+.ir-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ir-track {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: stretch;
+  min-height: 12rem;
+  padding: 0.25rem 0.125rem 0.5rem;
+}
+
+.ir-card {
+  position: relative;
+  flex: 0 0 min(100%, 17.5rem);
+  max-width: 20rem;
+  display: flex;
+  flex-direction: row;
+  background: var(--color-background-elevated, #fff);
+  border: 1px solid var(--color-border, #e0e0dc);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  scroll-snap-align: start;
+}
+
+.ir-card__accent {
+  width: 4px;
+  flex-shrink: 0;
+  border-radius: 0.5rem 0 0 0.5rem;
+  background: linear-gradient(180deg, #a0287a 0%, #7b1d6a 100%);
+}
+
+.ir-card__body {
+  flex: 1;
+  min-width: 0;
+  padding: 0.875rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ir-card__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #6b6b67);
+}
+
+.ir-card__header-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-text-secondary, #9a9a96);
+  flex-shrink: 0;
+}
+
+.ir-card__header-text {
+  line-height: 1.2;
+}
+
+.ir-card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text-primary, #2c2c2a);
+}
+
+.ir-card__desc {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary, #6b6b67);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ir-card__metric {
+  margin-top: 0.25rem;
+}
+
+.ir-card__metric-label {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #8a8a86);
+}
+
+.ir-card__metric-value {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-primary, #2c2c2a);
+}
+
+.ir-card__actions {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ir-card__btn {
+  flex-shrink: 0;
+}

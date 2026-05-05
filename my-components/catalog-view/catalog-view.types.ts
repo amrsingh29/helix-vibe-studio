@@ -1,9 +1,9 @@
 /**
  * @generated
- * @context Configurable catalog/grid-table view: records + field keys from any record definition; optional built-in Data Page load (Record grid–style); card slot mapping; optional RxOpenViewActionService target view + viewParams; actionSinks for designer-configured rx-actions on row button.
+ * @context Configurable catalog/grid-table: optional built-in Data Page; optional **Table multi-select** (checkboxes + bulk toolbar + catalogSelectedRowsJson); card slot mapping; Open view + buttonActions.
  * @decisions useBuiltInRecordQuery uses RxRecordInstanceDataPageService (cookbook/04); slot field IDs optional — fallback to previous heuristics when empty; no IAction[] on config — chains live under ActionSink in view tree.
  * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, docs/request-view-component-with-record-definition.md
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 import { IActionSinkConfig, IRxStandardProps } from '@helix/platform/view/api';
 
@@ -80,6 +80,11 @@ export interface ICatalogViewProperties extends IRxStandardProps {
   /** Designer default for first paint; user can switch at runtime. */
   initialView: CatalogViewMode;
   /**
+   * When true, **Table** view uses row checkboxes + one toolbar action; per-row buttons are hidden.
+   * Card view and single-row Table behavior are unchanged when false (default).
+   */
+  enableTableMultiSelect?: boolean;
+  /**
    * When set and the key exists in `fields`, a facet control (pills) is shown for that field.
    * Example: billing_cycle_type
    */
@@ -118,6 +123,13 @@ export interface ICatalogViewProperties extends IRxStandardProps {
   catalogActionRecord?: CatalogActionRecordRow;
   /** **Output**: same row as JSON string (for debugging or string-only pipelines). */
   catalogActionRecordJson?: string;
+  /**
+   * **Output** (multi-select Table): JSON array string of selected row snapshots
+   * (each object keyed by field id string, same shape as {@link catalogActionRecordJson} per row).
+   */
+  catalogSelectedRowsJson?: string;
+  /** **Output** (multi-select Table): array of shallow row snapshots for expressions when supported. */
+  catalogSelectedRows?: CatalogActionRecordRow[];
   /**
    * **Output**: shallow map of field id → value (same entries as {@link catalogActionRecord}); convenient for bracket expressions.
    */

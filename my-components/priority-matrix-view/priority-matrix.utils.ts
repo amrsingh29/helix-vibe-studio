@@ -1,6 +1,6 @@
 /**
  * @generated
- * @context Parse priority matrix JSON: ordered axis values, first-seen priority order, cell map, detail rows.
+ * @context Parse priority matrix JSON: ordered axis values, first-seen priority order, cell map, detail rows; semantic P1–P4 visual keys via resolvePriorityVisualKey (first-seen tier only for fallback).
  * @decisions First matching matrix entry wins for duplicate (row,col); skip rows missing axis fields; String() for priority keys.
  * @references Plan: priority matrix view (data-driven)
  * @modified 2026-05-03
@@ -199,4 +199,65 @@ export function clampPriorityTier(index: number | undefined, maxTier: number): n
     return 0;
   }
   return Math.min(Math.max(0, index), maxTier);
+}
+
+const LABEL_BAND: ReadonlyArray<[string, 1 | 2 | 3 | 4]> = [
+  ['critical', 1],
+  ['high', 2],
+  ['medium', 3],
+  ['low', 4]
+];
+
+/**
+ * Map P1–P4 / numeric / severity labels to semantic CSS bands; otherwise fallback tier from first-seen order.
+ * @context P1 must render red regardless of JSON row order — semantic mapping takes precedence over tier index.
+ */
+function parseSemanticBand(priority: unknown, priorityLabel: string): 1 | 2 | 3 | 4 | null {
+  const ps = toStr(priority).trim();
+  const pm = ps.match(/^P\s*([1-4])$/i);
+  if (pm) {
+    return Number(pm[1]) as 1 | 2 | 3 | 4;
+  }
+  if (typeof priority === 'number' && Number.isFinite(priority)) {
+    const n = Math.trunc(priority);
+    if (n >= 1 && n <= 4) {
+      return n as 1 | 2 | 3 | 4;
+    }
+  }
+  const onlyNum = ps.match(/^([1-4])$/);
+  if (onlyNum) {
+    return Number(onlyNum[1]) as 1 | 2 | 3 | 4;
+  }
+  const lab = priorityLabel.trim().toLowerCase();
+  if (lab) {
+    for (const [word, band] of LABEL_BAND) {
+      if (lab === word || lab.startsWith(`${word} `) || lab.endsWith(` ${word}`)) {
+        return band;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Returns class suffix for `pm-cell--{suffix}`: `semantic-1`…`semantic-4` or `fallback-0`…`fallback-11`.
+ */
+export function resolvePriorityVisualKey(
+  entry: Record<string, unknown>,
+  priorityIndexByKey: Map<string, number>,
+  maxFallbackTier: number
+): string {
+  const pk =
+    entry['priority'] === null || entry['priority'] === undefined ? '' : String(entry['priority']);
+  const pl =
+    entry['priority_label'] === null || entry['priority_label'] === undefined
+      ? ''
+      : String(entry['priority_label']);
+  const band = parseSemanticBand(entry['priority'], pl);
+  if (band !== null) {
+    return `semantic-${band}`;
+  }
+  const idx = priorityIndexByKey.get(pk);
+  const n = clampPriorityTier(idx, maxFallbackTier);
+  return `fallback-${n}`;
 }

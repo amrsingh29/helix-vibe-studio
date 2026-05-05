@@ -3,7 +3,7 @@
  * @context Theme-token layout for catalog — white canvas; product cards white with #e6e6e6 border + soft shadow (reference screenshot); slate text hierarchy.
  * @decisions :host inline-size container queries; explicit #fff; card hover lifts shadow, stays white (no grey card fill).
  * @references .cursor/rules/bmc-ux-adapt-ui-components.md
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 
 // @context Stack rail + horizontal category scroller when the component is narrow (split view / phone), even if the browser viewport is wide.
@@ -443,6 +443,47 @@
 .cv-table__actions {
   white-space: nowrap;
   width: 1%;
+}
+
+// @context Table multi-select: bulk toolbar + checkbox column.
+.cv-toolbar__bulk {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cv-toolbar__bulk-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary, #4a5568);
+  white-space: nowrap;
+}
+
+.cv-table__checkbox {
+  width: 2.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.cv-table__check-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.cv-table__checkbox-input {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--color-action, #0b5fff);
+}
+
+.cv-tr--selected {
+  background: rgba(11, 95, 255, 0.06) !important;
 }
 
 // @context Overrides base rail/toolbar rules — must load last so narrow layouts win over default sidebar styles.

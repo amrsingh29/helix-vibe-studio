@@ -3,7 +3,7 @@
  * @context Registers Catalog view; actionSinks + outputs catalogActionRecord / catalogFieldValuesByFieldId for Launch process input expressions.
  * @decisions buttonActions sink + OpenView/LaunchProcess modules; legacy inspector fields when chain empty.
  * @references cookbook/02-ui-view-components.md, my-components/runtime-actions-demo/RUNTIME-ACTIONS-DEMO-ARCHITECTURE.md
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 import { NgModule } from '@angular/core';
 import { RX_STANDARD_PROPS_DESC, RX_VIEW_DEFINITION, RxViewComponentRegistryService } from '@helix/platform/view/api';
@@ -47,6 +47,7 @@ export class CatalogViewRegistrationModule {
         { name: 'fields', localizable: false, enableExpressionEvaluation: true },
         { name: 'buttonLabel', localizable: true, enableExpressionEvaluation: true },
         { name: 'initialView', localizable: false, enableExpressionEvaluation: false },
+        { name: 'enableTableMultiSelect', localizable: false, enableExpressionEvaluation: false },
         { name: 'categoryFieldKey', localizable: false, enableExpressionEvaluation: false },
         { name: 'facetFieldKey', localizable: false, enableExpressionEvaluation: false },
         { name: 'facetOptionsJson', localizable: false, enableExpressionEvaluation: false },
@@ -56,6 +57,8 @@ export class CatalogViewRegistrationModule {
         { name: 'viewParamFieldKeysCsv', localizable: false, enableExpressionEvaluation: false },
         { name: 'catalogActionRecord', localizable: false, enableExpressionEvaluation: false },
         { name: 'catalogActionRecordJson', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogSelectedRowsJson', localizable: false, enableExpressionEvaluation: false },
+        { name: 'catalogSelectedRows', localizable: false, enableExpressionEvaluation: false },
         { name: 'catalogFieldValuesByFieldId', localizable: false, enableExpressionEvaluation: false },
         ...RX_STANDARD_PROPS_DESC
       ]

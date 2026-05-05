@@ -1,9 +1,9 @@
 /**
  * @generated
- * @context Runtime catalog: optional built-in Record Instance Data Page; card slot mapping; table + filters; RD field names; buttonActions sink (triggerSinkActions) then legacy RxOpenViewActionService.
- * @decisions notifyPropertyChanged catalogFieldValuesByFieldId + catalogActionRecord before tryRunSinkActions for Launch process input expressions; OnPush; forkJoin labels + rows.
+ * @context Runtime catalog: optional built-in Record Instance Data Page; card slot mapping; table + filters; RD field names; buttonActions sink (triggerSinkActions) then legacy RxOpenViewActionService; defer single-row row-action notifies to avoid stack overflow.
+ * @decisions Defer catalogSelectedRows* + row-action notifies via setTimeout(0); distinctUntilChanged on data-input fingerprint before switchMap so row-click output echoes do not abort in-flight datapage XHR (Network "canceled"); tap merges full config to state every emission; preserve viewMode after first config apply.
  * @references cookbook/02-ui-view-components.md, cookbook/04-ui-services-and-apis.md, BaseViewComponent.triggerSinkActions
- * @modified 2026-03-21
+ * @modified 2026-04-28
  */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
@@ -14,13 +14,13 @@ import {
   RxRecordDefinitionService,
   RxRecordInstanceDataPageService
 } from '@helix/platform/record/api';
-import { IDataPageRequestConfiguration, RxLogService } from '@helix/platform/shared/api';
+import { IDataPageRequestConfiguration, RxLogService, RxNotificationService } from '@helix/platform/shared/api';
 import { OpenViewActionType, RxViewComponent } from '@helix/platform/view/api';
 import { RxOpenViewActionService } from '@helix/platform/view/actions';
 import { IOpenViewActionParams } from '@helix/platform/view/actions/open-view/open-view-action.types';
 import { BaseViewComponent, IViewComponent, RuntimeViewModelApi } from '@helix/platform/view/runtime';
 import { EMPTY, forkJoin, Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import {
   buildCatalogFieldValuesByFieldId,
   buildCatalogPropertySelection,
@@ -29,9 +29,50 @@ import {
   normalizeTargetViewDefinitionNameValue,
   shouldUseBuiltInRecordQuery
 } from '../catalog-view.utils';
-import { CatalogViewMode, ICatalogViewProperties } from '../catalog-view.types';
+import { CatalogActionRecordRow, CatalogViewMode, ICatalogViewProperties } from '../catalog-view.types';
 
 type RecordRow = Record<string, unknown>;
+
+/**
+ * Fingerprint of inspector/view inputs that drive Record Instance Data Page + field layout loads.
+ * Omits runtime outputs ({@link ICatalogViewProperties} catalogAction*, catalogFieldValues*, catalogSelectedRows*)
+ * so when those echo back into `config` after a row click, `switchMap` does not unsubscribe and cancel in-flight datapage XHRs.
+ */
+function catalogDataInputsFingerprint(c: ICatalogViewProperties): string {
+  try {
+    return JSON.stringify({
+      hidden: c.hidden,
+      name: c.name,
+      actionSinks: c.actionSinks,
+      useBuiltInRecordQuery: c.useBuiltInRecordQuery,
+      catalogPageSize: c.catalogPageSize,
+      catalogQueryExpression: c.catalogQueryExpression,
+      cardTitleFieldId: c.cardTitleFieldId,
+      cardDescriptionFieldId: c.cardDescriptionFieldId,
+      cardBadgeFieldId: c.cardBadgeFieldId,
+      cardPriceFieldId: c.cardPriceFieldId,
+      cardCurrencyFieldId: c.cardCurrencyFieldId,
+      recordDefinitionName: c.recordDefinitionName,
+      catalogSelectedFieldIds: c.catalogSelectedFieldIds,
+      records: c.records,
+      recordsViewInputParamName: c.recordsViewInputParamName,
+      fields: c.fields,
+      fieldsCsv: c.fieldsCsv,
+      buttonLabel: c.buttonLabel,
+      initialView: c.initialView,
+      enableTableMultiSelect: c.enableTableMultiSelect,
+      facetFieldKey: c.facetFieldKey,
+      facetOptionsJson: c.facetOptionsJson,
+      categoryFieldKey: c.categoryFieldKey,
+      targetViewDefinitionName: c.targetViewDefinitionName,
+      openViewPresentationType: c.openViewPresentationType,
+      openViewModalTitle: c.openViewModalTitle,
+      viewParamFieldKeysCsv: c.viewParamFieldKeysCsv
+    });
+  } catch {
+    return `${Date.now()}-${Math.random()}`;
+  }
+}
 
 @Component({
   standalone: true,
@@ -67,6 +108,21 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
 
   displayRows: RecordRow[] = [];
 
+  /** @context Table multi-select mode: Request ID / Display-ID keys stable across sorts. */
+  private readonly selectedRowKeys = new Set<string>();
+
+  /**
+   * @context After first config, runtime Grid/Table toggle must not be overwritten by output-feedback config emissions.
+   */
+  private hasAppliedInitialViewMode = false;
+
+  /**
+   * @context Avoid infinite notifyPropertyChanged → config → notify loops (stack overflow in CLIE).
+   */
+  private lastEmittedSelectedRowsJson: string | null = null;
+
+  private pendingSelectedRowsEmit = false;
+
   facetFieldKey = '';
   facetOptionList: string[] = [];
   categoryFieldEffective = '';
@@ -77,6 +133,7 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
   constructor(
     private readonly cdr: ChangeDetectorRef,
     private readonly rxLogService: RxLogService,
+    private readonly rxNotificationService: RxNotificationService,
     private readonly translate: TranslateService,
     private readonly rxOpenViewActionService: RxOpenViewActionService,
     private readonly rxRecordInstanceDataPageService: RxRecordInstanceDataPageService,
@@ -91,9 +148,17 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
 
     this.config
       .pipe(
-        switchMap((c: ICatalogViewProperties) => {
+        tap((c: ICatalogViewProperties) => {
           this.state = { ...c };
           this.isHidden = Boolean(c.hidden);
+        }),
+        distinctUntilChanged(
+          (a, b) => catalogDataInputsFingerprint(a) === catalogDataInputsFingerprint(b)
+        ),
+        switchMap((c: ICatalogViewProperties) => {
+          if (!this.tableMultiSelectEnabled()) {
+            this.selectedRowKeys.clear();
+          }
           this.applyLayoutFromConfig(c);
           const rdName =
             extractCatalogFieldId(c.recordDefinitionName) ||
@@ -130,8 +195,13 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
   /**
    * Layout, field list, filters — everything except {@link rawRecords}.
    */
-  private applyLayoutFromConfig(c: ICatalogViewProperties): void {
-    this.viewMode = c.initialView === 'table' ? 'table' : 'card';
+  private applyLayoutFromConfig(c: ICatalogViewProperties, opts?: { syncInitialView?: boolean }): void {
+    if (opts?.syncInitialView === true) {
+      this.viewMode = c.initialView === 'table' ? 'table' : 'card';
+    } else if (!this.hasAppliedInitialViewMode) {
+      this.viewMode = c.initialView === 'table' ? 'table' : 'card';
+      this.hasAppliedInitialViewMode = true;
+    }
     this.fields = resolveFieldsSource(c);
     this.facetFieldKey = extractCatalogFieldId(c.facetFieldKey);
     const facetRaw = (c.facetOptionsJson ?? '').trim();
@@ -270,6 +340,9 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
 
   setView(mode: CatalogViewMode): void {
     this.viewMode = mode;
+    if (mode === 'card') {
+      this.selectedRowKeys.clear();
+    }
     this.rebuildView();
     this.cdr.markForCheck();
   }
@@ -434,55 +507,17 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
 
   onRowAction(row: RecordRow): void {
     const fieldMap = buildCatalogFieldValuesByFieldId(row);
-    this.notifyPropertyChanged('catalogFieldValuesByFieldId', fieldMap);
-    this.notifyPropertyChanged('catalogActionRecord', row);
-    this.notifyPropertyChanged('catalogActionRecordJson', safeStringify(row));
+    setTimeout(() => {
+      this.notifyPropertyChanged('catalogFieldValuesByFieldId', fieldMap);
+      this.notifyPropertyChanged('catalogActionRecord', row);
+      this.notifyPropertyChanged('catalogActionRecordJson', safeStringify(row));
 
-    if (this.tryRunSinkActions('buttonActions')) {
-      return;
-    }
-
-    const viewDefRaw = this.state?.targetViewDefinitionName;
-    const viewDef = normalizeTargetViewDefinitionNameValue(viewDefRaw);
-    if (!viewDef) {
-      return;
-    }
-
-    const keys = parseViewParamFieldKeys(this.state?.viewParamFieldKeysCsv);
-    const viewParams = buildViewInputParamsFromRow(row, keys);
-    const presentationType = resolveOpenViewPresentationType(this.state?.openViewPresentationType);
-    const modalTitleRaw = this.state?.openViewModalTitle;
-    const modalTitle = (
-      extractCatalogFieldId(modalTitleRaw) ||
-      (typeof modalTitleRaw === 'string' ? modalTitleRaw.trim() : '')
-    ).trim();
-
-    const params: IOpenViewActionParams = {
-      viewDefinitionName: viewDef,
-      viewParams,
-      presentation: {
-        type: presentationType,
-        ...(modalTitle ? { title: modalTitle } : {})
+      if (this.tryRunSinkActions('buttonActions')) {
+        return;
       }
-    };
 
-    this.rxOpenViewActionService
-      .execute(params)
-      .pipe(
-        takeUntil(this.destroyed$),
-        catchError(() => {
-          // @context Cancel/outside-click paths surface as errors — avoid noisy error logs
-          this.rxLogService.debug(
-            this.translate.instant('com.amar.helix-vibe-studio.view-components.catalog.open-view-cancelled')
-          );
-          return EMPTY;
-        })
-      )
-      .subscribe(() => {
-        this.rxLogService.debug(
-          this.translate.instant('com.amar.helix-vibe-studio.view-components.catalog.open-view-closed')
-        );
-      });
+      this.openLegacySingleRowView(row);
+    }, 0);
   }
 
   /**
@@ -541,6 +576,226 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
     }
 
     this.displayRows = rows;
+    this.pruneTableSelectionToVisibleRows();
+    this.scheduleSelectedRowsOutputEmit();
+  }
+
+  /** Table + inspector flag: multi-select UI and outputs. */
+  showTableMultiUx(): boolean {
+    return this.tableMultiSelectEnabled() && this.viewMode === 'table';
+  }
+
+  /** @context Optional inspector property; older saved views omit it. */
+  private tableMultiSelectEnabled(): boolean {
+    return this.coerceBool(this.state?.enableTableMultiSelect, false);
+  }
+
+  private coerceBool(value: unknown, defaultValue: boolean): boolean {
+    if (value === false || value === 'false' || value === 0 || value === '0') {
+      return false;
+    }
+    if (value === true || value === 'true' || value === 1 || value === '1') {
+      return true;
+    }
+    return defaultValue;
+  }
+
+  tableSelectedCount(): number {
+    if (!this.showTableMultiUx()) {
+      return 0;
+    }
+    return this.orderedSelectedRows().length;
+  }
+
+  /** @context Datapage rows use string keys (field ids). */
+  trackRowKey(_index: number, row: RecordRow): string {
+    return this.selectionKey(row);
+  }
+
+  isRowSelected(row: RecordRow): boolean {
+    return this.selectedRowKeys.has(this.selectionKey(row));
+  }
+
+  allVisibleRowsSelected(): boolean {
+    if (!this.displayRows.length || !this.showTableMultiUx()) {
+      return false;
+    }
+    return this.displayRows.every((r) => this.selectedRowKeys.has(this.selectionKey(r)));
+  }
+
+  /** @context No indeterminate control without extra DOM; checkbox follows “all visible selected”. */
+  toggleSelectAllVisible(): void {
+    if (!this.showTableMultiUx()) {
+      return;
+    }
+    if (this.allVisibleRowsSelected()) {
+      for (const r of this.displayRows) {
+        this.selectedRowKeys.delete(this.selectionKey(r));
+      }
+    } else {
+      for (const r of this.displayRows) {
+        this.selectedRowKeys.add(this.selectionKey(r));
+      }
+    }
+    this.scheduleSelectedRowsOutputEmit();
+    this.cdr.markForCheck();
+  }
+
+  toggleRowSelected(row: RecordRow): void {
+    if (!this.showTableMultiUx()) {
+      return;
+    }
+    const k = this.selectionKey(row);
+    if (this.selectedRowKeys.has(k)) {
+      this.selectedRowKeys.delete(k);
+    } else {
+      this.selectedRowKeys.add(k);
+    }
+    this.scheduleSelectedRowsOutputEmit();
+    this.cdr.markForCheck();
+  }
+
+  /** @context Primary toolbar action for multi-select mode; first row mirrors legacy single outputs. */
+  onToolbarBulkRowAction(): void {
+    if (!this.showTableMultiUx()) {
+      return;
+    }
+    const rows = this.orderedSelectedRows();
+    if (rows.length === 0) {
+      const msg = this.translate.instant(
+        'com.amar.helix-vibe-studio.view-components.catalog.bulk-select-required'
+      );
+      this.rxNotificationService.addWarningMessage(
+        msg.includes('com.amar.') ? 'Select at least one row in the table.' : msg
+      );
+      return;
+    }
+    const first = rows[0];
+    const fieldMap = buildCatalogFieldValuesByFieldId(first);
+    const snapshots = rows.map((r) => buildCatalogFieldValuesByFieldId(r)) as CatalogActionRecordRow[];
+
+    setTimeout(() => {
+      this.notifyPropertyChanged('catalogFieldValuesByFieldId', fieldMap);
+      this.notifyPropertyChanged('catalogActionRecord', first);
+      this.notifyPropertyChanged('catalogActionRecordJson', safeStringify(first));
+      this.notifyPropertyChanged('catalogSelectedRowsJson', JSON.stringify(snapshots));
+      this.notifyPropertyChanged('catalogSelectedRows', snapshots);
+      this.lastEmittedSelectedRowsJson = JSON.stringify(snapshots);
+
+      if (this.tryRunSinkActions('buttonActions')) {
+        return;
+      }
+      this.openLegacySingleRowView(first);
+    }, 0);
+  }
+
+  private openLegacySingleRowView(row: RecordRow): void {
+    const viewDefRaw = this.state?.targetViewDefinitionName;
+    const viewDef = normalizeTargetViewDefinitionNameValue(viewDefRaw);
+    if (!viewDef) {
+      return;
+    }
+
+    const keys = parseViewParamFieldKeys(this.state?.viewParamFieldKeysCsv);
+    const viewParams = buildViewInputParamsFromRow(row, keys);
+    const presentationType = resolveOpenViewPresentationType(this.state?.openViewPresentationType);
+    const modalTitleRaw = this.state?.openViewModalTitle;
+    const modalTitle = (
+      extractCatalogFieldId(modalTitleRaw) ||
+      (typeof modalTitleRaw === 'string' ? modalTitleRaw.trim() : '')
+    ).trim();
+
+    const params: IOpenViewActionParams = {
+      viewDefinitionName: viewDef,
+      viewParams,
+      presentation: {
+        type: presentationType,
+        ...(modalTitle ? { title: modalTitle } : {})
+      }
+    };
+
+    this.rxOpenViewActionService
+      .execute(params)
+      .pipe(
+        takeUntil(this.destroyed$),
+        catchError(() => {
+          this.rxLogService.debug(
+            this.translate.instant('com.amar.helix-vibe-studio.view-components.catalog.open-view-cancelled')
+          );
+          return EMPTY;
+        })
+      )
+      .subscribe(() => {
+        this.rxLogService.debug(
+          this.translate.instant('com.amar.helix-vibe-studio.view-components.catalog.open-view-closed')
+        );
+      });
+  }
+
+  private orderedSelectedRows(): RecordRow[] {
+    return this.displayRows.filter((r) => this.selectedRowKeys.has(this.selectionKey(r)));
+  }
+
+  private orderedSelectedRowSnapshots(): CatalogActionRecordRow[] {
+    return this.orderedSelectedRows().map((r) => buildCatalogFieldValuesByFieldId(r)) as CatalogActionRecordRow[];
+  }
+
+  /**
+   * @context Output notifyPropertyChanged must not run synchronously inside config subscription (re-enters updateViewComponentConfig → stack overflow).
+   * Do not emit catalogSelectedRows* when multi-select table UX is off — even [] triggered feedback loops. Table+multi only; coalesce via setTimeout(0); dedupe JSON.
+   */
+  private scheduleSelectedRowsOutputEmit(): void {
+    if (!this.showTableMultiUx()) {
+      this.lastEmittedSelectedRowsJson = null;
+      return;
+    }
+    if (this.pendingSelectedRowsEmit) {
+      return;
+    }
+    this.pendingSelectedRowsEmit = true;
+    setTimeout(() => {
+      this.pendingSelectedRowsEmit = false;
+      if (!this.showTableMultiUx()) {
+        return;
+      }
+      const snapshots = this.orderedSelectedRowSnapshots();
+      const json = JSON.stringify(snapshots);
+      if (json !== this.lastEmittedSelectedRowsJson) {
+        this.lastEmittedSelectedRowsJson = json;
+        this.notifyPropertyChanged('catalogSelectedRowsJson', json);
+        this.notifyPropertyChanged('catalogSelectedRows', snapshots);
+      }
+    }, 0);
+  }
+
+  private pruneTableSelectionToVisibleRows(): void {
+    if (!this.showTableMultiUx()) {
+      return;
+    }
+    const visible = new Set(this.displayRows.map((r) => this.selectionKey(r)));
+    for (const k of [...this.selectedRowKeys]) {
+      if (!visible.has(k)) {
+        this.selectedRowKeys.delete(k);
+      }
+    }
+  }
+
+  /** @context Prefer Request ID (379), else Display ID (1), else JSON fingerprint. */
+  private selectionKey(row: RecordRow): string {
+    const rid = row['379'] ?? row[String(379)];
+    if (rid != null && String(rid).trim() !== '') {
+      return `379:${String(rid)}`;
+    }
+    const d = row['1'];
+    if (d != null && String(d).trim() !== '') {
+      return `1:${String(d)}`;
+    }
+    try {
+      const keys = Object.keys(row).sort();
+      return `f:${keys.map((k) => `${k}:${JSON.stringify(row[k])}`).join('|')}`;
+    } catch {
+      return `fallback:${Math.random().toString(36)}`;
+    }
   }
 
   private setProperty(propertyPath: string, propertyValue: unknown): void | Observable<never> {
@@ -563,7 +818,20 @@ export class CatalogViewComponent extends BaseViewComponent implements OnInit, I
       case 'initialView':
         next.initialView = propertyValue as CatalogViewMode;
         this.state = next as unknown as ICatalogViewProperties;
-        this.applyLayoutFromConfig(this.state);
+        this.applyLayoutFromConfig(this.state, { syncInitialView: true });
+        if (this.viewMode === 'card') {
+          this.selectedRowKeys.clear();
+        }
+        this.rebuildView();
+        this.notifyPropertyChanged(propertyPath, propertyValue);
+        this.cdr.markForCheck();
+        break;
+      case 'enableTableMultiSelect':
+        next.enableTableMultiSelect = this.coerceBool(propertyValue, false);
+        this.state = next as unknown as ICatalogViewProperties;
+        if (!(this.state.enableTableMultiSelect ?? false)) {
+          this.selectedRowKeys.clear();
+        }
         this.rebuildView();
         this.notifyPropertyChanged(propertyPath, propertyValue);
         this.cdr.markForCheck();

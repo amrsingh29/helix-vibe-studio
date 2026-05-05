@@ -1,7 +1,7 @@
 /**
  * @generated
- * @context Runtime priority matrix VC: JSON from record or expression, dynamic grid, priority-tier styles, cell detail strip.
- * @decisions OnPush; resolveMatrixRaw$ mirrors org-chart; first cell entry wins; external error from record API + parse error.
+ * @context Runtime priority matrix VC: JSON from record or expression, dynamic grid, semantic P1–P4 colors + fallback tiers, selection + summary strip.
+ * @decisions OnPush; resolveMatrixRaw$ mirrors org-chart; first cell entry wins; resolvePriorityVisualKey for classes; selected row/col for outline + summary.
  * @references cookbook/02-ui-view-components.md, my-components/org-chart-view/runtime/org-chart-view.component.ts
  * @modified 2026-05-03
  */
@@ -16,10 +16,10 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, distinctUntilChanged, map, switchMap, takeUntil } from 'rxjs/operators';
 import {
   buildCellDetailPairs,
-  clampPriorityTier,
   formatDetailValue,
   IPriorityMatrixModel,
-  parsePriorityMatrixConfig
+  parsePriorityMatrixConfig,
+  resolvePriorityVisualKey
 } from '../priority-matrix.utils';
 import {
   coerceDataPageRows,
@@ -57,6 +57,10 @@ export class PriorityMatrixViewComponent extends BaseViewComponent implements On
 
   selectedDetail: { label: string; value: string }[] | null = null;
 
+  /** @context Selected grid coordinates for outline + summary — cleared when matrix reloads or empty cell clicked */
+  selectedRow: string | null = null;
+  selectedCol: string | null = null;
+
   constructor(
     private readonly cdr: ChangeDetectorRef,
     private readonly rxLogService: RxLogService,
@@ -86,6 +90,8 @@ export class PriorityMatrixViewComponent extends BaseViewComponent implements On
         this.parseErrorKey = parsed.errorKey;
         this.model = parsed.model;
         this.selectedDetail = null;
+        this.selectedRow = null;
+        this.selectedCol = null;
         this.cdr.markForCheck();
       });
   }
@@ -178,23 +184,49 @@ export class PriorityMatrixViewComponent extends BaseViewComponent implements On
     return m.cellMap.get(key) ?? null;
   }
 
-  /** @context Priority styling tier from first-seen priority order in matrix array */
-  cellTier(entry: Record<string, unknown> | null): number {
-    const m = this.model;
-    if (!m || !entry) {
-      return 0;
-    }
-    const pk =
-      entry['priority'] === null || entry['priority'] === undefined ? '' : String(entry['priority']);
-    const idx = m.priorityIndexByKey.get(pk);
-    return clampPriorityTier(idx, MAX_PRIORITY_TIER);
-  }
-
-  cellClass(entry: Record<string, unknown> | null): string {
+  cellClasses(row: string, col: string): string {
+    const entry = this.cellEntry(row, col);
     if (!entry) {
       return 'pm-cell pm-cell--empty';
     }
-    return `pm-cell pm-cell--${this.cellTier(entry)}`;
+    const m = this.model!;
+    const suffix = resolvePriorityVisualKey(entry, m.priorityIndexByKey, MAX_PRIORITY_TIER);
+    const selected =
+      this.selectedRow === row && this.selectedCol === col ? ' pm-cell--selected' : '';
+    return `pm-cell pm-cell--${suffix}${selected}`;
+  }
+
+  /** @context Screen reader summary: axis values + priority fields — no hardcoded catalog labels */
+  cellAriaLabel(row: string, col: string, entry: Record<string, unknown>): string {
+    const pr = formatDetailValue(entry['priority']);
+    const lab = formatDetailValue(entry['priority_label']);
+    const parts = [row, col, pr];
+    if (lab) {
+      parts.push(lab);
+    }
+    return parts.filter(Boolean).join(', ');
+  }
+
+  /** @context Translate params for compact summary line under grid when a cell is selected */
+  selectedSummaryParams(): Record<string, string> | null {
+    const m = this.model;
+    if (!m || this.selectedRow === null || this.selectedCol === null) {
+      return null;
+    }
+    const entry = this.cellEntry(this.selectedRow, this.selectedCol);
+    if (!entry) {
+      return null;
+    }
+    const pr = formatDetailValue(entry['priority']);
+    const pl = formatDetailValue(entry['priority_label']);
+    const priorityAndLabel = pl.length > 0 ? `${pr} (${pl})` : pr;
+    return {
+      rowAxis: m.rowAxisLabel,
+      colAxis: m.colAxisLabel,
+      row: this.selectedRow,
+      col: this.selectedCol,
+      priorityAndLabel
+    };
   }
 
   /** @context Surface priority fields from dynamic matrix row without hardcoded property names in template */
@@ -217,9 +249,13 @@ export class PriorityMatrixViewComponent extends BaseViewComponent implements On
     const m = this.model;
     if (!entry || !m) {
       this.selectedDetail = null;
+      this.selectedRow = null;
+      this.selectedCol = null;
       this.cdr.markForCheck();
       return;
     }
+    this.selectedRow = row;
+    this.selectedCol = col;
     const pairs = buildCellDetailPairs(entry, m.rowField, m.colField);
     this.selectedDetail = pairs.map((p) => ({ label: p.label, value: p.value }));
     this.cdr.markForCheck();
@@ -262,6 +298,8 @@ export class PriorityMatrixViewComponent extends BaseViewComponent implements On
             this.parseErrorKey = parsed.errorKey;
             this.model = parsed.model;
             this.selectedDetail = null;
+            this.selectedRow = null;
+            this.selectedCol = null;
             this.notifyPropertyChanged(propertyPath, propertyValue);
             this.cdr.markForCheck();
           });
